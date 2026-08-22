@@ -1,48 +1,41 @@
 /* ═══════════════════════════════════════════════════
-   SearchBar — Airbnb-inspired Premium Design
-   Prominent rounded search with icon
+   SearchBar Component — ODOO-LDCE Editorial Style
+   Rounded pill search input with icon
    ═══════════════════════════════════════════════════ */
 
-.searchBar {
-  position: relative;
+.searchContainer {
   display: flex;
   align-items: center;
+  width: 100%;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  padding: 10px 20px;
+  gap: 12px;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.searchIcon {
-  position: absolute;
-  left: 16px;
-  color: var(--color-text-secondary);
-  pointer-events: none;
-  transition: color 0.2s ease;
+.searchContainer:focus-within {
+  border-color: var(--color-ink);
+  box-shadow: var(--shadow-md);
+}
+
+.icon {
+  color: var(--color-text-tertiary);
+  flex-shrink: 0;
 }
 
 .input {
-  width: 100%;
-  padding: 12px 16px 12px 44px;
-  border: 1.5px solid var(--color-border);
-  border-radius: var(--radius-full);
-  background-color: var(--color-bg-surface);
-  font-size: var(--font-size-sm);
-  color: var(--color-text-primary);
-  transition: all 0.2s ease;
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 0.9375rem;
+  font-family: var(--font-family);
+  color: var(--color-ink);
+  min-width: 0;
 }
 
 .input::placeholder {
   color: var(--color-text-tertiary);
-}
-
-.input:hover {
-  border-color: var(--color-text-secondary);
-}
-
-.input:focus {
-  outline: none;
-  border-color: var(--color-text-primary);
-  box-shadow: 0 0 0 1px var(--color-text-primary);
-}
-
-.input:focus ~ .searchIcon,
-.input:focus + .searchIcon {
-  color: var(--color-text-primary);
 }

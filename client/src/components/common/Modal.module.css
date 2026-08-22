@@ -1,60 +1,59 @@
 /* ═══════════════════════════════════════════════════
-   Modal — Airbnb-inspired Premium Design
-   Scale-in animation, soft backdrop, rounded corners
+   Modal Component — ODOO-LDCE Editorial Style
+   Blur overlay, editorial serif title
    ═══════════════════════════════════════════════════ */
 
 .overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(44, 36, 24, 0.4);
+  backdrop-filter: blur(8px);
+  z-index: 100;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 100;
   padding: var(--space-4);
-  animation: fadeIn 0.2s ease;
+  animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .modal {
   background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-2xl);
-  box-shadow: var(--shadow-xl);
   width: 100%;
-  max-width: 560px;
+  max-width: 520px;
   max-height: 90vh;
   overflow-y: auto;
-  animation: scaleIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: var(--shadow-xl);
+  animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-5) var(--space-6);
-  border-bottom: 1px solid var(--color-border-light);
+  padding: var(--space-6);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .title {
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-bold);
   font-family: var(--font-display);
-  color: var(--color-text-primary);
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: var(--color-ink);
   margin: 0;
 }
 
 .closeBtn {
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  color: var(--color-text-primary);
-  transition: background-color 0.15s ease;
+  color: var(--color-text-secondary);
+  padding: 6px;
+  border-radius: var(--radius-full);
+  transition: all 0.2s ease;
 }
 
 .closeBtn:hover {
-  background-color: var(--color-bg-sunken);
+  background-color: var(--color-sand);
+  color: var(--color-ink);
 }
 
 .body {

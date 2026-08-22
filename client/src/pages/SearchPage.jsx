@@ -43,31 +43,31 @@ const SearchPage = () => {
   }, [activeTab, searchValue, sortBy]);
 
   return (
-    <PageShell title="Search Destinations & Activities">
+    <PageShell 
+      sectionLabel="04 — EXPLORE" 
+      title="Find destinations & activities"
+      subtitle="Discover global regional cities, activities, and cost estimates."
+    >
       <div className={styles.container}>
-        {/* Header & Tabs */}
-        <div className={styles.header}>
-          <div>
-            <h1 className={styles.pageTitle}>Activity Search Pages / City Search Page</h1>
-            <p className={styles.pageSubtitle}>Explore destinations and curated travel activities worldwide</p>
-          </div>
+        {/* Category Tabs */}
+        <div className={styles.tabsHeader}>
           <div className={styles.tabs}>
             <button 
               className={`${styles.tab} ${activeTab === 'cities' ? styles.activeTab : ''}`}
               onClick={() => setActiveTab('cities')}
             >
-              <MapPin size={16} /> Destination Cities
+              <MapPin size={14} /> Cities ({cities.length})
             </button>
             <button 
               className={`${styles.tab} ${activeTab === 'activities' ? styles.activeTab : ''}`}
               onClick={() => setActiveTab('activities')}
             >
-              <Activity size={16} /> Curated Activities
+              <Activity size={14} /> Activities ({activities.length})
             </button>
           </div>
         </div>
 
-        {/* FilterBar (Wireframe Screen 8) */}
+        {/* FilterBar */}
         <FilterBar 
           searchValue={searchValue}
           onSearch={setSearchValue}
@@ -86,7 +86,6 @@ const SearchPage = () => {
           ]}
         />
 
-        {/* ── Screen 8: Stacked Option and its Details Results ── */}
         {loading ? (
           <Loader text="Searching database..." />
         ) : (
@@ -107,19 +106,19 @@ const SearchPage = () => {
                           <h3 className={styles.optionTitle}>{city.name}</h3>
                           <p className={styles.optionCountry}><MapPin size={14} /> {city.country} • {city.region || 'World'}</p>
                         </div>
-                        <Badge variant="info">
+                        <Badge variant="default">
                           Cost: {COST_INDEX_LABELS[city.costIndex] || 'Moderate'}
                         </Badge>
                       </div>
 
                       <p className={styles.optionDescription}>
-                        {city.description || 'Option and its details — Explore top sights, historical monuments, local cuisines, and hotel stays.'}
+                        {city.description || 'Explore top sights, historical monuments, local cuisines, and hotel stays.'}
                       </p>
 
                       <div className={styles.optionFooter}>
                         <span className={styles.popularityScore}>Popularity: ★ {city.popularity || 85}/100</span>
                         <Button 
-                          variant="accent" 
+                          variant="primary" 
                           size="sm" 
                           onClick={() => navigate(`/trips/new`)}
                         >
@@ -148,22 +147,22 @@ const SearchPage = () => {
                           <h3 className={styles.optionTitle}>{activity.name}</h3>
                           <p className={styles.optionCountry}><Compass size={14} /> {activity.city?.name || 'Local Destination'} • {activity.category?.toUpperCase()}</p>
                         </div>
-                        <Badge variant="primary">
+                        <Badge variant="accent">
                           ₹{activity.estimatedCost || 0}
                         </Badge>
                       </div>
 
                       <p className={styles.optionDescription}>
-                        {activity.description || 'Option and its details — Curated experience including timing, guides, entry requirements, and reviews.'}
+                        {activity.description || 'Curated experience including timing, guides, entry requirements, and reviews.'}
                       </p>
 
                       <div className={styles.optionFooter}>
                         <div className={styles.activityStats}>
                           <span><Clock size={14} /> {activity.duration || 60} mins</span>
-                          <span><Star size={14} fill="orange" color="orange" /> {activity.rating || 4.5}/5</span>
+                          <span><Star size={14} style={{ color: 'var(--color-accent)' }} /> {activity.rating || 4.5}/5</span>
                         </div>
                         <Button 
-                          variant="accent" 
+                          variant="primary" 
                           size="sm" 
                           onClick={() => navigate(`/trips/new`)}
                         >

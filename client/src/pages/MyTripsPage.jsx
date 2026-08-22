@@ -39,10 +39,11 @@ const MyTripsPage = () => {
     (trip.description && trip.description.toLowerCase().includes(searchValue.toLowerCase()))
   );
 
-  // Group trips into 3 categories matching Wireframe Screen 6:
   const ongoingTrips = filteredTrips.filter(t => getTripStatus(t.startDate, t.endDate) === 'ongoing');
   const upcomingTrips = filteredTrips.filter(t => getTripStatus(t.startDate, t.endDate) === 'upcoming');
   const completedTrips = filteredTrips.filter(t => getTripStatus(t.startDate, t.endDate) === 'completed');
+
+  const totalStops = trips.reduce((sum, t) => sum + (t.stops?.length || 0), 0);
 
   const renderTripCard = (trip, statusVariant) => (
     <Card 
@@ -78,7 +79,7 @@ const MyTripsPage = () => {
             <DollarSign size={14} /> Budget: ₹{trip.totalBudget || 0}
           </span>
           <span className={styles.metaItem}>
-            <MapPin size={14} /> {trip.stops?.length || 0} Sections
+            <MapPin size={14} /> {trip.stops?.length || 0} Stops
           </span>
         </div>
       </div>
@@ -91,20 +92,31 @@ const MyTripsPage = () => {
   );
 
   return (
-    <PageShell title="User Trip Listing">
+    <PageShell 
+      sectionLabel="03 — JOURNEYS" 
+      title="Trips in motion"
+      subtitle="Manage your upcoming adventures, ongoing travels, and completed memories."
+    >
       <div className={styles.container}>
-        {/* Top Header & CTA */}
-        <div className={styles.topHeader}>
-          <div>
-            <h1 className={styles.pageHeading}>User Trip Listing</h1>
-            <p className={styles.pageSubheading}>Track your ongoing, upcoming, and completed travel plans</p>
+        {/* Top Summary Stats Bar (Matching ODOO-LDCE) */}
+        {!loading && (
+          <div className={styles.statsBar}>
+            <div className={styles.statCell}>
+              <p className={styles.statNumber}>{trips.length}</p>
+              <p className={styles.statLabel}>Total Trips</p>
+            </div>
+            <div className={styles.statCell}>
+              <p className={styles.statNumber}>{totalStops}</p>
+              <p className={styles.statLabel}>Cities Queued</p>
+            </div>
+            <div className={styles.statCell}>
+              <p className={styles.statNumber}>{upcomingTrips.length}</p>
+              <p className={styles.statLabel}>Upcoming Trips</p>
+            </div>
           </div>
-          <Button variant="accent" onClick={() => navigate('/trips/new')}>
-            <Plus size={16} /> Plan a New Trip
-          </Button>
-        </div>
+        )}
 
-        {/* FilterBar (Wireframe Screen 6) */}
+        {/* FilterBar & Search */}
         <FilterBar 
           searchValue={searchValue}
           onSearch={setSearchValue}
@@ -122,7 +134,7 @@ const MyTripsPage = () => {
           <Loader text="Loading your trips..." />
         ) : (
           <div className={styles.categoriesContainer}>
-            {/* ── Category 1: Ongoing (Wireframe Screen 6) ── */}
+            {/* Ongoing Section */}
             <section className={styles.categorySection}>
               <div className={styles.categoryHeader}>
                 <h2 className={styles.categoryTitle}>Ongoing</h2>
@@ -137,7 +149,7 @@ const MyTripsPage = () => {
               </div>
             </section>
 
-            {/* ── Category 2: Upcoming (Wireframe Screen 6) ── */}
+            {/* Upcoming Section */}
             <section className={styles.categorySection}>
               <div className={styles.categoryHeader}>
                 <h2 className={styles.categoryTitle}>Upcoming</h2>
@@ -152,7 +164,7 @@ const MyTripsPage = () => {
               </div>
             </section>
 
-            {/* ── Category 3: Completed (Wireframe Screen 6) ── */}
+            {/* Completed Section */}
             <section className={styles.categorySection}>
               <div className={styles.categoryHeader}>
                 <h2 className={styles.categoryTitle}>Completed</h2>

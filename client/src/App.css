@@ -1,31 +1,33 @@
 /* ══════════════════════════════════════════════════════════════
-   App.css — Global app-level overrides & animations
-   Component styles go in co-located .module.css files.
-   Design tokens are in index.css.
+   App.css — Global app-level overrides & animations (ODOO-LDCE Style)
    ══════════════════════════════════════════════════════════════ */
 
 #root {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background-color: var(--color-bg-page);
 }
 
-/* ── Page entrance animation ── */
+/* ── Page entrance animation (Reveal style) ── */
 .page-enter {
   opacity: 0;
-  transform: translateY(16px);
+  transform: translateY(20px);
+  filter: blur(6px);
 }
 
 .page-enter-active {
   opacity: 1;
   transform: translateY(0);
-  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-              transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  filter: blur(0px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+              filter 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* ── Animate on scroll utility ── */
 .animate-in {
-  animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) both;
+  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 /* ── Image cover utility ── */
