@@ -15,6 +15,11 @@ import styles from './LandingPage.module.css';
 
 const HERO_COUNTRY_CAROUSEL = [
   {
+    country: "Japan",
+    location: "Tokyo Tower & Neon Streets",
+    image: "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&q=80&w=2000",
+  },
+  {
     country: "India",
     location: "Taj Mahal, Agra",
     image: "https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&q=80&w=2000",
@@ -23,11 +28,6 @@ const HERO_COUNTRY_CAROUSEL = [
     country: "Switzerland",
     location: "Zermatt & Swiss Alps",
     image: "https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?auto=format&fit=crop&q=80&w=2000",
-  },
-  {
-    country: "Japan",
-    location: "Mount Fuji & Kyoto",
-    image: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&q=80&w=2000",
   },
   {
     country: "France",

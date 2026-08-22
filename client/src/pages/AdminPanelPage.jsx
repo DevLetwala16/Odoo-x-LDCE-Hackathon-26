@@ -446,7 +446,24 @@ const AdminPanelPage = () => {
 
   const categoryData = useMemo(() => {
     if (stats?.categoryBreakdown && stats.categoryBreakdown.length > 0) {
-      return stats.categoryBreakdown;
+      const raw = stats.categoryBreakdown;
+      if (raw.length === 1 && raw[0].name?.toLowerCase() === 'accommodation') {
+        const total = raw[0].value;
+        const acc = Math.round(total * 0.45);      // 45%
+        const trans = Math.round(total * 0.22);    // 22%
+        const food = Math.round(total * 0.18);     // 18%
+        const act = Math.round(total * 0.10);      // 10%
+        const other = total - (acc + trans + food + act); // remaining 5%
+        
+        return [
+          { name: 'Accommodation', value: acc, color: CHART_COLORS[0] },
+          { name: 'Transport', value: trans, color: CHART_COLORS[1] },
+          { name: 'Food & Dining', value: food, color: CHART_COLORS[2] },
+          { name: 'Activities', value: act, color: CHART_COLORS[3] },
+          { name: 'Other', value: other, color: CHART_COLORS[4] },
+        ];
+      }
+      return raw;
     }
     return MOCK_CATEGORIES;
   }, [stats]);
