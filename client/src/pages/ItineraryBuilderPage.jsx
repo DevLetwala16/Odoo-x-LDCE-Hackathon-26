@@ -41,6 +41,7 @@ const ItineraryBuilderPage = () => {
     category: 'sightseeing',
     estimatedCost: '',
     duration: 60,
+    city: '',
   });
 
   const fetchTripData = async () => {
@@ -129,12 +130,22 @@ const ItineraryBuilderPage = () => {
   };
 
   const openActivityModal = async (stop) => {
+    const cityId = stop.city?._id || stop.city;
     setActiveStopId(stop._id);
+    setNewActivity({
+      name: '',
+      category: 'sightseeing',
+      estimatedCost: '',
+      duration: 60,
+      city: cityId || '',
+    });
     setIsAddActivityModalOpen(true);
     try {
-      if (stop.city?._id) {
-        const cityDetails = await cityService.getCityById(stop.city._id);
+      if (cityId) {
+        const cityDetails = await cityService.getCityById(cityId);
         setAvailableActivities(cityDetails?.activities || []);
+      } else {
+        setAvailableActivities([]);
       }
     } catch (err) {
       console.error('Error fetching activities:', err);
@@ -147,6 +158,13 @@ const ItineraryBuilderPage = () => {
       await activityService.addActivityToStop(activeStopId, activityData);
       toast.success('Activity added to section!');
       setIsAddActivityModalOpen(false);
+      setNewActivity({
+        name: '',
+        category: 'sightseeing',
+        estimatedCost: '',
+        duration: 60,
+        city: '',
+      });
       fetchTripData();
     } catch (error) {
       toast.error(error.message || 'Failed to add activity');
