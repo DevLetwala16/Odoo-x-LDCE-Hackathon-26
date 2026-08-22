@@ -43,8 +43,8 @@ export const getStats = async (req, res, next) => {
         LoginData.find({
           $or: [{ user: userId }, { username: targetUser.username }],
         }).sort({ loginTime: -1 }).limit(10),
-        City.find().sort({ popularity: -1 }).limit(10),
-        Activity.find().sort({ rating: -1 }).limit(10).populate('city', 'name country'),
+        City.find().sort({ popularity: -1 }).limit(50),
+        Activity.find().sort({ rating: -1 }).limit(100).populate('city', 'name country'),
       ]);
 
       const totalUserBudget = userTrips.reduce((acc, t) => acc + (t.totalBudget || 0), 0);
@@ -447,10 +447,10 @@ export const getStats = async (req, res, next) => {
       };
     });
 
-    const topCities = allCities.slice(0, 10);
+    const topCities = allCities;
     const topActivities = await Activity.find()
       .sort({ rating: -1, popularity: -1 })
-      .limit(10)
+      .limit(100)
       .populate('city', 'name country');
 
     const recentLogins = await LoginData.find()

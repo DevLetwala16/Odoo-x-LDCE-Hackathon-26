@@ -1,74 +1,456 @@
 /* ═══════════════════════════════════════════════════
-   Itinerary Builder Page — ODOO-LDCE Editorial Style
+   Itinerary Builder Page — GlobeTrotter Design System
    ═══════════════════════════════════════════════════ */
 
 .container {
   display: flex;
   flex-direction: column;
-  gap: var(--space-8);
+  gap: var(--space-6);
+  max-width: 1000px;
+  margin: 0 auto;
 }
 
-.builderHeader {
+/* ── Top Bar Header ── */
+.topBar {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: center;
   flex-wrap: wrap;
   gap: var(--space-4);
-  padding-bottom: var(--space-6);
+  padding-bottom: var(--space-5);
   border-bottom: 1px solid var(--color-border);
 }
 
 .tripTitle {
-  font-family: var(--font-display);
-  font-size: 2.25rem;
-  font-weight: 400;
-  color: var(--color-ink);
+  font-family: var(--font-display, serif);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0 0 4px 0;
+}
+
+.tripDates {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
   margin: 0;
 }
 
-.stopsTimeline {
+.dot {
+  color: var(--color-border);
+  margin: 0 4px;
+}
+
+/* ── Stacked Sections List (Screen 5) ── */
+.sectionsList {
   display: flex;
   flex-direction: column;
   gap: var(--space-6);
-  position: relative;
 }
 
-.stopCard {
+.sectionCard {
   background-color: var(--color-bg-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-2xl);
   padding: var(--space-6);
-  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-normal);
 }
 
-.stopHeader {
+.sectionCard:hover {
+  box-shadow: var(--shadow-md);
+  border-color: rgba(14, 124, 134, 0.3);
+}
+
+.sectionCardHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--space-4);
+  gap: var(--space-3);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.sectionTitleBlock {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.gripIcon {
+  color: var(--color-text-secondary);
+  cursor: grab;
+  flex-shrink: 0;
+}
+
+.sectionNumberTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .cityName {
-  font-family: var(--font-display);
-  font-size: 1.5rem;
-  font-weight: 400;
-  color: var(--color-ink);
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-primary);
+}
+
+.sectionControlBtns {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.orderBtn {
+  background: var(--color-bg-sunken);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 6px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+}
+
+.orderBtn:hover:not(:disabled) {
+  background: var(--color-bg-surface);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.orderBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.deleteBtn {
+  background: rgba(231, 76, 60, 0.08);
+  border: 1px solid rgba(231, 76, 60, 0.2);
+  border-radius: var(--radius-md);
+  padding: 6px;
+  color: #E74C3C;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+}
+
+.deleteBtn:hover {
+  background: #E74C3C;
+  color: #FFFFFF;
+}
+
+.sectionDescription {
+  font-size: 0.9375rem;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
   margin: 0;
 }
 
-.activitiesList {
+/* Date & Budget Info Bar */
+.sectionDateBudgetBar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+  background-color: var(--color-bg-sunken);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+}
+
+.dateBadge, .budgetBadge, .activityCountBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.budgetBadge {
+  color: var(--color-primary);
+}
+
+.activityCountBadge {
+  color: var(--color-accent);
+}
+
+/* Activities List inside Section */
+.activitiesContainer {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
-  margin-top: var(--space-4);
+  margin-top: var(--space-2);
 }
 
-.activityItem {
+.activitiesTitle {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+
+.activitiesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--space-3);
+}
+
+.activityCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  background-color: var(--color-bg-sunken);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.actMain {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.actName {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.actMeta {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+}
+
+.removeActBtn {
+  background: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 12px 16px;
-  background-color: var(--color-sand);
+  transition: all var(--transition-fast);
+}
+
+.removeActBtn:hover {
+  color: #E74C3C;
+  background-color: rgba(231, 76, 60, 0.1);
+}
+
+.addActBtn {
+  align-self: flex-start;
+  margin-top: var(--space-1);
+}
+
+.emptyState {
+  padding: var(--space-8);
+  text-align: center;
+  color: var(--color-text-secondary);
+}
+
+/* Bottom CTA Area */
+.bottomActionArea {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-6) 0 var(--space-10) 0;
+}
+
+.addSectionCta {
+  padding: 14px 32px;
+  font-size: 1rem;
+  font-weight: 700;
+  box-shadow: var(--shadow-md);
+  border-radius: var(--radius-full);
+}
+
+/* ═══════════════════════════════════════════════════
+   MODAL FORM STYLING (Screen 5 Add Section / Activity)
+   ═══════════════════════════════════════════════════ */
+
+.modalForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: 0;
+  width: 100%;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  display: block;
+}
+
+.selectWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.selectIcon {
+  position: absolute;
+  left: 14px;
+  color: var(--color-text-secondary);
+  pointer-events: none;
+}
+
+.select {
+  width: 100%;
+  height: 44px;
+  padding: 0 16px 0 42px;
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
+  background-color: var(--color-bg-sunken);
+  color: var(--color-text-primary);
+  font-size: 0.9375rem;
+  font-family: inherit;
+  outline: none;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.select:focus {
+  border-color: var(--color-primary);
+  background-color: var(--color-bg-surface);
+  box-shadow: 0 0 0 3px rgba(14, 124, 134, 0.15);
+}
+
+.modalRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+  width: 100%;
+}
+
+@media (max-width: 500px) {
+  .modalRow {
+    grid-template-columns: 1fr;
+  }
+}
+
+.textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-bg-sunken);
+  color: var(--color-text-primary);
+  font-size: 0.9375rem;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 100px;
+  outline: none;
+  transition: all var(--transition-fast);
+  box-sizing: border-box;
+  line-height: 1.5;
+}
+
+.textarea:focus {
+  border-color: var(--color-primary);
+  background-color: var(--color-bg-surface);
+  box-shadow: 0 0 0 3px rgba(14, 124, 134, 0.15);
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+
+/* ── Activity Modal Specific Styles ── */
+.activityModalBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: var(--space-2) 0;
+}
+
+.presetActivities {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.presetTitle, .customTitle {
   font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.presetList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.presetItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  background-color: var(--color-bg-sunken);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.presetName {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.presetMeta {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+}
+
+.customActForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.error {
+  padding: var(--space-8);
+  text-align: center;
+  color: #E74C3C;
+  font-size: 1rem;
 }

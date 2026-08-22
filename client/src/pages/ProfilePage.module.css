@@ -219,6 +219,140 @@
   gap: var(--space-5);
 }
 
+/* ── Filter Control Card (Tabs 2 & 3) ── */
+.filterControlCard {
+  background-color: var(--color-bg-sunken);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-4) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.filterBarHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.filterBarTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
+
+.resultCountBadge {
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-primary);
+  background: rgba(14, 124, 134, 0.1);
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+}
+
+.filterControlsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  align-items: center;
+}
+
+.filterGroup {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.filterLabel {
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.filterBtnGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.filterPillBtn {
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  padding: 4px 12px;
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.filterPillBtn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-text-primary);
+}
+
+.activeFilterPillBtn {
+  background-color: var(--color-primary);
+  color: #FFFFFF;
+  border-color: var(--color-primary);
+}
+
+.activeFilterPillBtn:hover {
+  background-color: var(--color-primary);
+  color: #FFFFFF;
+}
+
+/* ── City Selector Horizontal List (Tab 3) ── */
+.citySelectorScrollList {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 4px 0 6px 0;
+}
+
+.citySelectBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  padding: 6px 14px;
+  font-size: 0.8125rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+}
+
+.citySelectBtn:hover {
+  border-color: var(--color-primary);
+  background-color: rgba(14, 124, 134, 0.08);
+}
+
+.activeCitySelectBtn {
+  background-color: var(--color-accent);
+  color: #FFFFFF;
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-sm);
+}
+
+.activeCitySelectBtn:hover {
+  background-color: var(--color-accent);
+  color: #FFFFFF;
+}
+
 /* ── Destination Cards Grid (Tab 2) ── */
 .destinationCardsGrid {
   display: grid;

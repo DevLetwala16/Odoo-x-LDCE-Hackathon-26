@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { 
@@ -20,7 +20,11 @@ import {
   Activity,
   Star,
   Layers,
-  ArrowRight
+  Filter,
+  Check,
+  Building2,
+  SlidersHorizontal,
+  ChevronDown
 } from 'lucide-react';
 import { 
   AreaChart, 
@@ -48,7 +52,7 @@ import adminService from '../services/adminService';
 import { getTripStatus } from '../utils/tripStatus';
 import styles from './ProfilePage.module.css';
 
-const CHART_COLORS = ['#0E7C86', '#F2703C', '#2FA36B', '#F39C12', '#8E44AD', '#3498DB', '#E74C3C'];
+const CHART_COLORS = ['#0E7C86', '#F2703C', '#2FA36B', '#F39C12', '#8E44AD', '#3498DB', '#E74C3C', '#1ABC9C'];
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -60,6 +64,13 @@ const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState('trends'); // 'trends' | 'destinations' | 'activities'
   const [costInterval, setCostInterval] = useState('week'); // 'day' | 'week' | 'month' | 'year'
   const [hoveredCity, setHoveredCity] = useState(null);
+
+  // Tab 2: Destination Rating & Cost Filters
+  const [ratingRangeFilter, setRatingRangeFilter] = useState('all'); // 'all' | '95' | '90' | '80' | '70'
+  const [costLevelFilter, setCostLevelFilter] = useState('all'); // 'all' | 'budget' | 'mid' | 'luxury'
+
+  // Tab 3: Recommended Activities City Selection Filter
+  const [selectedActivityCity, setSelectedActivityCity] = useState('all'); // 'all' | cityName
 
   const [formData, setFormData] = useState({
     firstName: user?.firstName || '',
@@ -120,9 +131,60 @@ const ProfilePage = () => {
   const currentCostData = stats?.trends?.[costInterval] || [];
   const categoryData = stats?.categoryBreakdown || [];
   const userMapCities = stats?.mapData || [];
-  const topCities = stats?.topCities || [];
-  const topActivities = stats?.topActivities || [];
+  const rawTopCities = stats?.topCities || [];
+  const rawTopActivities = stats?.topActivities || [];
   const budgetComparisonData = stats?.tripBudgetComparison || [];
+
+  // Filtered Destinations (Tab 2) based on Rating & Cost range
+  const filteredDestinations = useMemo(() => {
+    return rawTopCities.filter(city => {
+      const pop = city.popularity || 80;
+      const cost = city.costIndex || 3;
+
+      let matchesRating = true;
+      if (ratingRangeFilter === '95') matchesRating = pop >= 95;
+      else if (ratingRangeFilter === '90') matchesRating = pop >= 90;
+      else if (ratingRangeFilter === '80') matchesRating = pop >= 80;
+      else if (ratingRangeFilter === '70') matchesRating = pop >= 70;
+
+      let matchesCost = true;
+      if (costLevelFilter === 'budget') matchesCost = cost <= 2;
+      else if (costLevelFilter === 'mid') matchesCost = cost === 3;
+      else if (costLevelFilter === 'luxury') matchesCost = cost >= 4;
+
+      return matchesRating && matchesCost;
+    });
+  }, [rawTopCities, ratingRangeFilter, costLevelFilter]);
+
+  // Distinct list of cities for Activity Selection (Tab 3)
+  const availableActivityCities = useMemo(() => {
+    const citySet = new Set();
+    rawTopActivities.forEach(act => {
+      const cName = act.city?.name;
+      if (cName) citySet.add(cName);
+    });
+    return Array.from(citySet).sort();
+  }, [rawTopActivities]);
+
+  // Filtered Activities (Tab 3) based on user's chosen City
+  const filteredActivities = useMemo(() => {
+    if (selectedActivityCity === 'all') return rawTopActivities;
+    return rawTopActivities.filter(act => act.city?.name?.toLowerCase() === selectedActivityCity.toLowerCase());
+  }, [rawTopActivities, selectedActivityCity]);
+
+  // Category breakdown for activities of chosen city
+  const activityCategoryBreakdown = useMemo(() => {
+    const map = {};
+    filteredActivities.forEach(act => {
+      const cat = act.category ? act.category.toLowerCase().trim() : 'general';
+      map[cat] = (map[cat] || 0) + 1;
+    });
+    return Object.keys(map).map((k, idx) => ({
+      name: k.charAt(0).toUpperCase() + k.slice(1),
+      count: map[k],
+      color: CHART_COLORS[idx % CHART_COLORS.length],
+    }));
+  }, [filteredActivities]);
 
   const mainTabs = [
     { key: 'trends', label: 'My Personal Trends & Graphs', icon: <BarChart3 size={16} /> },
@@ -552,9 +614,65 @@ const ProfilePage = () => {
           </div>
         )}
 
-        {/* ════════════════ TAB 2: TOP DESTINATIONS & COST MAP ════════════════ */}
+        {/* ════════════════ TAB 2: TOP DESTINATIONS & COST MAP (RATING & COST RANGE FILTER) ════════════════ */}
         {activeTab === 'destinations' && (
           <div className={styles.tabContentBlock}>
+            {/* Interactive Rating & Cost Filter Bar */}
+            <Card className={styles.filterControlCard}>
+              <div className={styles.filterBarHeader}>
+                <div className={styles.filterBarTitle}>
+                  <SlidersHorizontal size={16} color="var(--color-primary)" />
+                  <span>Filter Destinations by Rating & Cost Range</span>
+                </div>
+                <span className={styles.resultCountBadge}>{filteredDestinations.length} Destinations Match</span>
+              </div>
+
+              <div className={styles.filterControlsRow}>
+                {/* Rating Range Filter */}
+                <div className={styles.filterGroup}>
+                  <label className={styles.filterLabel}>Rating Range:</label>
+                  <div className={styles.filterBtnGroup}>
+                    {[
+                      { id: 'all', label: 'All Ratings (0-100)' },
+                      { id: '95', label: '★ 95+ (World Class)' },
+                      { id: '90', label: '★ 90+ (Top Rated)' },
+                      { id: '80', label: '★ 80+ (Recommended)' },
+                    ].map(r => (
+                      <button
+                        key={r.id}
+                        className={`${styles.filterPillBtn} ${ratingRangeFilter === r.id ? styles.activeFilterPillBtn : ''}`}
+                        onClick={() => setRatingRangeFilter(r.id)}
+                      >
+                        {r.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Cost Level Filter */}
+                <div className={styles.filterGroup}>
+                  <label className={styles.filterLabel}>Cost Range:</label>
+                  <div className={styles.filterBtnGroup}>
+                    {[
+                      { id: 'all', label: 'All Budgets' },
+                      { id: 'budget', label: 'Affordable (Cost: 1-2)' },
+                      { id: 'mid', label: 'Mid-Range (Cost: 3)' },
+                      { id: 'luxury', label: 'Luxury (Cost: 4-5)' },
+                    ].map(c => (
+                      <button
+                        key={c.id}
+                        className={`${styles.filterPillBtn} ${costLevelFilter === c.id ? styles.activeFilterPillBtn : ''}`}
+                        onClick={() => setCostLevelFilter(c.id)}
+                      >
+                        {c.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </Card>
+
+            {/* Graphical Representation of Filtered Destinations */}
             <Card className={styles.chartCard}>
               <h4 className={styles.chartCardTitle}>
                 <MapPin size={18} /> Top Destinations Ranked by Popularity & Average Cost
@@ -564,9 +682,9 @@ const ProfilePage = () => {
               </p>
 
               <div className={styles.chartBody}>
-                {topCities.length > 0 ? (
+                {filteredDestinations.length > 0 ? (
                   <ResponsiveContainer width="100%" height={320}>
-                    <BarChart data={topCities.slice(0, 10)}>
+                    <BarChart data={filteredDestinations.slice(0, 12)}>
                       <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
                       <XAxis dataKey="name" tick={{ fontSize: 12, fill: 'var(--color-text-secondary)' }} />
                       <YAxis domain={[0, 100]} tick={{ fontSize: 12, fill: 'var(--color-text-secondary)' }} />
@@ -587,21 +705,21 @@ const ProfilePage = () => {
                         }}
                       />
                       <Bar dataKey="popularity" fill="var(--color-primary)" radius={[4, 4, 0, 0]}>
-                        {topCities.slice(0, 10).map((entry, index) => (
+                        {filteredDestinations.slice(0, 12).map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
                         ))}
                       </Bar>
                     </BarChart>
                   </ResponsiveContainer>
                 ) : (
-                  <p className={styles.noDataText}>Loading destinations from database...</p>
+                  <p className={styles.noDataText}>No destinations match the selected rating and cost range.</p>
                 )}
               </div>
             </Card>
 
-            {/* Destination Cards Grid Below (Matching media_1787391816239.png) */}
+            {/* Destination Cards Grid Below */}
             <div className={styles.destinationCardsGrid}>
-              {topCities.slice(0, 6).map((city) => (
+              {filteredDestinations.slice(0, 8).map((city) => (
                 <Card key={city._id} className={styles.cityCardMini}>
                   <div 
                     className={styles.cityCardImg} 
@@ -621,21 +739,110 @@ const ProfilePage = () => {
           </div>
         )}
 
-        {/* ════════════════ TAB 3: RECOMMENDED ACTIVITIES ════════════════ */}
+        {/* ════════════════ TAB 3: RECOMMENDED ACTIVITIES (CITY SELECTION FILTER) ════════════════ */}
         {activeTab === 'activities' && (
           <div className={styles.tabContentBlock}>
+            {/* Interactive City Selector Bar */}
+            <Card className={styles.filterControlCard}>
+              <div className={styles.filterBarHeader}>
+                <div className={styles.filterBarTitle}>
+                  <Building2 size={16} color="var(--color-primary)" />
+                  <span>Choose City for Activity Graphical Representation</span>
+                </div>
+                <span className={styles.resultCountBadge}>
+                  {filteredActivities.length} Activities {selectedActivityCity !== 'all' ? `in ${selectedActivityCity}` : 'Globally'}
+                </span>
+              </div>
+
+              <div className={styles.citySelectorScrollList}>
+                <button
+                  className={`${styles.citySelectBtn} ${selectedActivityCity === 'all' ? styles.activeCitySelectBtn : ''}`}
+                  onClick={() => setSelectedActivityCity('all')}
+                >
+                  <Globe size={14} /> <span>All Cities (Global)</span>
+                </button>
+
+                {availableActivityCities.map(city => (
+                  <button
+                    key={city}
+                    className={`${styles.citySelectBtn} ${selectedActivityCity.toLowerCase() === city.toLowerCase() ? styles.activeCitySelectBtn : ''}`}
+                    onClick={() => setSelectedActivityCity(city)}
+                  >
+                    <MapPin size={14} /> <span>{city}</span>
+                  </button>
+                ))}
+              </div>
+            </Card>
+
+            {/* City-Specific Activity Category Distribution (If city selected) */}
+            {selectedActivityCity !== 'all' && activityCategoryBreakdown.length > 0 && (
+              <Card className={styles.chartCard}>
+                <h4 className={styles.chartCardTitle}>
+                  <PieIcon size={18} /> {selectedActivityCity} Activity Category Distribution
+                </h4>
+                <p className={styles.chartCardSubtitle}>
+                  Proportion of sightseeing, culinary, cultural, and adventure experiences in {selectedActivityCity}
+                </p>
+
+                <div className={styles.pieContainer}>
+                  <ResponsiveContainer width="100%" height={220}>
+                    <PieChart>
+                      <Pie
+                        data={activityCategoryBreakdown}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={50}
+                        outerRadius={85}
+                        paddingAngle={4}
+                        dataKey="count"
+                      >
+                        {activityCategoryBreakdown.map((entry, index) => (
+                          <Cell key={`act-cat-${index}`} fill={entry.color || CHART_COLORS[index % CHART_COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip
+                        content={({ active, payload }) => {
+                          if (active && payload && payload.length) {
+                            const d = payload[0].payload;
+                            return (
+                              <div className={styles.customTooltip}>
+                                <h5 className={styles.tooltipTitle}>{d.name}</h5>
+                                <p><strong>Available Activities:</strong> {d.count} Tours/Experiences</p>
+                              </div>
+                            );
+                          }
+                          return null;
+                        }}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+
+                  <div className={styles.categoryLegendList}>
+                    {activityCategoryBreakdown.map((cat, i) => (
+                      <div key={i} className={styles.legendItem}>
+                        <span className={styles.colorDot} style={{ backgroundColor: cat.color }}></span>
+                        <span className={styles.legendName}>{cat.name}</span>
+                        <span className={styles.legendAmount}>{cat.count} activities</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </Card>
+            )}
+
+            {/* Graphical Representation of Activities in Selected City */}
             <Card className={styles.chartCard}>
               <h4 className={styles.chartCardTitle}>
-                <Activity size={18} /> Top Rated Activities Across Global Cities
+                <Activity size={18} /> Top Rated Activities {selectedActivityCity !== 'all' ? `in ${selectedActivityCity}` : 'Across Global Cities'}
               </h4>
               <p className={styles.chartCardSubtitle}>
-                Y-Axis: Activity Name • X-Axis: Star Rating Score (0 – 5.0★)
+                Y-Axis: Activity Name • X-Axis: Star Rating Score (0 – 5.0★) & Estimated Cost in Hover
               </p>
 
               <div className={styles.chartBody}>
-                {topActivities.length > 0 ? (
+                {filteredActivities.length > 0 ? (
                   <ResponsiveContainer width="100%" height={340}>
-                    <BarChart data={topActivities.slice(0, 8)} layout="vertical">
+                    <BarChart data={filteredActivities.slice(0, 10)} layout="vertical">
                       <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
                       <XAxis type="number" domain={[0, 5]} tick={{ fontSize: 12, fill: 'var(--color-text-secondary)' }} />
                       <YAxis dataKey="name" type="category" width={180} tick={{ fontSize: 11, fill: 'var(--color-text-secondary)' }} />
@@ -656,18 +863,22 @@ const ProfilePage = () => {
                           return null;
                         }}
                       />
-                      <Bar dataKey="rating" fill="var(--color-accent)" radius={[0, 4, 4, 0]} />
+                      <Bar dataKey="rating" fill="var(--color-accent)" radius={[0, 4, 4, 0]}>
+                        {filteredActivities.slice(0, 10).map((entry, index) => (
+                          <Cell key={`cell-act-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                        ))}
+                      </Bar>
                     </BarChart>
                   </ResponsiveContainer>
                 ) : (
-                  <p className={styles.noDataText}>Loading recommended activities from database...</p>
+                  <p className={styles.noDataText}>No activities found for {selectedActivityCity}.</p>
                 )}
               </div>
             </Card>
 
-            {/* Activities Cards Grid Below (Matching media_1787391822837.png) */}
+            {/* Activities Cards Grid Below */}
             <div className={styles.activitiesCardsGrid}>
-              {topActivities.slice(0, 8).map((act) => (
+              {filteredActivities.slice(0, 8).map((act) => (
                 <Card key={act._id} className={styles.activityCardMini}>
                   <div className={styles.activityCardHeader}>
                     <h4 className={styles.actTitleText}>{act.name}</h4>

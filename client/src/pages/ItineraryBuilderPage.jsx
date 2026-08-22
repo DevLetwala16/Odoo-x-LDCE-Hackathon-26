@@ -337,17 +337,20 @@ const ItineraryBuilderPage = () => {
 
           <div className={styles.inputGroup}>
             <label className={styles.label}>Select Destination City *</label>
-            <select 
-              value={newSection.cityId} 
-              onChange={(e) => setNewSection({ ...newSection, cityId: e.target.value })} 
-              className={styles.select}
-              required
-            >
-              <option value="">-- Choose City --</option>
-              {cities.map(c => (
-                <option key={c._id} value={c._id}>{c.name}, {c.country}</option>
-              ))}
-            </select>
+            <div className={styles.selectWrapper}>
+              <MapPin size={18} className={styles.selectIcon} />
+              <select 
+                value={newSection.cityId} 
+                onChange={(e) => setNewSection({ ...newSection, cityId: e.target.value })} 
+                className={styles.select}
+                required
+              >
+                <option value="">-- Choose City --</option>
+                {cities.map(c => (
+                  <option key={c._id} value={c._id}>{c.name}, {c.country}</option>
+                ))}
+              </select>
+            </div>
           </div>
 
           <div className={styles.modalRow}>
@@ -381,13 +384,18 @@ const ItineraryBuilderPage = () => {
               value={newSection.description} 
               onChange={(e) => setNewSection({ ...newSection, description: e.target.value })} 
               className={styles.textarea}
-              rows="3"
+              placeholder="All the necessary information about this section. This includes accommodation details, logistics, or special notes."
+              rows="4"
             ></textarea>
           </div>
 
           <div className={styles.modalActions}>
-            <Button variant="outline" onClick={() => setIsAddSectionModalOpen(false)}>Cancel</Button>
-            <Button type="submit" variant="accent">Add Section</Button>
+            <Button variant="outline" type="button" onClick={() => setIsAddSectionModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button type="submit" variant="accent">
+              Add Section
+            </Button>
           </div>
         </form>
       </Modal>
