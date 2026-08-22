@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Globe, Menu, X, User, LogOut, Home, Map, Search, Users, Shield } from 'lucide-react';
+import { Globe, Menu, X, User, LogOut, Home, Map, Search, Users, Shield, BarChart3 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import styles from './Navbar.module.css';
 
@@ -21,12 +21,8 @@ const Navbar = () => {
     { name: 'My Trips', path: '/trips', icon: <Map size={18} /> },
     { name: 'Search', path: '/search', icon: <Search size={18} /> },
     { name: 'Community', path: '/community', icon: <Users size={18} /> },
+    { name: 'Analytics', path: '/admin', icon: <BarChart3 size={18} /> },
   ];
-
-  // If user is admin, also show Admin Panel link in nav
-  if (user?.role === 'admin') {
-    navLinks.push({ name: 'Admin', path: '/admin', icon: <Shield size={18} /> });
-  }
 
   const displayName = user?.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : (user?.username || 'User');
   const initial = user?.firstName?.[0] || user?.username?.[0] || 'U';
@@ -82,11 +78,9 @@ const Navbar = () => {
                   <Link to="/profile" className={styles.dropdownItem} onClick={() => setIsProfileMenuOpen(false)}>
                     <User size={16} /> My Profile
                   </Link>
-                  {user.role === 'admin' && (
-                    <Link to="/admin" className={styles.dropdownItem} onClick={() => setIsProfileMenuOpen(false)}>
-                      <Shield size={16} /> Admin Portal
-                    </Link>
-                  )}
+                  <Link to="/admin" className={styles.dropdownItem} onClick={() => setIsProfileMenuOpen(false)}>
+                    <BarChart3 size={16} /> Personal Admin & Analytics
+                  </Link>
                   <button onClick={handleLogout} className={styles.dropdownItem}>
                     <LogOut size={16} /> Logout
                   </button>
@@ -121,16 +115,6 @@ const Navbar = () => {
               <span>{link.name}</span>
             </Link>
           ))}
-          {user?.role === 'admin' && (
-            <Link
-              to="/admin"
-              className={`${styles.mobileNavLink} ${location.pathname === '/admin' ? styles.active : ''}`}
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              <Shield size={18} />
-              <span>Admin Portal</span>
-            </Link>
-          )}
         </div>
       )}
     </nav>
