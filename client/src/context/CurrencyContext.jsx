@@ -9,7 +9,7 @@ export const useCurrency = () => {
 export const CurrencyProvider = ({ children }) => {
   // Available currencies: USD, EUR, INR
   const [currency, setCurrency] = useState(() => {
-    const saved = localStorage.getItem('globetrotter_currency');
+    const saved = localStorage.getItem('musafir_currency');
     return saved || 'INR';
   });
 
@@ -26,7 +26,7 @@ export const CurrencyProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    localStorage.setItem('globetrotter_currency', currency);
+    localStorage.setItem('musafir_currency', currency);
   }, [currency]);
 
   // Convert from INR (base for this project) to target currency

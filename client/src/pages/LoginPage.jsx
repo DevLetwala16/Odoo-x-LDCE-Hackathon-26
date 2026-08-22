@@ -28,7 +28,7 @@ const LoginPage = () => {
     setLoading(true);
     try {
       await login(formData.username, formData.password);
-      toast.success('Welcome back to GlobeTrotter!');
+      toast.success('Welcome back to Musafir!');
       navigate('/');
     } catch (error) {
       toast.error(error.message || 'Failed to login');
@@ -43,7 +43,7 @@ const LoginPage = () => {
       <div className={styles.leftPanel}>
         <div className={styles.brandContainer} onClick={() => navigate('/')}>
           <Globe className={styles.brandIcon} />
-          <h1 className={styles.brandName}>GlobeTrotter</h1>
+          <h1 className={styles.brandName}>Musafir</h1>
         </div>
 
         <Card className={styles.loginCard}>
@@ -99,7 +99,7 @@ const LoginPage = () => {
       {/* Right Panel: Hero Image & Quote Overlay */}
       <div className={styles.rightPanel}>
         <div className={styles.quoteOverlay}>
-          <p className={styles.quoteLabel}>GlobeTrotter Experience</p>
+          <p className={styles.quoteLabel}>Musafir Experience</p>
           <h3 className={styles.quoteTitle}>“To travel is to live.”</h3>
           <p className={styles.quoteSubtitle}>Multi-city routes, live budgets, and smart timelines.</p>
         </div>

@@ -1,7 +1,7 @@
 {
-  "name": "globetrotter-server",
+  "name": "musafir-server",
   "version": "1.0.0",
-  "description": "GlobeTrotter API Server",
+  "description": "Musafir API Server",
   "type": "module",
   "main": "index.js",
   "scripts": {

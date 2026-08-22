@@ -19,11 +19,11 @@ if (fs.existsSync(serverEnvPath)) {
 
 // Fallback defaults so the project works immediately on clone on any teammate's machine
 if (!process.env.MONGO_URI) {
-  process.env.MONGO_URI = 'mongodb+srv://Dev_letwala_Softcap:Dev_mongodb0716@softcapdev.puzklaw.mongodb.net/Globe_Trotter?retryWrites=true&w=majority';
+  process.env.MONGO_URI = 'mongodb+srv://Dev_letwala_Softcap:Dev_mongodb0716@softcapdev.puzklaw.mongodb.net/Musafir?retryWrites=true&w=majority';
 }
 
 if (!process.env.JWT_SECRET) {
-  process.env.JWT_SECRET = 'globetrotter-dev-secret-key-change-in-production-2026';
+  process.env.JWT_SECRET = 'musafir-dev-secret-key-change-in-production-2026';
 }
 
 if (!process.env.PORT) {

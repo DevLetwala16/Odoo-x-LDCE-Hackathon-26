@@ -8,9 +8,9 @@ const Footer = () => {
       <div className={styles.container}>
         <div className={styles.brandWrapper}>
           <Globe size={16} className={styles.brandIcon} />
-          <span className={styles.brandName}>GlobeTrotter</span>
+          <span className={styles.brandName}>Musafir</span>
         </div>
-        <p className={styles.copyright}>© 2026 GlobeTrotter. All rights reserved. Built for Odoo x LDCE Hackathon.</p>
+        <p className={styles.copyright}>© 2026 Musafir. All rights reserved. Built for Odoo x LDCE Hackathon.</p>
       </div>
     </footer>
   );

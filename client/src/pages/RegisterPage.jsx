@@ -51,7 +51,7 @@ const RegisterPage = () => {
         username: usernameToUse,
         password: passwordToUse,
       });
-      toast.success('Account created successfully! Welcome to GlobeTrotter.');
+      toast.success('Account created successfully! Welcome to Musafir.');
       navigate('/');
     } catch (error) {
       toast.error(error.message || 'Registration failed');

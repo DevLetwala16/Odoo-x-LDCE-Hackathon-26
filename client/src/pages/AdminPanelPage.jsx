@@ -150,7 +150,7 @@ const AdminPanelPage = () => {
         <div className={styles.header}>
           <div>
             <h1 className={styles.title}>
-              {isAdmin ? "GlobeTrotter Admin Portal" : "Travel Intelligence Portal"}
+              {isAdmin ? "Musafir Admin Portal" : "Travel Intelligence Portal"}
             </h1>
             <p className={styles.subtitle}>
               Real database analytics, destination cost trends, and travel expenditures

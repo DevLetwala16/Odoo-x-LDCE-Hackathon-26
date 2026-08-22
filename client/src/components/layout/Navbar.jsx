@@ -33,7 +33,7 @@ const Navbar = () => {
         {/* Brand */}
         <Link to="/" className={`${styles.brand} ${isHeroTransparent ? styles.transparentBrand : ''}`}>
           <Globe className={styles.brandIcon} size={20} />
-          <span className={styles.brandText}>GlobeTrotter</span>
+          <span className={styles.brandText}>Musafir</span>
         </Link>
 
         {/* Desktop Navigation */}
