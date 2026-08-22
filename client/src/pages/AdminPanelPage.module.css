@@ -29,32 +29,89 @@
   color: var(--color-text-secondary);
 }
 
-.liveIndicator {
+/* ── User Specific Graph Selector in Header ── */
+.userSelectorBox {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background-color: var(--color-bg-surface);
+  border: 1.5px solid var(--color-primary);
+  border-radius: var(--radius-lg);
+  padding: 6px 12px;
+  box-shadow: var(--shadow-sm);
+}
+
+.userSelectorLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+  white-space: nowrap;
+}
+
+.userDropdown {
+  border: none;
+  background: none;
+  outline: none;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  max-width: 250px;
+}
+
+/* ── User Active Banner ── */
+.userActiveBanner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  background: linear-gradient(135deg, rgba(14, 124, 134, 0.12) 0%, rgba(242, 112, 60, 0.08) 100%);
+  border: 1.5px solid var(--color-primary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-3) var(--space-4);
+  animation: fadeIn 0.3s ease;
+}
+
+.userBannerInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.userBannerAvatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-sm);
+  flex-shrink: 0;
+}
+
+.userBannerName {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.userBannerEmail {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  margin: 2px 0 0 0;
+}
+
+.resetBtn {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background-color: rgba(47, 163, 107, 0.1);
-  color: var(--color-success);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-bold);
-  padding: 6px 14px;
-  border-radius: var(--radius-full);
-  border: 1px solid rgba(47, 163, 107, 0.25);
-}
-
-.liveDot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background-color: var(--color-success);
-  box-shadow: 0 0 6px var(--color-success);
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(0.85); }
-  100% { opacity: 1; transform: scale(1); }
 }
 
 /* ── 4 Top Navigation Tabs (Wireframe Screen 12) ── */
@@ -497,6 +554,10 @@
   color: var(--color-text-primary);
 }
 
+.selectedTableRow {
+  background-color: rgba(14, 124, 134, 0.08);
+}
+
 .nameCell {
   display: flex;
   align-items: center;
@@ -562,6 +623,26 @@
   background-color: rgba(14, 124, 134, 0.15);
   color: var(--color-primary);
   border-color: var(--color-primary);
+}
+
+.viewUserGraphBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: var(--font-weight-semibold);
+  border: 1px solid var(--color-primary);
+  background-color: rgba(14, 124, 134, 0.08);
+  color: var(--color-primary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.viewUserGraphBtn:hover {
+  background-color: var(--color-primary);
+  color: #FFFFFF;
 }
 
 .deleteUserBtn {
@@ -757,6 +838,11 @@
   align-items: center;
   font-size: 11px;
   color: var(--color-text-secondary);
+}
+
+.statusHighlight {
+  font-weight: var(--font-weight-bold);
+  color: var(--color-accent);
 }
 
 .statusOnline {

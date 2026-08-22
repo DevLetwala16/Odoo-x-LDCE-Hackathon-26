@@ -17,7 +17,10 @@ import {
   XCircle,
   BarChart3,
   PieChart as PieIcon,
-  Compass
+  Compass,
+  UserCheck,
+  RotateCcw,
+  ArrowRight
 } from 'lucide-react';
 import { 
   AreaChart, 
@@ -32,14 +35,13 @@ import {
   PieChart, 
   Pie, 
   Cell,
-  Legend
 } from 'recharts';
 import PageShell from '../components/layout/PageShell';
-import FilterBar from '../components/common/FilterBar';
 import Card from '../components/common/Card';
 import Badge from '../components/common/Badge';
 import Button from '../components/common/Button';
 import Loader from '../components/common/Loader';
+import { useAuth } from '../hooks/useAuth';
 import adminService from '../services/adminService';
 import toast from 'react-hot-toast';
 import styles from './AdminPanelPage.module.css';
@@ -47,8 +49,10 @@ import styles from './AdminPanelPage.module.css';
 const CHART_COLORS = ['#0E7C86', '#F2703C', '#2FA36B', '#F39C12', '#8E44AD', '#3498DB', '#E74C3C', '#1ABC9C'];
 
 const AdminPanelPage = () => {
+  const { user: currentAdminUser } = useAuth();
   const [stats, setStats] = useState(null);
   const [users, setUsers] = useState([]);
+  const [selectedUserId, setSelectedUserId] = useState('all');
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('analytics'); // Default to rich analytics
   const [costInterval, setCostInterval] = useState('week'); // 'day' | 'week' | 'month' | 'year'
@@ -56,32 +60,47 @@ const AdminPanelPage = () => {
   const [searchUser, setSearchUser] = useState('');
   const [loginLogs, setLoginLogs] = useState([]);
 
+  const fetchStatsForUser = async (targetUserId) => {
+    try {
+      setLoading(true);
+      const [statsData, usersData, logsData] = await Promise.all([
+        adminService.getStats(targetUserId),
+        users.length === 0 ? adminService.getUsers() : Promise.resolve(users),
+        adminService.getLoginLogs(),
+      ]);
+      setStats(statsData);
+      if (users.length === 0) setUsers(usersData || []);
+      setLoginLogs(logsData || []);
+    } catch (err) {
+      toast.error('Failed to load admin analytics');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchAdminData = async () => {
-      try {
-        setLoading(true);
-        const [statsData, usersData, logsData] = await Promise.all([
-          adminService.getStats(),
-          adminService.getUsers(),
-          adminService.getLoginLogs(),
-        ]);
-        setStats(statsData);
-        setUsers(usersData || []);
-        setLoginLogs(logsData || []);
-      } catch (err) {
-        toast.error('Failed to load admin analytics');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchAdminData();
-  }, []);
+    fetchStatsForUser(selectedUserId);
+  }, [selectedUserId]);
+
+  const handleSelectUser = (id) => {
+    setSelectedUserId(id);
+    setActiveTab('analytics');
+    const target = users.find(u => u._id === id);
+    if (target) {
+      toast.success(`Loaded personalized analytics for ${target.firstName || target.username}`);
+    } else {
+      toast.success('Loaded platform-wide analytics');
+    }
+  };
 
   const handleDeleteUser = async (id, name) => {
     if (!window.confirm(`Delete user "${name}"? This will remove all their trips and login data.`)) return;
     try {
       await adminService.deleteUser(id);
       setUsers((prev) => prev.filter((u) => u._id !== id));
+      if (selectedUserId === id) {
+        setSelectedUserId('all');
+      }
       toast.success(`User "${name}" deleted`);
     } catch (err) {
       toast.error(err.response?.data?.error?.message || 'Failed to delete user');
@@ -99,7 +118,7 @@ const AdminPanelPage = () => {
     }
   };
 
-  if (loading) return <PageShell title="Admin Panel"><Loader text="Loading Admin Intelligence Hub..." /></PageShell>;
+  if (loading && !stats) return <PageShell title="Admin Panel"><Loader text="Loading Admin Analytics Hub..." /></PageShell>;
 
   // Current Cost Trend Data based on interval (1 Day, Week Wise, Month Wise, Year Wise)
   const currentCostData = stats?.trends?.[costInterval] || [];
@@ -115,6 +134,8 @@ const AdminPanelPage = () => {
     `${u.firstName} ${u.lastName} ${u.email} ${u.username}`.toLowerCase().includes(searchUser.toLowerCase())
   );
 
+  const selectedUserObj = users.find(u => u._id === selectedUserId);
+
   return (
     <PageShell title="Admin Panel">
       <div className={styles.container}>
@@ -122,12 +143,51 @@ const AdminPanelPage = () => {
         <div className={styles.header}>
           <div>
             <h1 className={styles.title}>GlobeTrotter Admin Portal</h1>
-            <p className={styles.subtitle}>Real-time graphical analytics, cost breakdown & system management</p>
+            <p className={styles.subtitle}>Real-time graphical analytics, user-specific insights & system management</p>
           </div>
-          <div className={styles.liveIndicator}>
-            <span className={styles.liveDot}></span> Live System Feed
+          
+          {/* User Specific Switcher Dropdown */}
+          <div className={styles.userSelectorBox}>
+            <label className={styles.userSelectorLabel}><UserCheck size={16} /> Filter Graph by Person:</label>
+            <select 
+              value={selectedUserId} 
+              onChange={(e) => handleSelectUser(e.target.value)}
+              className={styles.userDropdown}
+            >
+              <option value="all">📊 All Users (Platform-Wide)</option>
+              {currentAdminUser && (
+                <option value={currentAdminUser._id}>
+                  👤 Logged-in Admin ({currentAdminUser.firstName || currentAdminUser.username})
+                </option>
+              )}
+              {users.map(u => (
+                <option key={u._id} value={u._id}>
+                  👤 {u.firstName} {u.lastName} (@{u.username})
+                </option>
+              ))}
+            </select>
           </div>
         </div>
+
+        {/* User-Specific Active Banner */}
+        {selectedUserId !== 'all' && selectedUserObj && (
+          <div className={styles.userActiveBanner}>
+            <div className={styles.userBannerInfo}>
+              <div className={styles.userBannerAvatar}>
+                {selectedUserObj.firstName?.[0]}{selectedUserObj.lastName?.[0]}
+              </div>
+              <div>
+                <h4 className={styles.userBannerName}>
+                  Showing Personalized Analytics for: <strong>{selectedUserObj.firstName} {selectedUserObj.lastName}</strong> (@{selectedUserObj.username})
+                </h4>
+                <p className={styles.userBannerEmail}>Email: {selectedUserObj.email} • Role: {selectedUserObj.role?.toUpperCase()}</p>
+              </div>
+            </div>
+            <Button variant="outline" size="sm" onClick={() => handleSelectUser('all')} className={styles.resetBtn}>
+              <RotateCcw size={14} /> Reset to All Users
+            </Button>
+          </div>
+        )}
 
         {/* ── 4 Top Navigation Tabs (Wireframe Screen 12) ── */}
         <div className={styles.tabsRow}>
@@ -162,8 +222,8 @@ const AdminPanelPage = () => {
                       <Users size={22} color="var(--color-primary)" />
                     </div>
                     <div>
-                      <p className={styles.kpiLabel}>Total Registered Users</p>
-                      <h3 className={styles.kpiValue}>{stats?.totalUsers || 0}</h3>
+                      <p className={styles.kpiLabel}>{selectedUserId !== 'all' ? 'User Profile' : 'Total Registered Users'}</p>
+                      <h3 className={styles.kpiValue}>{selectedUserId !== 'all' ? selectedUserObj?.username : (stats?.totalUsers || 0)}</h3>
                     </div>
                   </Card>
 
@@ -172,7 +232,7 @@ const AdminPanelPage = () => {
                       <Compass size={22} color="var(--color-accent)" />
                     </div>
                     <div>
-                      <p className={styles.kpiLabel}>Total Trips Planned</p>
+                      <p className={styles.kpiLabel}>{selectedUserId !== 'all' ? 'Person\'s Total Trips' : 'Total Trips Planned'}</p>
                       <h3 className={styles.kpiValue}>{stats?.totalTrips || 0}</h3>
                     </div>
                   </Card>
@@ -182,7 +242,7 @@ const AdminPanelPage = () => {
                       <DollarSign size={22} color="var(--color-success)" />
                     </div>
                     <div>
-                      <p className={styles.kpiLabel}>Total Platform Budget</p>
+                      <p className={styles.kpiLabel}>{selectedUserId !== 'all' ? 'Person\'s Total Budget' : 'Total Platform Budget'}</p>
                       <h3 className={styles.kpiValue}>₹{(stats?.totalPlatformBudget || 0).toLocaleString()}</h3>
                     </div>
                   </Card>
@@ -192,7 +252,7 @@ const AdminPanelPage = () => {
                       <TrendingUp size={22} color="#8E44AD" />
                     </div>
                     <div>
-                      <p className={styles.kpiLabel}>Average Trip Cost</p>
+                      <p className={styles.kpiLabel}>Avg Cost per Trip</p>
                       <h3 className={styles.kpiValue}>₹{(stats?.avgTripBudget || 0).toLocaleString()}</h3>
                     </div>
                   </Card>
@@ -203,9 +263,13 @@ const AdminPanelPage = () => {
                   <div className={styles.chartHeaderRow}>
                     <div>
                       <h3 className={styles.chartTitle}>
-                        <TrendingUp size={18} /> Trip Cost Trends & Spending Volume
+                        <TrendingUp size={18} /> {selectedUserId !== 'all' ? `${selectedUserObj?.firstName}'s Trip Cost Curve` : 'Trip Cost Trends & Spending Volume'}
                       </h3>
-                      <p className={styles.chartSubtitle}>Real-time analysis of travel expenditures across time intervals</p>
+                      <p className={styles.chartSubtitle}>
+                        {selectedUserId !== 'all' 
+                          ? `Visual spending pattern across intervals for ${selectedUserObj?.firstName} ${selectedUserObj?.lastName}` 
+                          : 'Real-time analysis of travel expenditures across time intervals'}
+                      </p>
                     </div>
 
                     {/* Timeframe Selectors */}
@@ -266,7 +330,7 @@ const AdminPanelPage = () => {
                 <div className={styles.twoColumnGrid}>
                   <Card className={styles.chartCard}>
                     <h3 className={styles.chartTitle}>
-                      <PieIcon size={18} /> Category-Wise Spending During Trips
+                      <PieIcon size={18} /> {selectedUserId !== 'all' ? `${selectedUserObj?.firstName}'s Category Spending` : 'Category-Wise Spending During Trips'}
                     </h3>
                     <p className={styles.chartSubtitle}>Distribution across accommodation, flights, dining, and activities</p>
 
@@ -315,7 +379,7 @@ const AdminPanelPage = () => {
                     <div className={styles.mapHeaderRow}>
                       <div>
                         <h3 className={styles.chartTitle}>
-                          <Globe size={18} /> Destination Map with Cost on Hover
+                          <Globe size={18} /> {selectedUserId !== 'all' ? `${selectedUserObj?.firstName}'s Destinations` : 'Destination Map with Cost on Hover'}
                         </h3>
                         <p className={styles.chartSubtitle}>Hover or tap on destinations to view average trip cost</p>
                       </div>
@@ -370,7 +434,7 @@ const AdminPanelPage = () => {
                 {/* ── 4. Recent Real-Time Login Logs from Login_data Collection ── */}
                 <Card className={styles.chartCard}>
                   <h3 className={styles.chartTitle}>
-                    <Clock size={18} /> Real-Time Login Audit Logs (`Login_data` Collection)
+                    <Clock size={18} /> {selectedUserId !== 'all' ? `${selectedUserObj?.firstName}'s Login Records` : 'Real-Time Login Audit Logs (`Login_data` Collection)'}
                   </h3>
                   <p className={styles.chartSubtitle}>Auditing user authentication activity, IP addresses, and timestamps</p>
 
@@ -414,7 +478,7 @@ const AdminPanelPage = () => {
                 <div className={styles.tableHeaderControls}>
                   <div>
                     <h3 className={styles.tableTitle}>Manage Users ({filteredUsers.length})</h3>
-                    <p className={styles.tableSubtitle}>Manage account roles, permissions, and created itineraries</p>
+                    <p className={styles.tableSubtitle}>Manage account roles, inspect created itineraries, and view individual user graphs</p>
                   </div>
                   <div className={styles.searchUserWrap}>
                     <Search size={16} className={styles.searchIcon} />
@@ -438,12 +502,13 @@ const AdminPanelPage = () => {
                         <th>City / Country</th>
                         <th>Trips Created</th>
                         <th>Role</th>
+                        <th>Personal Graph</th>
                         <th>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
                       {filteredUsers.map((u) => (
-                        <tr key={u._id}>
+                        <tr key={u._id} className={selectedUserId === u._id ? styles.selectedTableRow : ''}>
                           <td className={styles.nameCell}>
                             <div className={styles.avatarCircle}>
                               {u.firstName?.[0]}{u.lastName?.[0]}
@@ -461,6 +526,15 @@ const AdminPanelPage = () => {
                               title="Click to toggle Admin / User role"
                             >
                               <Shield size={12} /> {u.role.toUpperCase()}
+                            </button>
+                          </td>
+                          <td>
+                            <button 
+                              onClick={() => handleSelectUser(u._id)}
+                              className={styles.viewUserGraphBtn}
+                              title="View individual graph and analytics for this person"
+                            >
+                              <TrendingUp size={14} /> View Graph <ArrowRight size={12} />
                             </button>
                           </td>
                           <td>
@@ -585,7 +659,7 @@ const AdminPanelPage = () => {
                 <div className={styles.guideItem}>
                   <h4 className={styles.guideTitle}>Manage User Section:</h4>
                   <p className={styles.guideText}>
-                    This Section is responsible for managing users and their actions. Allows admins to promote roles, inspect created itineraries, and remove accounts.
+                    This Section is responsible for managing users and their actions. Allows admins to inspect individual user graphs, promote roles, and view created trips.
                   </p>
                 </div>
 
@@ -606,7 +680,7 @@ const AdminPanelPage = () => {
                 <div className={styles.guideItem}>
                   <h4 className={styles.guideTitle}>User Trends and Analytics:</h4>
                   <p className={styles.guideText}>
-                    Major focus on providing analysis across various points (1-day, week-wise, month-wise, year-wise trip costs and category budgets) to give actionable insights.
+                    Focuses on providing individual or platform-wide spending curves across 1-day, week-wise, month-wise, and year-wise intervals.
                   </p>
                 </div>
               </div>
@@ -614,11 +688,13 @@ const AdminPanelPage = () => {
               {/* Live Status Badge */}
               <div className={styles.serverStatusCard}>
                 <div className={styles.statusRow}>
-                  <span>MongoDB Atlas</span>
-                  <span className={styles.statusOnline}>● Connected</span>
+                  <span>Target Filter</span>
+                  <span className={styles.statusHighlight}>
+                    {selectedUserId !== 'all' ? selectedUserObj?.username || 'User' : 'All Users'}
+                  </span>
                 </div>
                 <div className={styles.statusRow}>
-                  <span>Active Database</span>
+                  <span>Database</span>
                   <span className={styles.statusText}>`Globe_Trotter`</span>
                 </div>
                 <div className={styles.statusRow}>

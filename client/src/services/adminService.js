@@ -1,8 +1,8 @@
 import api from './api';
 
 export const adminService = {
-  getStats: async () => {
-    const res = await api.get('/admin/stats');
+  getStats: async (userId = 'all') => {
+    const res = await api.get('/admin/stats', { params: { userId } });
     return res?.data || res || {};
   },
   getUsers: async () => {
