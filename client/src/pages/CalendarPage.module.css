@@ -9,13 +9,78 @@
   justify-content: flex-start;
 }
 
+.topBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.title {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-1);
+}
+
+.subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.calendarLayout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* ── Screen 11: Interactive Calendar Card ── */
 .calendarCard {
   padding: var(--space-8);
   border-radius: var(--radius-2xl);
 }
 
-.placeholder {
+.monthNavHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-6);
+}
+
+.monthLabel {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+}
+
+.navBtn {
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-primary);
+  transition: all var(--transition-fast);
+}
+
+.navBtn:hover {
+  background-color: var(--color-bg-sunken);
+  color: var(--color-primary);
+}
+
+.dayNamesGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
   text-align: center;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-secondary);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .placeholder h2 {
@@ -73,4 +138,15 @@
   border-color: transparent;
   background-color: transparent;
   cursor: default;
+}
+
+.activityBadge {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-primary);
+}
+
+.noEventsText {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  font-style: italic;
 }

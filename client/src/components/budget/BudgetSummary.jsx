@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './BudgetSummary.module.css';
-import { formatCurrency } from '../../utils/formatters';
+import { formatCurrency } from '../../utils/formatCurrency';
 
 const BudgetSummary = ({ totalBudget = 0, totalEstimated = 0, breakdown = {} }) => {
   const percentage = totalBudget > 0 ? (totalEstimated / totalBudget) * 100 : 0;

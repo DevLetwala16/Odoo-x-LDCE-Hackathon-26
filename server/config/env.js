@@ -1,24 +1,33 @@
 import dotenv from 'dotenv';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// Load .env from server/ directory
-dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
+// Try loading server/.env first, then root/.env, then fallback
+const serverEnvPath = path.resolve(__dirname, '..', '.env');
+const rootEnvPath = path.resolve(__dirname, '..', '..', '.env');
 
-/**
- * Validate that all required environment variables are set.
- * Throws if any are missing.
- */
-const requiredVars = ['MONGO_URI', 'JWT_SECRET'];
+if (fs.existsSync(serverEnvPath)) {
+  dotenv.config({ path: serverEnvPath });
+} else if (fs.existsSync(rootEnvPath)) {
+  dotenv.config({ path: rootEnvPath });
+} else {
+  dotenv.config();
+}
 
-for (const varName of requiredVars) {
-  if (!process.env[varName]) {
-    console.error(`❌ Missing required environment variable: ${varName}`);
-    console.error(`   Copy .env.example to server/.env and fill in the values.`);
-    process.exit(1);
-  }
+// Fallback defaults so the project works immediately on clone on any teammate's machine
+if (!process.env.MONGO_URI) {
+  process.env.MONGO_URI = 'mongodb+srv://Dev_letwala_Softcap:Dev_mongodb0716@softcapdev.puzklaw.mongodb.net/Globe_Trotter?retryWrites=true&w=majority';
+}
+
+if (!process.env.JWT_SECRET) {
+  process.env.JWT_SECRET = 'globetrotter-dev-secret-key-change-in-production-2026';
+}
+
+if (!process.env.PORT) {
+  process.env.PORT = '5000';
 }
 
 export const config = {
@@ -27,3 +36,5 @@ export const config = {
   jwtSecret: process.env.JWT_SECRET,
   nodeEnv: process.env.NODE_ENV || 'development',
 };
+
+export default config;

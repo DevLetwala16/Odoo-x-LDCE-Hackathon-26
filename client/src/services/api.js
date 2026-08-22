@@ -29,21 +29,23 @@ api.interceptors.request.use(
 // ── Response interceptor: unwrap envelope + handle auth errors ──
 api.interceptors.response.use(
   (response) => {
-    // Unwrap the standard envelope: { success: true, data: { ... } }
+    // Unwrap standard envelope: { success: true, data: { ... } }
     return response.data;
   },
   (error) => {
-    const message =
+    const backendMessage =
       error.response?.data?.error?.message ||
-      error.message ||
-      'Something went wrong';
+      error.response?.data?.message ||
+      error.response?.data?.error ||
+      (typeof error.response?.data === 'string' ? error.response.data : null);
 
-    // Auto-logout on 401
+    const message = backendMessage || error.message || 'Network request failed';
+
+    // Auto-logout on 401 (only if not on public auth pages)
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      // Only redirect if not already on login page
-      if (window.location.pathname !== '/login') {
+      if (window.location.pathname !== '/login' && window.location.pathname !== '/register') {
         window.location.href = '/login';
       }
     }

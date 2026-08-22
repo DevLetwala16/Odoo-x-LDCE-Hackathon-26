@@ -155,9 +155,9 @@
   background-color: var(--color-bg-sunken);
 }
 
-.selectedCity {
-  border-color: var(--color-primary);
-  background-color: var(--color-primary-light);
+.selectedCard {
+  border: 2px solid var(--color-primary);
+  box-shadow: 0 0 0 2px var(--color-info);
 }
 
 .cityInfo {

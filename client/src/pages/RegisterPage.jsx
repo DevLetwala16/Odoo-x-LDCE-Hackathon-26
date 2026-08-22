@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { Globe } from 'lucide-react';
+import { Camera, User } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import Button from '../components/common/Button';
 import Input from '../components/common/Input';
@@ -44,10 +44,10 @@ const RegisterPage = () => {
     setLoading(true);
     try {
       await register(formData);
-      toast.success('Account created successfully!');
+      toast.success('Registration successful! Welcome to GlobeTrotter.');
       navigate('/');
     } catch (error) {
-      toast.error(error.message || 'Failed to register');
+      toast.error(error.message || 'Registration failed');
     } finally {
       setLoading(false);
     }
@@ -56,20 +56,32 @@ const RegisterPage = () => {
   return (
     <div className={styles.container}>
       <Card className={styles.registerCard}>
-        <div className={styles.header}>
-          <Globe size={40} className={styles.brandIcon} />
-          <h1 className={styles.title}>Join GlobeTrotter</h1>
-          <p className={styles.subtitle}>Create an account to start planning your journeys</p>
+        {/* Top Photo Upload Circle (Wireframe Screen 2) */}
+        <div className={styles.photoUploadWrapper}>
+          <div className={styles.photoCircle}>
+            {formData.avatar ? (
+              <img src={formData.avatar} alt="Avatar" className={styles.avatarPreview} />
+            ) : (
+              <div className={styles.photoPlaceholder}>
+                <Camera size={32} className={styles.photoIcon} />
+                <span className={styles.photoText}>Photo</span>
+              </div>
+            )}
+          </div>
         </div>
+
+        <h1 className={styles.title}>Registration</h1>
+        <p className={styles.subtitle}>Create your GlobeTrotter account</p>
         
         <form onSubmit={handleSubmit} className={styles.form}>
+          {/* Row 1: First Name | Last Name */}
           <div className={styles.row}>
             <Input 
               label="First Name *" 
               name="firstName" 
               value={formData.firstName} 
               onChange={handleChange} 
-              placeholder="e.g. Alex"
+              placeholder="First Name"
               required 
             />
             <Input 
@@ -77,89 +89,93 @@ const RegisterPage = () => {
               name="lastName" 
               value={formData.lastName} 
               onChange={handleChange} 
-              placeholder="e.g. Smith"
+              placeholder="Last Name"
               required 
             />
           </div>
           
+          {/* Username & Password */}
           <div className={styles.row}>
             <Input 
               label="Username *" 
               name="username" 
               value={formData.username} 
               onChange={handleChange} 
-              placeholder="e.g. alexsmith"
+              placeholder="Username"
               required 
             />
             <Input 
-              label="Email *" 
+              label="Password *" 
+              name="password" 
+              type="password" 
+              value={formData.password} 
+              onChange={handleChange} 
+              placeholder="Min. 6 characters"
+              required 
+            />
+          </div>
+
+          {/* Row 2: Email Address | Phone Number */}
+          <div className={styles.row}>
+            <Input 
+              label="Email Address *" 
               name="email" 
               type="email" 
               value={formData.email} 
               onChange={handleChange} 
-              placeholder="alex@example.com"
+              placeholder="email@example.com"
               required 
             />
-          </div>
-          
-          <Input 
-            label="Password *" 
-            name="password" 
-            type="password" 
-            value={formData.password} 
-            onChange={handleChange} 
-            placeholder="Minimum 6 characters"
-            required 
-          />
-          
-          <div className={styles.row}>
             <Input 
-              label="Phone" 
+              label="Phone Number" 
               name="phone" 
               value={formData.phone} 
               onChange={handleChange} 
-              placeholder="+1234567890"
-            />
-            <Input 
-              label="Avatar URL" 
-              name="avatar" 
-              value={formData.avatar} 
-              onChange={handleChange} 
-              placeholder="https://..."
+              placeholder="+91 9876543210"
             />
           </div>
           
+          {/* Row 3: City | Country */}
           <div className={styles.row}>
             <Input 
               label="City" 
               name="city" 
               value={formData.city} 
               onChange={handleChange} 
-              placeholder="e.g. Paris"
+              placeholder="Your City"
             />
             <Input 
               label="Country" 
               name="country" 
               value={formData.country} 
               onChange={handleChange} 
-              placeholder="e.g. France"
+              placeholder="Your Country"
             />
           </div>
+
+          <Input 
+            label="Avatar Photo URL (Optional)" 
+            name="avatar" 
+            value={formData.avatar} 
+            onChange={handleChange} 
+            placeholder="https://images.unsplash.com/..."
+          />
           
+          {/* Row 4: Additional Information ... */}
           <div className={styles.inputGroup}>
-            <label className={styles.label}>Additional Info</label>
+            <label className={styles.label}>Additional Information ...</label>
             <textarea 
               name="additionalInfo" 
               className={styles.textarea} 
               value={formData.additionalInfo} 
               onChange={handleChange} 
-              placeholder="Travel preferences, dietary requirements, interests..."
+              placeholder="Tell us about your travel interests, preferences..."
               rows="3"
             ></textarea>
           </div>
           
           <Button type="submit" variant="accent" className={styles.submitBtn} disabled={loading}>
-            {loading ? 'Creating Account...' : 'Sign Up'}
+            {loading ? 'Registering...' : 'Registration'}
           </Button>
         </form>
         

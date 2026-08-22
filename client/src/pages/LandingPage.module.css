@@ -93,7 +93,7 @@
   animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.1s both;
 }
 
-/* ── Section Layout ── */
+/* ── Sections ── */
 .section {
   margin-bottom: var(--space-16);
   animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.15s both;
@@ -101,9 +101,9 @@
 
 .sectionHeader {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--space-6);
+  align-items: center;
+  margin-bottom: var(--space-4);
 }
 
 .sectionTitle {
@@ -125,20 +125,8 @@
 /* ── City Grid ── */
 .grid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-5);
-}
-
-@media (min-width: 640px) {
-  .grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 1024px) {
-  .grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: var(--space-4);
 }
 
 .cityCard {
@@ -147,7 +135,9 @@
   position: relative;
   border-radius: var(--radius-xl);
   overflow: hidden;
+  padding: 0;
   cursor: pointer;
+  border-radius: var(--radius-lg);
 }
 
 .cityImage {
@@ -194,23 +184,11 @@
   color: rgba(255, 255, 255, 0.9);
 }
 
-/* ── Trips Grid ── */
-.tripsGrid {
+/* ── Previous Trips ── */
+.previousTripsGrid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-5);
-}
-
-@media (min-width: 768px) {
-  .tripsGrid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 1024px) {
-  .tripsGrid {
-    grid-template-columns: repeat(3, 1fr);
-  }
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--space-4);
 }
 
 .tripCard {
@@ -230,15 +208,16 @@
   font-size: 1.125rem;
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-primary);
-  letter-spacing: -0.01em;
+  margin-bottom: var(--space-2);
 }
 
 .tripMeta {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--space-2);
+  font-size: var(--font-size-xs);
   color: var(--color-text-secondary);
-  font-size: 0.8125rem;
+  margin-bottom: var(--space-2);
 }
 
 /* ── Empty States ── */

@@ -3,17 +3,86 @@
    Pill tabs, hover-lift trip cards, image zoom
    ═══════════════════════════════════════════════════ */
 
-.header {
+.topHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.pageHeading {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-1);
+}
+
+.pageSubheading {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+/* ── Categorized Sections (Wireframe Screen 6) ── */
+.categoriesContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  margin-top: var(--space-4);
+}
+
+.categorySection {
   display: flex;
   flex-direction: column;
   gap: var(--space-5);
   margin-bottom: var(--space-8);
 }
 
-@media (min-width: 600px) {
-  .header {
+.categoryHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  border-bottom: 2px solid var(--color-border);
+  padding-bottom: var(--space-2);
+}
+
+.categoryTitle {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
+
+.countBadge {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  background-color: var(--color-info);
+  color: var(--color-primary);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+
+.tripsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* ── Wide Horizontal Trip Card (Wireframe Screen 6) ── */
+.horizontalTripCard {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-bg-surface);
+  cursor: pointer;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+@media (min-width: 768px) {
+  .horizontalTripCard {
     flex-direction: row;
-    justify-content: space-between;
     align-items: center;
   }
 }
@@ -123,7 +192,7 @@
   padding: var(--space-5) var(--space-5) var(--space-6);
   display: flex;
   flex-direction: column;
-  flex: 1;
+  gap: var(--space-2);
 }
 
 .tripName {
@@ -132,22 +201,25 @@
   font-size: 1.125rem;
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-primary);
-  letter-spacing: -0.01em;
 }
 
-.tripDetails {
+.tripShortOverview {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+}
+
+.tripMetaRow {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-4);
   margin-bottom: 10px;
 }
 
-.detailItem {
+.metaItem {
   display: flex;
   align-items: center;
-  gap: 6px;
-  color: var(--color-text-secondary);
-  font-size: 0.8125rem;
+  gap: 4px;
 }
 
 .tripDescription {

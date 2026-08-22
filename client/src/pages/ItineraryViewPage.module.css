@@ -63,7 +63,22 @@
   gap: var(--space-5);
 }
 
-.metaItem {
+.pageTitle {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.tripMetaRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.tripMetaRow span {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -168,7 +183,19 @@
   z-index: 1;
 }
 
-.dayHeader {
+.headerCol {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.dayBlock {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-bg-surface);
+  overflow: hidden;
+}
+
+.dayTitleBar {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -193,12 +220,19 @@
 }
 
 .dayDates {
+  font-size: var(--font-size-xs);
   color: var(--color-text-secondary);
   font-size: 0.8125rem;
   font-weight: var(--font-weight-medium);
 }
 
-.activitiesList {
+.sectionBudgetTag {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-accent);
+}
+
+.activityExpenseRows {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
