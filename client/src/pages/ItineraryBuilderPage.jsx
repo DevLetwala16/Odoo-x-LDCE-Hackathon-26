@@ -155,7 +155,17 @@ const ItineraryBuilderPage = () => {
   const handleAddActivity = async (activityData) => {
     if (!activeStopId) return;
     try {
-      await activityService.addActivityToStop(activeStopId, activityData);
+      const payload = activityData.activityId
+        ? { activityId: activityData.activityId }
+        : {
+            name: activityData.name,
+            category: activityData.category || 'sightseeing',
+            estimatedCost: activityData.estimatedCost !== '' ? Number(activityData.estimatedCost) : 0,
+            duration: activityData.duration !== '' ? Number(activityData.duration) : 60,
+            city: activityData.city,
+          };
+
+      await activityService.addActivityToStop(activeStopId, payload);
       toast.success('Activity added to section!');
       setIsAddActivityModalOpen(false);
       setNewActivity({
@@ -451,14 +461,14 @@ const ItineraryBuilderPage = () => {
                 type="number" 
                 label="Estimated Cost (₹)" 
                 value={newActivity.estimatedCost} 
-                onChange={(e) => setNewActivity({ ...newActivity, estimatedCost: Number(e.target.value) })} 
-                placeholder="₹1000" 
+                onChange={(e) => setNewActivity({ ...newActivity, estimatedCost: e.target.value })} 
+                placeholder="e.g. 1000" 
               />
               <Input 
                 type="number" 
                 label="Duration (mins)" 
                 value={newActivity.duration} 
-                onChange={(e) => setNewActivity({ ...newActivity, duration: Number(e.target.value) })} 
+                onChange={(e) => setNewActivity({ ...newActivity, duration: e.target.value })} 
                 placeholder="60" 
               />
             </div>

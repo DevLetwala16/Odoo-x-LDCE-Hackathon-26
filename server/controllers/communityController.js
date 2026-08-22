@@ -69,8 +69,10 @@ export const getPostById = async (req, res, next) => {
 // @access  Private
 export const createPost = async (req, res, next) => {
   try {
+    const title = req.body.title || (req.body.content ? req.body.content.slice(0, 60) : 'Travel Field Note');
     const post = await CommunityPost.create({
       ...req.body,
+      title,
       user: req.user._id,
     });
 

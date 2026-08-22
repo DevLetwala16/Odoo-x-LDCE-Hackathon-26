@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { MapPin, Check, Plus, ArrowRight } from 'lucide-react';
+import { MapPin, Check, Plus, ArrowRight, Search, X } from 'lucide-react';
 import PageShell from '../components/layout/PageShell';
 import Input from '../components/common/Input';
 import Button from '../components/common/Button';
@@ -13,10 +13,14 @@ import styles from './CreateTripPage.module.css';
 
 const CreateTripPage = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const initialSearchCity = searchParams.get('city') || searchParams.get('q') || searchParams.get('search') || '';
+
   const [loading, setLoading] = useState(false);
   const [cities, setCities] = useState([]);
+  const [placeSearchQuery, setPlaceSearchQuery] = useState(initialSearchCity);
   const [formData, setFormData] = useState({
-    name: '',
+    name: initialSearchCity ? `Trip to ${initialSearchCity}` : '',
     selectedPlaceId: '',
     startDate: '',
     endDate: '',
@@ -28,21 +32,43 @@ const CreateTripPage = () => {
   useEffect(() => {
     const fetchCities = async () => {
       try {
-        const data = await cityService.getCities({ limit: 6, sortBy: 'popularity' });
-        setCities(data?.cities || data || []);
+        const data = await cityService.getCities({ limit: 100, sortBy: 'popularity' });
+        const fetchedCities = data?.cities || data || [];
+        setCities(fetchedCities);
+
+        // If a city was searched on Home/Search page, auto-select it!
+        if (initialSearchCity && fetchedCities.length > 0) {
+          const match = fetchedCities.find(c => 
+            c.name.toLowerCase() === initialSearchCity.toLowerCase() ||
+            c._id === initialSearchCity ||
+            c.name.toLowerCase().includes(initialSearchCity.toLowerCase())
+          );
+          if (match) {
+            setFormData(prev => ({
+              ...prev,
+              selectedPlaceId: match._id,
+              name: prev.name || `Trip to ${match.name}`,
+              coverImage: prev.coverImage || match.imageUrl || '',
+            }));
+          }
+        }
       } catch (error) {
         console.error('Error fetching suggested places:', error);
       }
     };
     fetchCities();
-  }, []);
+  }, [initialSearchCity]);
 
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSelectPlace = (cityId) => {
-    setFormData((prev) => ({ ...prev, selectedPlaceId: cityId }));
+    setFormData((prev) => ({ 
+      ...prev, 
+      selectedPlaceId: cityId,
+      name: prev.name ? prev.name : `Trip to ${cities.find(c => c._id === cityId)?.name || 'Destination'}`
+    }));
     const selectedCity = cities.find(c => c._id === cityId);
     toast.success(`Selected ${selectedCity?.name || 'City'} as destination`);
   };
@@ -61,13 +87,14 @@ const CreateTripPage = () => {
     
     setLoading(true);
     try {
+      const selectedCityObj = cities.find(c => c._id === formData.selectedPlaceId);
       const payload = {
         name: formData.name,
         startDate: formData.startDate,
         endDate: formData.endDate,
         totalBudget: Number(formData.totalBudget) || 0,
         description: formData.description,
-        coverImage: formData.coverImage || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&q=80&w=800'
+        coverImage: formData.coverImage || selectedCityObj?.imageUrl || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&q=80&w=800'
       };
       
       const res = await tripService.createTrip(payload);
@@ -78,7 +105,7 @@ const CreateTripPage = () => {
           await stopService.createStop(trip._id, {
             city: formData.selectedPlaceId,
             title: 'Section 1',
-            description: `Exploration in ${cities.find(c => c._id === formData.selectedPlaceId)?.name || 'destination'}`,
+            description: `Exploration in ${selectedCityObj?.name || 'destination'}`,
             arrivalDate: formData.startDate,
             departureDate: formData.endDate,
             order: 0,
@@ -97,6 +124,13 @@ const CreateTripPage = () => {
       setLoading(false);
     }
   };
+
+  const filteredPlaces = cities.filter(c => 
+    !placeSearchQuery ||
+    c.name.toLowerCase().includes(placeSearchQuery.toLowerCase()) ||
+    c.country.toLowerCase().includes(placeSearchQuery.toLowerCase()) ||
+    (c.region && c.region.toLowerCase().includes(placeSearchQuery.toLowerCase()))
+  );
 
   return (
     <PageShell 
@@ -124,10 +158,10 @@ const CreateTripPage = () => {
               <select 
                 name="selectedPlaceId" 
                 value={formData.selectedPlaceId} 
-                onChange={handleChange}
+                onChange={(e) => handleSelectPlace(e.target.value)}
                 className={styles.select}
               >
-                <option value="">-- Choose a Destination --</option>
+                <option value="">-- Choose a Destination ({cities.length} available) --</option>
                 {cities.map(c => (
                   <option key={c._id} value={c._id}>{c.name}, {c.country}</option>
                 ))}
@@ -178,12 +212,29 @@ const CreateTripPage = () => {
 
         {/* ── Screen 4: Suggestions for Places to Visit / Activities in pattern ── */}
         <div className={styles.suggestionsSection}>
-          <h3 className={styles.suggestionsTitle}>
-            Suggestions for Places to Visit / Activities in pattern
-          </h3>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', marginBottom: '12px' }}>
+            <h3 className={styles.suggestionsTitle} style={{ margin: 0 }}>
+              Suggestions for Places to Visit ({cities.length} Global Cities)
+            </h3>
+            <div style={{ display: 'flex', alignItems: 'center', background: 'var(--color-bg-sunken)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-full)', padding: '4px 12px', gap: '6px' }}>
+              <Search size={14} style={{ color: 'var(--color-text-secondary)' }} />
+              <input 
+                type="text" 
+                placeholder="Filter destination..." 
+                value={placeSearchQuery}
+                onChange={(e) => setPlaceSearchQuery(e.target.value)}
+                style={{ border: 'none', background: 'transparent', outline: 'none', fontSize: '0.8125rem', color: 'var(--color-ink)', width: '140px' }}
+              />
+              {placeSearchQuery && (
+                <button onClick={() => setPlaceSearchQuery('')} style={{ border: 'none', background: 'none', cursor: 'pointer', padding: 0, display: 'flex', color: 'var(--color-text-secondary)' }}>
+                  <X size={12} />
+                </button>
+              )}
+            </div>
+          </div>
 
           <div className={styles.suggestionsGrid}>
-            {cities.map(city => (
+            {filteredPlaces.map(city => (
               <Card 
                 key={city._id} 
                 hoverable 

@@ -20,8 +20,10 @@ const communityPostSchema = new mongoose.Schema(
     },
     title: {
       type: String,
-      required: [true, 'Post title is required'],
       trim: true,
+      default: function () {
+        return this.content ? this.content.slice(0, 50) : 'Travel Note';
+      },
     },
     content: {
       type: String,

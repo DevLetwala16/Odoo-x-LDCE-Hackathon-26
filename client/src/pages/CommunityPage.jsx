@@ -16,6 +16,7 @@ const CommunityPage = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchValue, setSearchValue] = useState('');
+  const [newPostTitle, setNewPostTitle] = useState('');
   const [newPostContent, setNewPostContent] = useState('');
   const [postImage, setPostImage] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -46,10 +47,12 @@ const CommunityPage = () => {
     setSubmitting(true);
     try {
       await communityService.createPost({
+        title: newPostTitle.trim() || newPostContent.slice(0, 50),
         content: newPostContent,
         imageUrl: postImage || undefined,
       });
       toast.success('Field note published to Community Hub!');
+      setNewPostTitle('');
       setNewPostContent('');
       setPostImage('');
       fetchPosts();
@@ -114,6 +117,11 @@ const CommunityPage = () => {
                 </div>
                 {newPostContent && (
                   <div className={styles.expandedPostForm}>
+                    <Input 
+                      placeholder="Note Title (Optional, e.g. Sunset in Santorini)" 
+                      value={newPostTitle} 
+                      onChange={(e) => setNewPostTitle(e.target.value)} 
+                    />
                     <Input 
                       placeholder="Optional Photo URL (https://...)" 
                       value={postImage} 

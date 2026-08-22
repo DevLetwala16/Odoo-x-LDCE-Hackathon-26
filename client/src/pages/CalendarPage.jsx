@@ -123,16 +123,20 @@ const CalendarPage = () => {
                 <div key={dayNumber} className={styles.dayCell}>
                   <span className={styles.dayNumber}>{dayNumber}</span>
                   <div className={styles.dayEvents}>
-                    {matchingTrips.map((t, idx) => (
-                      <div 
-                        key={idx} 
-                        className={styles.tripBadge}
-                        onClick={() => navigate(`/trips/${t._id}`)}
-                        title={`${t.name || t.title} (₹${t.totalBudget || 0})`}
-                      >
-                        {t.name || t.title}
-                      </div>
-                    ))}
+                    {matchingTrips.map((t, idx) => {
+                      const tripId = t._id || t.tripId;
+                      const tripTitle = t.name || t.title || 'Trip';
+                      return (
+                        <div 
+                          key={idx} 
+                          className={styles.tripBadge}
+                          onClick={() => tripId && navigate(`/trips/${tripId}`)}
+                          title={`${tripTitle}`}
+                        >
+                          {tripTitle}
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               );

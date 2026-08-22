@@ -80,7 +80,7 @@ const LandingPage = () => {
             <Button
               variant="accent"
               size="lg"
-              onClick={() => navigate(user ? '/trips/new' : '/login')}
+              onClick={() => navigate(user ? (searchValue ? `/trips/new?city=${encodeURIComponent(searchValue)}` : '/trips/new') : '/login')}
             >
               {user ? 'Plan a Trip' : 'Get Started'} <ArrowRight size={16} />
             </Button>
@@ -206,7 +206,7 @@ const LandingPage = () => {
               variant="accent"
               size="lg"
               className={styles.bottomPlanBtn}
-              onClick={() => navigate(user ? '/trips/new' : '/login')}
+              onClick={() => navigate(user ? (searchValue ? `/trips/new?city=${encodeURIComponent(searchValue)}` : '/trips/new') : '/login')}
             >
               <Plus size={18} /> Plan a Trip
             </Button>
