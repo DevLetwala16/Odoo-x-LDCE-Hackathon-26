@@ -6,7 +6,7 @@ import Stop from '../models/Stop.js';
 // @access  Private
 export const getActivities = async (req, res, next) => {
   try {
-    const { cityId, category, minCost, maxCost, q, sortBy = 'name', page = 1, limit = 20 } = req.query;
+    const { cityId, category, minCost, maxCost, q, sortBy = 'name', page = 1, limit = 50 } = req.query;
     const filter = {};
 
     if (cityId) filter.city = cityId;
@@ -17,7 +17,11 @@ export const getActivities = async (req, res, next) => {
       if (maxCost) filter.estimatedCost.$lte = Number(maxCost);
     }
     if (q) {
-      filter.name = { $regex: q, $options: 'i' };
+      filter.$or = [
+        { name: { $regex: q, $options: 'i' } },
+        { description: { $regex: q, $options: 'i' } },
+        { category: { $regex: q, $options: 'i' } },
+      ];
     }
 
     const sortOptions = {};
@@ -26,7 +30,7 @@ export const getActivities = async (req, res, next) => {
     else if (sortBy === 'duration') sortOptions.duration = 1;
     else sortOptions.name = 1;
 
-    const parsedLimit = Math.min(parseInt(limit) || 20, 100);
+    const parsedLimit = Math.min(parseInt(limit) || 50, 100);
     const skip = (parseInt(page) - 1) * parsedLimit;
 
     const [activities, total] = await Promise.all([
@@ -62,22 +66,33 @@ export const addActivityToStop = async (req, res, next) => {
       return next(err);
     }
 
-    const { activityId } = req.body;
+    const { activityId, name, category, estimatedCost, duration, description } = req.body;
 
     if (activityId) {
-      // Add existing activity
-      if (!stop.activities.includes(activityId)) {
+      // Add existing activity by ID
+      const existingIdStr = activityId.toString();
+      const hasActivity = stop.activities.some(a => a.toString() === existingIdStr);
+      if (!hasActivity) {
         stop.activities.push(activityId);
         await stop.save();
       }
-    } else {
-      // Create new custom activity and add it
+    } else if (name) {
+      // Create new custom activity and automatically link to stop.city
       const newActivity = await Activity.create({
-        ...req.body,
+        name,
+        description: description || '',
+        category: category || 'sightseeing',
+        city: req.body.city || stop.city || undefined,
+        estimatedCost: Number(estimatedCost) || 0,
+        duration: Number(duration) || 60,
         isGlobal: false,
       });
       stop.activities.push(newActivity._id);
       await stop.save();
+    } else {
+      const err = new Error('Activity details or ID required');
+      err.statusCode = 400;
+      return next(err);
     }
 
     const populated = await stop.populate('activities');

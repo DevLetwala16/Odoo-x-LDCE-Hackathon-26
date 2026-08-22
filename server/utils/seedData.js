@@ -6,96 +6,214 @@ import User from '../models/User.js';
 import '../config/env.js';
 
 /* ────────────────────────────────────────────────
-   20 cities across multiple regions
+   Global Cities across all Major Countries & Continents
    ──────────────────────────────────────────────── */
 const cities = [
-  // Europe
+  // ── India (Asia) ──
+  {
+    name: 'Delhi',
+    country: 'India',
+    region: 'Asia',
+    costIndex: 2,
+    popularity: 97,
+    description: 'India\'s historic capital — bustling bazaars, Mughal architecture, world-class street food, and historic monuments.',
+    latitude: 28.6139,
+    longitude: 77.2090,
+    imageUrl: 'https://images.unsplash.com/photo-1587474260584-136574528ed5?w=800&q=80',
+  },
+  {
+    name: 'Mumbai',
+    country: 'India',
+    region: 'Asia',
+    costIndex: 3,
+    popularity: 96,
+    description: 'The City of Dreams — vibrant coastal metropolis, Gateway of India, Bollywood, and lively Marine Drive.',
+    latitude: 19.0760,
+    longitude: 72.8777,
+    imageUrl: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=800&q=80',
+  },
+  {
+    name: 'Jaipur',
+    country: 'India',
+    region: 'Asia',
+    costIndex: 2,
+    popularity: 94,
+    description: 'The Pink City of Rajasthan — grand royal palaces, majestic forts, colorful textiles, and rich heritage.',
+    latitude: 26.9124,
+    longitude: 75.7873,
+    imageUrl: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?w=800&q=80',
+  },
+  {
+    name: 'Goa',
+    country: 'India',
+    region: 'Asia',
+    costIndex: 2,
+    popularity: 98,
+    description: 'Sun, sand, and sea — tropical beaches, Portuguese heritage architecture, water sports, and vibrant nightlife.',
+    latitude: 15.2993,
+    longitude: 74.1240,
+    imageUrl: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=800&q=80',
+  },
+  {
+    name: 'Varanasi',
+    country: 'India',
+    region: 'Asia',
+    costIndex: 1,
+    popularity: 90,
+    description: 'One of the world\'s oldest living cities — spiritual ghats along the sacred Ganges, evening Aarti, and silk weaving.',
+    latitude: 25.3176,
+    longitude: 82.9739,
+    imageUrl: 'https://images.unsplash.com/photo-1561361513-2d000a50f0dc?w=800&q=80',
+  },
+  {
+    name: 'Bengaluru',
+    country: 'India',
+    region: 'Asia',
+    costIndex: 3,
+    popularity: 88,
+    description: 'The Garden City and tech capital — lush public parks, royal palaces, craft microbreweries, and lively cafe culture.',
+    latitude: 12.9716,
+    longitude: 77.5946,
+    imageUrl: 'https://images.unsplash.com/photo-1596176530529-78163a4f7af2?w=800&q=80',
+  },
+
+  // ── France (Europe) ──
   {
     name: 'Paris',
     country: 'France',
     region: 'Europe',
     costIndex: 5,
     popularity: 100,
-    description: 'The city of light — romance, art, haute cuisine, and the iconic Eiffel Tower.',
+    description: 'The city of light — romance, world-famous art museums, haute cuisine, and the iconic Eiffel Tower.',
     latitude: 48.8566,
     longitude: 2.3522,
     imageUrl: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=800&q=80',
   },
   {
+    name: 'Nice',
+    country: 'France',
+    region: 'Europe',
+    costIndex: 4,
+    popularity: 87,
+    description: 'Capital of the French Riviera — Mediterranean coastline, Promenade des Anglais, and colorful Old Town.',
+    latitude: 43.7102,
+    longitude: 7.2620,
+    imageUrl: 'https://images.unsplash.com/photo-1533105079780-92b9be482077?w=800&q=80',
+  },
+
+  // ── Italy (Europe) ──
+  {
     name: 'Rome',
     country: 'Italy',
     region: 'Europe',
     costIndex: 4,
-    popularity: 92,
-    description: 'The Eternal City — millennia of history, world-class cuisine, and baroque fountains.',
+    popularity: 96,
+    description: 'The Eternal City — millennia of ancient Roman history, Vatican City, world-class pasta, and baroque fountains.',
     latitude: 41.9028,
     longitude: 12.4964,
     imageUrl: 'https://images.unsplash.com/photo-1555992336-03a23c7b20ee?w=800&q=80',
   },
   {
-    name: 'London',
-    country: 'UK',
+    name: 'Venice',
+    country: 'Italy',
     region: 'Europe',
     costIndex: 5,
-    popularity: 96,
-    description: 'Historic capital blending royal heritage, world-class museums, and vibrant street culture.',
+    popularity: 93,
+    description: 'The floating city — romantic gondola canals, grand palaces, St. Mark\'s Basilica, and artisan glassblowing.',
+    latitude: 45.4408,
+    longitude: 12.3155,
+    imageUrl: 'https://images.unsplash.com/photo-1514890547357-a9ee288728e0?w=800&q=80',
+  },
+  {
+    name: 'Florence',
+    country: 'Italy',
+    region: 'Europe',
+    costIndex: 4,
+    popularity: 91,
+    description: 'Cradle of the Renaissance — world-famous art galleries, the terracotta Duomo, and Tuscan wine and cuisine.',
+    latitude: 43.7696,
+    longitude: 11.2558,
+    imageUrl: 'https://images.unsplash.com/photo-1543429776-2782fc8e1acd?w=800&q=80',
+  },
+
+  // ── United Kingdom (Europe) ──
+  {
+    name: 'London',
+    country: 'United Kingdom',
+    region: 'Europe',
+    costIndex: 5,
+    popularity: 99,
+    description: 'Historic capital blending royal heritage, world-class museums, West End theaters, and vibrant street culture.',
     latitude: 51.5074,
     longitude: -0.1278,
     imageUrl: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=800&q=80',
   },
   {
-    name: 'Barcelona',
-    country: 'Spain',
-    region: 'Europe',
-    costIndex: 4,
-    popularity: 89,
-    description: 'Modernist masterpieces meet vibrant beach culture and world-famous tapas bars.',
-    latitude: 41.3851,
-    longitude: 2.1734,
-    imageUrl: 'https://images.unsplash.com/photo-1583422409516-2895a77efded?w=800&q=80',
-  },
-  {
-    name: 'Prague',
-    country: 'Czech Republic',
-    region: 'Europe',
-    costIndex: 3,
-    popularity: 83,
-    description: 'City of a hundred spires — fairy-tale Gothic architecture and legendary Czech beer.',
-    latitude: 50.0755,
-    longitude: 14.4378,
-    imageUrl: 'https://images.unsplash.com/photo-1541849546-216549ae216d?w=800&q=80',
-  },
-  {
-    name: 'Amsterdam',
-    country: 'Netherlands',
+    name: 'Edinburgh',
+    country: 'United Kingdom',
     region: 'Europe',
     costIndex: 4,
     popularity: 88,
-    description: 'Canals, bicycles, world-class museums, and a uniquely liberal spirit.',
-    latitude: 52.3676,
-    longitude: 4.9041,
-    imageUrl: 'https://images.unsplash.com/photo-1534351590666-13e3e96b5017?w=800&q=80',
-  },
-  {
-    name: 'Istanbul',
-    country: 'Turkey',
-    region: 'Europe/Asia',
-    costIndex: 3,
-    popularity: 87,
-    description: 'Where East meets West — minarets, spice bazaars, and the glittering Bosphorus.',
-    latitude: 41.0082,
-    longitude: 28.9784,
-    imageUrl: 'https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=800&q=80',
+    description: 'Scotland\'s historic capital — dramatic clifftop castle, cobblestone Royal Mile, and world-renowned festivals.',
+    latitude: 55.9533,
+    longitude: -3.1883,
+    imageUrl: 'https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=800&q=80',
   },
 
-  // Asia
+  // ── United States (Americas) ──
+  {
+    name: 'New York',
+    country: 'United States',
+    region: 'Americas',
+    costIndex: 5,
+    popularity: 99,
+    description: 'The city that never sleeps — iconic skyscrapers, Broadway shows, Central Park, and global gastronomy.',
+    latitude: 40.7128,
+    longitude: -74.0060,
+    imageUrl: 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=800&q=80',
+  },
+  {
+    name: 'San Francisco',
+    country: 'United States',
+    region: 'Americas',
+    costIndex: 5,
+    popularity: 92,
+    description: 'Golden Gate Bridge, historic cable cars, Victorian houses, vibrant tech hub, and bay views.',
+    latitude: 37.7749,
+    longitude: -122.4194,
+    imageUrl: 'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=800&q=80',
+  },
+  {
+    name: 'Los Angeles',
+    country: 'United States',
+    region: 'Americas',
+    costIndex: 4,
+    popularity: 95,
+    description: 'Entertainment capital of the world — Hollywood glamour, Santa Monica beaches, and iconic palm-lined streets.',
+    latitude: 34.0522,
+    longitude: -118.2437,
+    imageUrl: 'https://images.unsplash.com/photo-1580655653885-65763b2597d0?w=800&q=80',
+  },
+  {
+    name: 'Miami',
+    country: 'United States',
+    region: 'Americas',
+    costIndex: 4,
+    popularity: 90,
+    description: 'Sun-soaked tropical city — pastel Art Deco architecture, glamorous South Beach, and vibrant nightlife.',
+    latitude: 25.7617,
+    longitude: -80.1918,
+    imageUrl: 'https://images.unsplash.com/photo-1535498730771-e735b998cd64?w=800&q=80',
+  },
+
+  // ── Japan (Asia) ──
   {
     name: 'Tokyo',
     country: 'Japan',
     region: 'Asia',
     costIndex: 4,
-    popularity: 98,
-    description: 'Hyper-modern metropolis where ancient shrines coexist with neon-lit skyscrapers.',
+    popularity: 99,
+    description: 'Hyper-modern metropolis where ancient shrines coexist with neon skyscrapers and Michelin culinary culture.',
     latitude: 35.6762,
     longitude: 139.6503,
     imageUrl: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800&q=80',
@@ -105,373 +223,402 @@ const cities = [
     country: 'Japan',
     region: 'Asia',
     costIndex: 4,
-    popularity: 86,
-    description: 'Ancient temples, zen gardens, geisha districts, and breathtaking cherry blossoms.',
+    popularity: 94,
+    description: 'Historic heart of Japan — 1,000+ temples, zen gardens, traditional tea houses, and geisha quarters.',
     latitude: 35.0116,
     longitude: 135.7681,
     imageUrl: 'https://images.unsplash.com/photo-1478436127897-769e1b3f0f36?w=800&q=80',
   },
   {
-    name: 'Bangkok',
-    country: 'Thailand',
+    name: 'Osaka',
+    country: 'Japan',
     region: 'Asia',
-    costIndex: 2,
-    popularity: 90,
-    description: 'Vibrant street food, ornate temples, rooftop bars, and buzzing night markets.',
-    latitude: 13.7563,
-    longitude: 100.5018,
-    imageUrl: 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=800&q=80',
-  },
-  {
-    name: 'Bali',
-    country: 'Indonesia',
-    region: 'Asia',
-    costIndex: 2,
-    popularity: 94,
-    description: 'Island of the gods — terraced rice fields, Hindu temples, surf beaches, and yoga retreats.',
-    latitude: -8.3405,
-    longitude: 115.0920,
-    imageUrl: 'https://images.unsplash.com/photo-1573790387438-4da905039392?w=800&q=80',
-  },
-  {
-    name: 'Singapore',
-    country: 'Singapore',
-    region: 'Asia',
-    costIndex: 5,
-    popularity: 85,
-    description: 'Futuristic gardens, Michelin-star hawker stalls, and world-class shopping in a gleaming city-state.',
-    latitude: 1.3521,
-    longitude: 103.8198,
-    imageUrl: 'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=800&q=80',
-  },
-  {
-    name: 'Seoul',
-    country: 'South Korea',
-    region: 'Asia',
-    costIndex: 4,
-    popularity: 85,
-    description: 'K-pop culture, ancient palaces, cutting-edge technology, and legendary Korean BBQ.',
-    latitude: 37.5665,
-    longitude: 126.9780,
-    imageUrl: 'https://images.unsplash.com/photo-1538485399081-7191377e8241?w=800&q=80',
-  },
-  {
-    name: 'Mumbai',
-    country: 'India',
-    region: 'Asia',
-    costIndex: 2,
-    popularity: 78,
-    description: 'City of dreams — Bollywood, colonial architecture, bustling bazaars, and incredible street food.',
-    latitude: 19.0760,
-    longitude: 72.8777,
-    imageUrl: 'https://images.unsplash.com/photo-1595658658481-d53d3f999875?w=800&q=80',
-  },
-
-  // Americas
-  {
-    name: 'New York',
-    country: 'USA',
-    region: 'North America',
-    costIndex: 5,
-    popularity: 95,
-    description: 'The Big Apple — Times Square, world-class museums, iconic skyline, and diverse neighbourhoods.',
-    latitude: 40.7128,
-    longitude: -74.0060,
-    imageUrl: 'https://images.unsplash.com/photo-1499092346589-b9b6be3e94b2?w=800&q=80',
-  },
-  {
-    name: 'Mexico City',
-    country: 'Mexico',
-    region: 'North America',
-    costIndex: 2,
-    popularity: 80,
-    description: 'Rich Aztec history, vibrant art scene, incredible food, and colonial grandeur.',
-    latitude: 19.4326,
-    longitude: -99.1332,
-    imageUrl: 'https://images.unsplash.com/photo-1518638150340-f706e86654de?w=800&q=80',
-  },
-  {
-    name: 'Rio de Janeiro',
-    country: 'Brazil',
-    region: 'South America',
     costIndex: 3,
-    popularity: 82,
-    description: 'Carnival, samba, Copacabana beach, Christ the Redeemer, and stunning mountain backdrops.',
-    latitude: -22.9068,
-    longitude: -43.1729,
-    imageUrl: 'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?w=800&q=80',
+    popularity: 89,
+    description: 'Japan\'s street food haven — neon-lit Dotonbori canals, historic castle, and friendly urban culture.',
+    latitude: 34.6937,
+    longitude: 135.5023,
+    imageUrl: 'https://images.unsplash.com/photo-1590559899731-a382839e5549?w=800&q=80',
   },
 
-  // Middle East & Africa
+  // ── United Arab Emirates (Middle East) ──
   {
     name: 'Dubai',
-    country: 'UAE',
+    country: 'United Arab Emirates',
     region: 'Middle East',
-    costIndex: 4,
-    popularity: 88,
-    description: 'Futuristic skyline, luxury malls, desert safaris, and world-record attractions.',
+    costIndex: 5,
+    popularity: 98,
+    description: 'City of superlatives — world\'s tallest Burj Khalifa, luxury shopping, desert safaris, and man-made islands.',
     latitude: 25.2048,
     longitude: 55.2708,
     imageUrl: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&q=80',
   },
   {
-    name: 'Cape Town',
-    country: 'South Africa',
-    region: 'Africa',
-    costIndex: 3,
-    popularity: 81,
-    description: 'Table Mountain, penguins, world-class wineries, and two-ocean coastlines.',
-    latitude: -33.9249,
-    longitude: 18.4241,
-    imageUrl: 'https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=800&q=80',
+    name: 'Abu Dhabi',
+    country: 'United Arab Emirates',
+    region: 'Middle East',
+    costIndex: 4,
+    popularity: 88,
+    description: 'Majestic capital featuring the breathtaking Sheikh Zayed Grand Mosque, Louvre museum, and luxury islands.',
+    latitude: 24.4539,
+    longitude: 54.3773,
+    imageUrl: 'https://images.unsplash.com/photo-1518684079-3c830dcef090?w=800&q=80',
   },
 
-  // Oceania
+  // ── Spain (Europe) ──
+  {
+    name: 'Barcelona',
+    country: 'Spain',
+    region: 'Europe',
+    costIndex: 4,
+    popularity: 95,
+    description: 'Gaudí\'s architectural wonderland — Sagrada Familia, vibrant beachfront, Gothic quarters, and tapas bars.',
+    latitude: 41.3851,
+    longitude: 2.1734,
+    imageUrl: 'https://images.unsplash.com/photo-1583422409516-2895a77efded?w=800&q=80',
+  },
+  {
+    name: 'Madrid',
+    country: 'Spain',
+    region: 'Europe',
+    costIndex: 3,
+    popularity: 91,
+    description: 'Royal capital brimming with world-class art museums, grand plazas, Retiro Park, and lively night culture.',
+    latitude: 40.4168,
+    longitude: -3.7038,
+    imageUrl: 'https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=800&q=80',
+  },
+
+  // ── Germany (Europe) ──
+  {
+    name: 'Berlin',
+    country: 'Germany',
+    region: 'Europe',
+    costIndex: 3,
+    popularity: 92,
+    description: 'Dynamic cultural capital — iconic Brandenburg Gate, Berlin Wall art, Museum Island, and indie cafes.',
+    latitude: 52.5200,
+    longitude: 13.4050,
+    imageUrl: 'https://images.unsplash.com/photo-1560969184-10fe8719e047?w=800&q=80',
+  },
+  {
+    name: 'Munich',
+    country: 'Germany',
+    region: 'Europe',
+    costIndex: 4,
+    popularity: 89,
+    description: 'Bavarian gem — historic Marienplatz, fairy-tale castle gateway, beer gardens, and engineering museums.',
+    latitude: 48.1351,
+    longitude: 11.5820,
+    imageUrl: 'https://images.unsplash.com/photo-1595867818082-083862f3d630?w=800&q=80',
+  },
+
+  // ── Switzerland (Europe) ──
+  {
+    name: 'Zurich',
+    country: 'Switzerland',
+    region: 'Europe',
+    costIndex: 5,
+    popularity: 90,
+    description: 'Gleaming lakeside city — Alpine views, historic Old Town, pristine waters, and artisan Swiss chocolates.',
+    latitude: 47.3769,
+    longitude: 8.5417,
+    imageUrl: 'https://images.unsplash.com/photo-1515488764276-beab7607c1e6?w=800&q=80',
+  },
+  {
+    name: 'Lucerne',
+    country: 'Switzerland',
+    region: 'Europe',
+    costIndex: 5,
+    popularity: 89,
+    description: 'Picturesque mountain town — wooden Chapel Bridge, stunning Lake Lucerne, and direct gateway to Mount Pilatus.',
+    latitude: 47.0502,
+    longitude: 8.3093,
+    imageUrl: 'https://images.unsplash.com/photo-1527668752968-14dc70a27c95?w=800&q=80',
+  },
+
+  // ── Australia (Oceania) ──
   {
     name: 'Sydney',
     country: 'Australia',
     region: 'Oceania',
-    costIndex: 5,
-    popularity: 84,
-    description: 'Iconic Opera House, Harbour Bridge, golden beaches, and a vibrant multicultural food scene.',
+    costIndex: 4,
+    popularity: 96,
+    description: 'Harbour city icon — Sydney Opera House, Harbour Bridge, Bondi Beach surf, and coastal walks.',
     latitude: -33.8688,
     longitude: 151.2093,
     imageUrl: 'https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?w=800&q=80',
   },
+  {
+    name: 'Melbourne',
+    country: 'Australia',
+    region: 'Oceania',
+    costIndex: 4,
+    popularity: 91,
+    description: 'Cultural & coffee capital — famous graffiti laneways, world-class dining, tramways, and Great Ocean Road.',
+    latitude: -37.8136,
+    longitude: 144.9631,
+    imageUrl: 'https://images.unsplash.com/photo-1514395462725-fb4566210144?w=800&q=80',
+  },
+
+  // ── Canada (Americas) ──
+  {
+    name: 'Toronto',
+    country: 'Canada',
+    region: 'Americas',
+    costIndex: 4,
+    popularity: 93,
+    description: 'Canada\'s dynamic metropolis — CN Tower, multicultural neighborhoods, and scenic gateway to Niagara Falls.',
+    latitude: 43.6532,
+    longitude: -79.3832,
+    imageUrl: 'https://images.unsplash.com/photo-1517090504586-fde19ea6066f?w=800&q=80',
+  },
+  {
+    name: 'Vancouver',
+    country: 'Canada',
+    region: 'Americas',
+    costIndex: 5,
+    popularity: 92,
+    description: 'Spectacular mountain and ocean paradise — Stanley Park seawall, Capilano suspension bridge, and outdoor adventures.',
+    latitude: 49.2827,
+    longitude: -123.1207,
+    imageUrl: 'https://images.unsplash.com/photo-1559511260-66a65e0982d5?w=800&q=80',
+  },
+
+  // ── Thailand (Asia) ──
+  {
+    name: 'Bangkok',
+    country: 'Thailand',
+    region: 'Asia',
+    costIndex: 2,
+    popularity: 96,
+    description: 'Vibrant street food paradise — golden ornate temples, bustling river canals, and lively night markets.',
+    latitude: 13.7563,
+    longitude: 100.5018,
+    imageUrl: 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=800&q=80',
+  },
+  {
+    name: 'Phuket',
+    country: 'Thailand',
+    region: 'Asia',
+    costIndex: 2,
+    popularity: 94,
+    description: 'Tropical island getaway — limestone karst bays, crystal clear waters, Big Buddha, and beach resorts.',
+    latitude: 7.8804,
+    longitude: 98.3923,
+    imageUrl: 'https://images.unsplash.com/photo-1589394815804-964ed0be2eb5?w=800&q=80',
+  },
+
+  // ── Indonesia (Asia) ──
+  {
+    name: 'Bali',
+    country: 'Indonesia',
+    region: 'Asia',
+    costIndex: 2,
+    popularity: 98,
+    description: 'Island of the Gods — emerald terraced rice fields, ancient Hindu temples, volcanic surf beaches, and yoga retreats.',
+    latitude: -8.3405,
+    longitude: 115.0920,
+    imageUrl: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800&q=80',
+  },
+
+  // ── Singapore (Asia) ──
+  {
+    name: 'Singapore',
+    country: 'Singapore',
+    region: 'Asia',
+    costIndex: 5,
+    popularity: 95,
+    description: 'Futuristic garden city — glowing Supertree Grove, Marina Bay Sands infinity pool, and Michelin hawker foods.',
+    latitude: 1.3521,
+    longitude: 103.8198,
+    imageUrl: 'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=800&q=80',
+  },
+
+  // ── South Korea (Asia) ──
+  {
+    name: 'Seoul',
+    country: 'South Korea',
+    region: 'Asia',
+    costIndex: 3,
+    popularity: 94,
+    description: 'K-culture powerhouse — royal Joseon palaces, futuristic Dongdaemun Design Plaza, and sizzling Korean BBQ.',
+    latitude: 37.5665,
+    longitude: 126.9780,
+    imageUrl: 'https://images.unsplash.com/photo-1538485399081-7191377e8241?w=800&q=80',
+  },
+
+  // ── Netherlands (Europe) ──
+  {
+    name: 'Amsterdam',
+    country: 'Netherlands',
+    region: 'Europe',
+    costIndex: 4,
+    popularity: 93,
+    description: 'Canal ring wonderland — world-famous Van Gogh & Rijksmuseum, bicycle-friendly streets, and historic bridges.',
+    latitude: 52.3676,
+    longitude: 4.9041,
+    imageUrl: 'https://images.unsplash.com/photo-1534351590666-13e3e96b5017?w=800&q=80',
+  },
+
+  // ── Greece (Europe) ──
+  {
+    name: 'Athens',
+    country: 'Greece',
+    region: 'Europe',
+    costIndex: 3,
+    popularity: 92,
+    description: 'Birthplace of democracy — the ancient Acropolis & Parthenon towering over vibrant taverna-filled neighborhoods.',
+    latitude: 37.9838,
+    longitude: 23.7275,
+    imageUrl: 'https://images.unsplash.com/photo-1565008447742-97f6f38c985c?w=800&q=80',
+  },
+  {
+    name: 'Santorini',
+    country: 'Greece',
+    region: 'Europe',
+    costIndex: 5,
+    popularity: 97,
+    description: 'Whitewashed paradise — blue-domed churches perched on volcanic caldera cliffs with world-famous sunsets.',
+    latitude: 36.3932,
+    longitude: 25.4615,
+    imageUrl: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=800&q=80',
+  },
+
+  // ── Egypt (Africa & Middle East) ──
+  {
+    name: 'Cairo',
+    country: 'Egypt',
+    region: 'Africa',
+    costIndex: 1,
+    popularity: 92,
+    description: 'Land of the Pharaohs — the Great Pyramids of Giza, the Sphinx, historic mosques, and ancient Nile cruises.',
+    latitude: 30.0444,
+    longitude: 31.2357,
+    imageUrl: 'https://images.unsplash.com/photo-1572252009286-268acec5ca0a?w=800&q=80',
+  },
+
+  // ── South Africa (Africa) ──
+  {
+    name: 'Cape Town',
+    country: 'South Africa',
+    region: 'Africa',
+    costIndex: 2,
+    popularity: 93,
+    description: 'Where mountains meet two oceans — iconic Table Mountain, penguin beaches, scenic coastal drives, and vineyards.',
+    latitude: -33.9249,
+    longitude: 18.4241,
+    imageUrl: 'https://images.unsplash.com/photo-1580618672591-eb180b1a973f?w=800&q=80',
+  },
+
+  // ── Brazil (Americas) ──
+  {
+    name: 'Rio de Janeiro',
+    country: 'Brazil',
+    region: 'Americas',
+    costIndex: 2,
+    popularity: 95,
+    description: 'The Marvelous City — Christ the Redeemer, golden Copacabana sands, Sugarloaf Mountain cable cars, and samba.',
+    latitude: -22.9068,
+    longitude: -43.1729,
+    imageUrl: 'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?w=800&q=80',
+  },
+
+  // ── Turkey (Europe/Asia) ──
+  {
+    name: 'Istanbul',
+    country: 'Turkey',
+    region: 'Europe/Asia',
+    costIndex: 2,
+    popularity: 95,
+    description: 'Where continents collide — historic Hagia Sophia, Blue Mosque, bustling Grand Bazaar, and Bosphorus Strait.',
+    latitude: 41.0082,
+    longitude: 28.9784,
+    imageUrl: 'https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=800&q=80',
+  },
+  {
+    name: 'Cappadocia',
+    country: 'Turkey',
+    region: 'Europe/Asia',
+    costIndex: 3,
+    popularity: 93,
+    description: 'Fairy-tale landscape — sunrise hot air balloon rides over whimsical rock valleys and ancient underground cities.',
+    latitude: 38.6431,
+    longitude: 34.8289,
+    imageUrl: 'https://images.unsplash.com/photo-1641128324972-af3212f0f6bd?w=800&q=80',
+  },
+
+  // ── New Zealand (Oceania) ──
+  {
+    name: 'Queenstown',
+    country: 'New Zealand',
+    region: 'Oceania',
+    costIndex: 4,
+    popularity: 92,
+    description: 'Adventure capital of the world — alpine lakes, Southern Alps, bungy jumping, jet boating, and Milford Sound.',
+    latitude: -45.0312,
+    longitude: 168.6626,
+    imageUrl: 'https://images.unsplash.com/photo-1589802829985-817e51171b92?w=800&q=80',
+  }
 ];
 
 /* ────────────────────────────────────────────────
-   6 unique activities per city  (120 total)
+   Activities for Cities
    ──────────────────────────────────────────────── */
-const cityActivities = {
-  Paris: [
-    { name: 'Eiffel Tower Visit', category: 'sightseeing', estimatedCost: 2800, duration: 180, rating: 4.9, description: 'Ascend the iconic iron lattice tower for panoramic views over Paris.' },
-    { name: 'Louvre Museum', category: 'culture', estimatedCost: 1700, duration: 240, rating: 4.8, description: 'World\'s largest art museum — home to the Mona Lisa and Venus de Milo.' },
-    { name: 'Seine River Cruise', category: 'sightseeing', estimatedCost: 1500, duration: 90, rating: 4.6, description: 'Glide past Notre Dame, Musee d\'Orsay, and the Eiffel Tower by boat.' },
-    { name: 'Montmartre & Sacre-Coeur Walk', category: 'culture', estimatedCost: 0, duration: 120, rating: 4.5, description: 'Explore the artsy hilltop village and visit the stunning white basilica.' },
-    { name: 'French Pastry Class', category: 'food', estimatedCost: 8000, duration: 180, rating: 4.7, description: 'Learn to make croissants and macarons with a Parisian patissier.' },
-    { name: 'Galeries Lafayette Shopping', category: 'shopping', estimatedCost: 0, duration: 120, rating: 4.4, description: 'Explore Europe\'s grandest department store with its stunning glass dome.' },
-  ],
-  Rome: [
-    { name: 'Colosseum & Roman Forum Tour', category: 'culture', estimatedCost: 2000, duration: 180, rating: 4.9, description: 'Walk through the ancient amphitheatre and Roman Forum ruins.' },
-    { name: 'Vatican Museums & Sistine Chapel', category: 'culture', estimatedCost: 2200, duration: 240, rating: 4.8, description: 'Marvel at Michelangelo\'s ceiling and millennia of papal treasures.' },
-    { name: 'Trevi Fountain & Piazza Navona', category: 'sightseeing', estimatedCost: 0, duration: 90, rating: 4.7, description: 'Toss a coin in the baroque Trevi Fountain, then stroll to Piazza Navona.' },
-    { name: 'Roman Cooking Class', category: 'food', estimatedCost: 7000, duration: 210, rating: 4.6, description: 'Make authentic cacio e pepe and tiramisu with a local chef.' },
-    { name: 'Trastevere Evening Food Walk', category: 'food', estimatedCost: 3000, duration: 150, rating: 4.8, description: 'Graze through Rome\'s most atmospheric neighbourhood after dark.' },
-    { name: 'Borghese Gallery', category: 'culture', estimatedCost: 1500, duration: 120, rating: 4.7, description: 'Bernini\'s breathtaking sculptures in a stunning villa museum.' },
-  ],
-  London: [
-    { name: 'Tower of London & Crown Jewels', category: 'culture', estimatedCost: 2500, duration: 150, rating: 4.7, description: 'Explore the 1000-year-old fortress and see the dazzling Crown Jewels.' },
-    { name: 'British Museum', category: 'culture', estimatedCost: 0, duration: 180, rating: 4.8, description: 'World-class collection including the Rosetta Stone and Elgin Marbles.' },
-    { name: 'Borough Market Food Tour', category: 'food', estimatedCost: 2500, duration: 120, rating: 4.6, description: 'Graze through London\'s finest artisan food market near London Bridge.' },
-    { name: 'West End Theatre Show', category: 'culture', estimatedCost: 6000, duration: 180, rating: 4.9, description: 'Catch a world-renowned theatre performance in the heart of London.' },
-    { name: 'Notting Hill & Portobello Market', category: 'shopping', estimatedCost: 0, duration: 120, rating: 4.5, description: 'Browse antiques, vintage fashion, and street food on Portobello Road.' },
-    { name: 'Thames Path & Tower Bridge Walk', category: 'sightseeing', estimatedCost: 0, duration: 90, rating: 4.4, description: 'Stroll along the Thames and cross the iconic bascule bridge.' },
-  ],
-  Barcelona: [
-    { name: 'Sagrada Familia', category: 'culture', estimatedCost: 2600, duration: 150, rating: 5.0, description: 'Gaudi\'s unfinished masterpiece — a breathtaking UNESCO basilica.' },
-    { name: 'Park Guell', category: 'sightseeing', estimatedCost: 1000, duration: 120, rating: 4.7, description: 'Mosaic terraces and Gaudi gardens with panoramic city views.' },
-    { name: 'La Boqueria Market', category: 'food', estimatedCost: 1500, duration: 90, rating: 4.6, description: 'Vibrant covered market overflowing with fresh seafood, jamon, and tapas.' },
-    { name: 'Gothic Quarter Walk', category: 'sightseeing', estimatedCost: 0, duration: 120, rating: 4.5, description: 'Wander the medieval maze of lanes, Roman ruins, and hidden plazas.' },
-    { name: 'Barceloneta Beach Day', category: 'relaxation', estimatedCost: 500, duration: 240, rating: 4.4, description: 'Sun, sand, and sangria on the city\'s famous urban beach.' },
-    { name: 'Tapas Crawl in El Born', category: 'food', estimatedCost: 3500, duration: 180, rating: 4.8, description: 'Bar-hop through Barcelona\'s hippest neighbourhood tasting pintxos and vermouth.' },
-  ],
-  Prague: [
-    { name: 'Prague Castle & St. Vitus Cathedral', category: 'culture', estimatedCost: 1400, duration: 180, rating: 4.8, description: 'Europe\'s largest castle complex overlooking the Vltava river.' },
-    { name: 'Charles Bridge at Dawn', category: 'sightseeing', estimatedCost: 0, duration: 60, rating: 4.9, description: 'Cross the 14th-century stone bridge lined with baroque statues before crowds arrive.' },
-    { name: 'Old Town Square & Astronomical Clock', category: 'sightseeing', estimatedCost: 0, duration: 90, rating: 4.7, description: 'Watch the 600-year-old clock perform its hourly mechanical show.' },
-    { name: 'Czech Beer Tasting Tour', category: 'food', estimatedCost: 1500, duration: 120, rating: 4.8, description: 'Sample world-class Pilsner and dark lagers at a traditional pub crawl.' },
-    { name: 'Vysehrad Fortress Walk', category: 'sightseeing', estimatedCost: 0, duration: 90, rating: 4.5, description: 'Visit the lesser-known clifftop fortress with sweeping river panoramas.' },
-    { name: 'Trdelnk & Market Street Food', category: 'food', estimatedCost: 500, duration: 60, rating: 4.4, description: 'Try the chimney cake and browse local artisan markets in the old town.' },
-  ],
-  Amsterdam: [
-    { name: 'Anne Frank House', category: 'culture', estimatedCost: 1400, duration: 120, rating: 4.9, description: 'Poignant visit to the hiding place where Anne Frank wrote her diary.' },
-    { name: 'Rijksmuseum', category: 'culture', estimatedCost: 2200, duration: 180, rating: 4.8, description: 'Rembrandt\'s Night Watch among Dutch Golden Age masterpieces.' },
-    { name: 'Canal Boat Tour', category: 'sightseeing', estimatedCost: 1800, duration: 90, rating: 4.7, description: 'Float through Amsterdam\'s UNESCO-listed 17th-century canal ring.' },
-    { name: 'Albert Cuyp Market', category: 'shopping', estimatedCost: 0, duration: 90, rating: 4.5, description: 'Largest street market in Europe — stroopwafels, cheese, and fresh herring.' },
-    { name: 'Vondelpark Bike Ride', category: 'relaxation', estimatedCost: 1200, duration: 120, rating: 4.6, description: 'Rent a bike and cycle through Amsterdam like a true local.' },
-    { name: 'Dutch Cheese & Jenever Tasting', category: 'food', estimatedCost: 2000, duration: 90, rating: 4.7, description: 'Taste aged Gouda and traditional Dutch genever gin at a tasting house.' },
-  ],
-  Istanbul: [
-    { name: 'Hagia Sophia & Blue Mosque', category: 'culture', estimatedCost: 0, duration: 150, rating: 4.9, description: 'Visit two of the world\'s most magnificent religious monuments side by side.' },
-    { name: 'Grand Bazaar & Spice Market', category: 'shopping', estimatedCost: 2000, duration: 150, rating: 4.7, description: 'Get lost in 4,000 shops selling carpets, spices, jewellery, and lanterns.' },
-    { name: 'Bosphorus Sunset Cruise', category: 'sightseeing', estimatedCost: 2000, duration: 120, rating: 4.8, description: 'Cruise between Europe and Asia as the sun sets behind Ottoman palaces.' },
-    { name: 'Turkish Hammam Experience', category: 'relaxation', estimatedCost: 3500, duration: 90, rating: 4.6, description: 'Relax with a traditional scrub and soap massage in a centuries-old hammam.' },
-    { name: 'Street Food Tour in Karakoy', category: 'food', estimatedCost: 2500, duration: 120, rating: 4.8, description: 'Taste simit, fish sandwiches, and Turkish street sweets in the hip waterfront district.' },
-    { name: 'Topkapi Palace', category: 'culture', estimatedCost: 1800, duration: 180, rating: 4.7, description: 'Explore the opulent heart of the Ottoman Empire and its legendary harem.' },
-  ],
-  Tokyo: [
-    { name: 'Senso-ji Temple & Asakusa', category: 'culture', estimatedCost: 0, duration: 120, rating: 4.8, description: 'Tokyo\'s oldest temple set in a lively district of craft shops and street food.' },
-    { name: 'Shibuya Crossing & Harajuku', category: 'sightseeing', estimatedCost: 0, duration: 120, rating: 4.7, description: 'Experience the world\'s busiest scramble crossing, then explore quirky fashion culture.' },
-    { name: 'Tsukiji Outer Market Breakfast', category: 'food', estimatedCost: 2000, duration: 90, rating: 4.9, description: 'Eat the freshest sushi and tamagoyaki at the famous fish market stalls.' },
-    { name: 'teamLab Borderless Digital Art', category: 'culture', estimatedCost: 3200, duration: 150, rating: 4.9, description: 'Immerse yourself in a world-famous borderless digital art universe.' },
-    { name: 'Akihabara Electronics & Anime District', category: 'shopping', estimatedCost: 0, duration: 120, rating: 4.5, description: 'Explore the dizzying electronics district packed with gadgets, manga, and arcades.' },
-    { name: 'Mount Fuji Day Trip', category: 'adventure', estimatedCost: 5000, duration: 480, rating: 5.0, description: 'Journey to Japan\'s sacred peak for panoramic views and fifth-station hiking.' },
-  ],
-  Kyoto: [
-    { name: 'Fushimi Inari Shrine', category: 'sightseeing', estimatedCost: 0, duration: 150, rating: 4.9, description: 'Hike through thousands of vermillion torii gates winding up a sacred mountain.' },
-    { name: 'Arashiyama Bamboo Grove', category: 'sightseeing', estimatedCost: 0, duration: 90, rating: 4.8, description: 'Walk through towering bamboo stalks in this mystical, atmospheric grove.' },
-    { name: 'Tea Ceremony Experience', category: 'culture', estimatedCost: 3000, duration: 90, rating: 4.7, description: 'Participate in an authentic matcha tea ceremony with a Kyoto tea master.' },
-    { name: 'Kinkaku-ji Golden Pavilion', category: 'culture', estimatedCost: 500, duration: 90, rating: 4.8, description: 'Admire the iconic Zen temple whose top floors are clad entirely in gold leaf.' },
-    { name: 'Nishiki Market Food Walk', category: 'food', estimatedCost: 2000, duration: 90, rating: 4.6, description: 'Taste tofu, pickled vegetables, and Japanese sweets in the kitchen of Kyoto.' },
-    { name: 'Gion Geisha District Evening Walk', category: 'culture', estimatedCost: 0, duration: 90, rating: 4.7, description: 'Stroll through lantern-lit lanes of the historic geisha district at dusk.' },
-  ],
-  Bangkok: [
-    { name: 'Grand Palace & Wat Phra Kaew', category: 'culture', estimatedCost: 1100, duration: 180, rating: 4.9, description: 'Thailand\'s most sacred temple complex housing the revered Emerald Buddha.' },
-    { name: 'Floating Market Tour', category: 'sightseeing', estimatedCost: 2500, duration: 240, rating: 4.7, description: 'Cruise through canal markets selling exotic fruits, noodles, and souvenirs.' },
-    { name: 'Chatuchak Weekend Market', category: 'shopping', estimatedCost: 0, duration: 180, rating: 4.6, description: 'Shop till you drop at one of the world\'s largest weekend markets.' },
-    { name: 'Thai Cooking Class', category: 'food', estimatedCost: 3000, duration: 210, rating: 4.8, description: 'Learn to make pad thai, green curry, and mango sticky rice.' },
-    { name: 'Rooftop Bar Sunset Cocktails', category: 'nightlife', estimatedCost: 4000, duration: 120, rating: 4.7, description: 'Sip cocktails high above Bangkok\'s skyline at a world-famous rooftop bar.' },
-    { name: 'Chinatown Street Food Night', category: 'food', estimatedCost: 1500, duration: 120, rating: 4.8, description: 'Devour grilled seafood, roasted duck, and mango desserts on Yaowarat Road.' },
-  ],
-  Bali: [
-    { name: 'Ubud Monkey Forest & Rice Terraces', category: 'sightseeing', estimatedCost: 800, duration: 180, rating: 4.7, description: 'Walk through the sacred monkey sanctuary and marvel at Tegalalang\'s terraces.' },
-    { name: 'Sunrise Trek on Mount Batur', category: 'adventure', estimatedCost: 4000, duration: 300, rating: 4.9, description: 'Hike an active volcano at 3am to catch a spectacular sunrise above the clouds.' },
-    { name: 'Uluwatu Temple Sunset & Kecak Dance', category: 'culture', estimatedCost: 1000, duration: 120, rating: 4.9, description: 'Watch the Kecak fire dance at a clifftop temple as the sun dips into the sea.' },
-    { name: 'Balinese Cooking Class', category: 'food', estimatedCost: 3500, duration: 180, rating: 4.7, description: 'Market shopping, spice grinding, and cooking a traditional Balinese feast.' },
-    { name: 'Surf Lesson at Kuta Beach', category: 'adventure', estimatedCost: 2500, duration: 120, rating: 4.5, description: 'Ride your first wave with expert instructors on Bali\'s most famous surf break.' },
-    { name: 'Traditional Balinese Spa Massage', category: 'relaxation', estimatedCost: 2000, duration: 90, rating: 4.8, description: 'Luxurious open-air treatment combining stretching, pressure point, and aromatherapy.' },
-  ],
-  Singapore: [
-    { name: 'Gardens by the Bay & Supertrees', category: 'sightseeing', estimatedCost: 2800, duration: 180, rating: 4.9, description: 'Stroll through futuristic garden domes and see the iconic Supertree light show.' },
-    { name: 'Hawker Centre Food Crawl', category: 'food', estimatedCost: 1000, duration: 120, rating: 5.0, description: 'Eat your way through Maxwell or Lau Pa Sat — Hainanese chicken rice to chilli crab.' },
-    { name: 'Marina Bay Sands SkyPark', category: 'sightseeing', estimatedCost: 2300, duration: 90, rating: 4.8, description: 'Enjoy the iconic infinity pool view or the observation deck over the city.' },
-    { name: 'Chinatown & Little India Walk', category: 'culture', estimatedCost: 0, duration: 120, rating: 4.6, description: 'Explore Singapore\'s vibrant ethnic enclaves packed with temples and street art.' },
-    { name: 'Universal Studios Singapore', category: 'adventure', estimatedCost: 8100, duration: 360, rating: 4.7, description: 'Thrilling rides and immersive theme zones on Sentosa Island.' },
-    { name: 'Night Safari Zoo', category: 'adventure', estimatedCost: 5000, duration: 180, rating: 4.8, description: 'Encounter nocturnal animals in the world\'s first purpose-built night zoo.' },
-  ],
-  Seoul: [
-    { name: 'Gyeongbokgung Palace & Hanbok Rental', category: 'culture', estimatedCost: 1200, duration: 150, rating: 4.8, description: 'Tour Korea\'s grandest Joseon palace and rent a hanbok for free entry.' },
-    { name: 'Myeongdong Street Food & Shopping', category: 'shopping', estimatedCost: 2000, duration: 150, rating: 4.7, description: 'K-beauty products, street tteokbokki, and sizzling Korean corn dogs.' },
-    { name: 'Korean BBQ Dinner', category: 'food', estimatedCost: 4000, duration: 120, rating: 5.0, description: 'Grill marinated pork belly and galbi beef at your own tabletop brazier.' },
-    { name: 'Bukchon Hanok Village Walk', category: 'sightseeing', estimatedCost: 0, duration: 90, rating: 4.7, description: 'Wander narrow alleys lined with 600-year-old traditional Korean houses.' },
-    { name: 'K-Pop Entertainment Tour', category: 'culture', estimatedCost: 3000, duration: 150, rating: 4.5, description: 'Visit HYBE headquarters and SM/YG entertainment flagship stores.' },
-    { name: 'Namsan Tower Cable Car', category: 'sightseeing', estimatedCost: 1700, duration: 120, rating: 4.6, description: 'Ride up to N Seoul Tower for panoramic views and the famous love padlocks.' },
-  ],
-  Mumbai: [
-    { name: 'Gateway of India & Colaba', category: 'sightseeing', estimatedCost: 0, duration: 120, rating: 4.7, description: 'Stroll the iconic waterfront arch then explore colonial Colaba Causeway market.' },
-    { name: 'Dharavi Community Tour', category: 'culture', estimatedCost: 1500, duration: 180, rating: 4.6, description: 'Responsible guided tour of Asia\'s largest urban village and its cottage industries.' },
-    { name: 'Mumbai Street Food Walk', category: 'food', estimatedCost: 500, duration: 120, rating: 4.9, description: 'Eat the best vada pav, pav bhaji, and cutting chai Mumbai has to offer.' },
-    { name: 'Bollywood Studio Tour', category: 'culture', estimatedCost: 3000, duration: 180, rating: 4.5, description: 'Go behind the scenes at Film City — sets, costumes, and dance performances.' },
-    { name: 'Elephanta Caves Ferry Trip', category: 'adventure', estimatedCost: 1200, duration: 300, rating: 4.6, description: 'Take a harbour ferry to UNESCO rock-cut cave temples dedicated to Shiva.' },
-    { name: 'Crawford Market & Chor Bazaar', category: 'shopping', estimatedCost: 0, duration: 120, rating: 4.4, description: 'Haggle for spices, antiques, and vintage treasures in Mumbai\'s oldest markets.' },
-  ],
-  'New York': [
-    { name: 'Statue of Liberty & Ellis Island', category: 'culture', estimatedCost: 2500, duration: 300, rating: 4.8, description: 'Ferry to Lady Liberty and the moving immigration museum on Ellis Island.' },
-    { name: 'Central Park Highlights Walk', category: 'sightseeing', estimatedCost: 0, duration: 150, rating: 4.7, description: 'Explore Bethesda Fountain, Strawberry Fields, and the Bow Bridge.' },
-    { name: 'Metropolitan Museum of Art', category: 'culture', estimatedCost: 2500, duration: 240, rating: 4.9, description: 'One of the world\'s greatest art collections across 5,000 years of human creativity.' },
-    { name: 'Brooklyn Bridge Walk & DUMBO', category: 'sightseeing', estimatedCost: 0, duration: 120, rating: 4.8, description: 'Cross the bridge on foot then explore Brooklyn\'s trendiest neighbourhood.' },
-    { name: 'High Line & Chelsea Market', category: 'sightseeing', estimatedCost: 0, duration: 120, rating: 4.7, description: 'Stroll the elevated park and browse artisan food and design vendors below.' },
-    { name: 'Broadway Show', category: 'culture', estimatedCost: 8000, duration: 180, rating: 4.9, description: 'See the world\'s greatest live theatre in the dazzling Theatre District.' },
-  ],
-  'Mexico City': [
-    { name: 'Teotihuacan Pyramids Day Trip', category: 'adventure', estimatedCost: 2000, duration: 360, rating: 4.9, description: 'Climb the Pyramid of the Sun — one of the largest ancient structures on Earth.' },
-    { name: 'Frida Kahlo Museum (Casa Azul)', category: 'culture', estimatedCost: 1700, duration: 120, rating: 4.8, description: 'Visit the cobalt-blue house where Frida Kahlo lived, loved, and painted.' },
-    { name: 'Historic Centro & Zocalo', category: 'sightseeing', estimatedCost: 0, duration: 120, rating: 4.6, description: 'Explore the vast main square, Aztec ruins, and baroque cathedral in the heart of CDMX.' },
-    { name: 'Mezcal & Taco Tasting Tour', category: 'food', estimatedCost: 3000, duration: 150, rating: 4.9, description: 'Taste artisanal mezcal and authentic tacos de guisado on a walking tour.' },
-    { name: 'Xochimilco Trajinera Boat Ride', category: 'sightseeing', estimatedCost: 1500, duration: 180, rating: 4.6, description: 'Float through UNESCO-listed ancient canals on a colourful flat-bottomed boat.' },
-    { name: 'Lucha Libre Wrestling Show', category: 'culture', estimatedCost: 1200, duration: 120, rating: 4.7, description: 'Cheer on masked wrestlers at the legendary Arena Mexico — pure Mexican spectacle.' },
-  ],
-  'Rio de Janeiro': [
-    { name: 'Christ the Redeemer', category: 'sightseeing', estimatedCost: 10000, duration: 180, rating: 5.0, description: 'Ascend Corcovado to see the iconic art deco statue with a 360 degree panorama.' },
-    { name: 'Sugarloaf Mountain Cable Car', category: 'adventure', estimatedCost: 8000, duration: 180, rating: 4.8, description: 'Two cable car rides to 396 m elevation for stunning Guanabara Bay views.' },
-    { name: 'Ipanema & Copacabana Beach Day', category: 'relaxation', estimatedCost: 1000, duration: 300, rating: 4.7, description: 'Lounge on Rio\'s legendary beaches, play footvolley, and sip fresh coconut water.' },
-    { name: 'Samba School Tour & Dance Class', category: 'culture', estimatedCost: 4000, duration: 180, rating: 4.7, description: 'Visit one of Rio\'s carnival samba schools and learn the basic samba steps.' },
-    { name: 'Santa Teresa Neighbourhood Walk', category: 'sightseeing', estimatedCost: 0, duration: 120, rating: 4.6, description: 'Explore the bohemian hilltop barrio with its street art, cafes, and tram.' },
-    { name: 'Feijoada Sunday Lunch', category: 'food', estimatedCost: 3500, duration: 120, rating: 4.8, description: 'Savour the Brazilian national dish — slow-cooked black bean and pork stew.' },
-  ],
-  Dubai: [
-    { name: 'Burj Khalifa At the Top', category: 'sightseeing', estimatedCost: 12000, duration: 120, rating: 4.9, description: 'Take the world\'s fastest elevator to the observation deck at 555 m.' },
-    { name: 'Desert Safari & Dune Bashing', category: 'adventure', estimatedCost: 7000, duration: 360, rating: 4.9, description: '4WD dune bashing, camel riding, and a Bedouin camp dinner under the stars.' },
-    { name: 'Dubai Creek & Gold Souk', category: 'sightseeing', estimatedCost: 500, duration: 150, rating: 4.7, description: 'Cross the historic creek by abra and browse dazzling gold and spice souks.' },
-    { name: 'Dubai Mall & Aquarium', category: 'shopping', estimatedCost: 0, duration: 180, rating: 4.6, description: 'World\'s largest mall — visit the massive shark tank aquarium and indoor ice rink.' },
-    { name: 'Dhow Cruise Dinner on Dubai Creek', category: 'nightlife', estimatedCost: 4500, duration: 180, rating: 4.7, description: 'Cruise past illuminated skyscrapers with a buffet dinner and cultural show.' },
-    { name: 'Jumeirah Beach & Burj Al Arab View', category: 'relaxation', estimatedCost: 0, duration: 120, rating: 4.5, description: 'Sunbathe on the public beach with a perfect view of the iconic sail-shaped hotel.' },
-  ],
-  'Cape Town': [
-    { name: 'Table Mountain Cable Car', category: 'adventure', estimatedCost: 5000, duration: 180, rating: 4.9, description: 'Ride the rotating cable car to the flat-topped mountain summit for city views.' },
-    { name: 'Cape Peninsula & Cape of Good Hope', category: 'sightseeing', estimatedCost: 4000, duration: 480, rating: 5.0, description: 'Drive the scenic coastal road to Africa\'s south-westernmost tip.' },
-    { name: 'Boulders Beach Penguin Colony', category: 'sightseeing', estimatedCost: 1800, duration: 120, rating: 4.8, description: 'Walk among thousands of African penguins on a gorgeous boulder-strewn beach.' },
-    { name: 'Winelands Tour — Stellenbosch & Franschhoek', category: 'food', estimatedCost: 6000, duration: 360, rating: 4.9, description: 'Taste world-class wines at historic Cape Dutch wine estates.' },
-    { name: 'Bo-Kaap Neighbourhood & Cooking Class', category: 'culture', estimatedCost: 3500, duration: 180, rating: 4.7, description: 'Explore the brightly painted Cape Malay quarter and cook traditional dishes.' },
-    { name: 'V&A Waterfront & Craft Market', category: 'shopping', estimatedCost: 0, duration: 120, rating: 4.6, description: 'Browse craft markets, restaurants, and street performers at the iconic harbour.' },
-  ],
-  Sydney: [
-    { name: 'Sydney Opera House Tour', category: 'culture', estimatedCost: 4000, duration: 90, rating: 4.9, description: 'Go behind the scenes of the world\'s most recognised architectural masterpiece.' },
-    { name: 'Bondi Beach & Coastal Walk', category: 'relaxation', estimatedCost: 0, duration: 240, rating: 4.8, description: 'Surf or swim at Bondi then walk the spectacular clifftop path to Coogee.' },
-    { name: 'Sydney Harbour Bridge Climb', category: 'adventure', estimatedCost: 27000, duration: 180, rating: 5.0, description: 'Climb to the arch summit of the Harbour Bridge for an unforgettable panorama.' },
-    { name: 'Circular Quay & The Rocks', category: 'sightseeing', estimatedCost: 0, duration: 120, rating: 4.7, description: 'Explore Sydney\'s historic sandstone precinct with galleries, pubs, and market stalls.' },
-    { name: 'Blue Mountains Day Trip', category: 'adventure', estimatedCost: 5000, duration: 480, rating: 4.8, description: 'See the Three Sisters at Katoomba and ride the world\'s steepest scenic railway.' },
-    { name: 'Sydney Fish Market', category: 'food', estimatedCost: 3000, duration: 90, rating: 4.7, description: 'Feast on the freshest oysters, prawns, and barramundi at the world-famous market.' },
-  ],
-};
+const activityTemplates = [
+  { name: 'Historic Landmarks & Heritage Walking Tour', category: 'sightseeing', baseCost: 1200, duration: 180, rating: 4.8 },
+  { name: 'Famous Local Cuisine & Street Food Crawl', category: 'food', baseCost: 800, duration: 120, rating: 4.9 },
+  { name: 'Panoramic Sunset Viewpoint & Skydeck', category: 'sightseeing', baseCost: 1500, duration: 90, rating: 4.7 },
+  { name: 'National Museum & Cultural Treasures Guided Tour', category: 'culture', baseCost: 600, duration: 150, rating: 4.6 },
+  { name: 'Scenic Boat & Waterfront Cruise Experience', category: 'adventure', baseCost: 2000, duration: 120, rating: 4.8 },
+  { name: 'Traditional Artisan Markets & Souvenirs Shopping', category: 'shopping', baseCost: 500, duration: 120, rating: 4.5 },
+];
 
 /* ────────────────────────────────────────────────
-   Admin user for testing
+   Seed Runner
    ──────────────────────────────────────────────── */
-const adminUser = {
-  firstName: 'Admin',
-  lastName: 'GlobeTrotter',
-  username: 'admin',
-  email: 'admin@globetrotter.dev',
-  password: 'Admin@1234',
-  role: 'admin',
-  city: 'Mumbai',
-  country: 'India',
-  additionalInfo: 'System administrator account for GlobeTrotter.',
-};
-
-/* ────────────────────────────────────────────────
-   Seed runner
-   ──────────────────────────────────────────────── */
-const seedData = async () => {
+export const seedDatabase = async () => {
   try {
     await connectDB();
-    console.log('Connected to database');
+    console.log('🔄 Seeding database with comprehensive Countries & Cities...');
 
-    // Clear existing seed data
+    // Clear existing cities and activities to ensure fresh up-to-date data
     await City.deleteMany({});
     await Activity.deleteMany({});
-    console.log('Cleared existing cities and activities');
 
-    // Remove existing admin to avoid duplicate key errors
-    await User.deleteOne({ username: adminUser.username });
-    console.log('Removed existing admin user (if any)');
+    const createdCities = await City.insertMany(cities);
+    console.log(`✅ Seeded ${createdCities.length} major cities across all continents.`);
 
-    // Insert cities
-    const insertedCities = await City.insertMany(cities);
-    console.log('Inserted ' + insertedCities.length + ' cities');
+    const activitiesToInsert = [];
 
-    // Generate activities for each city
-    const allActivities = [];
-    insertedCities.forEach((city) => {
-      const activityList = cityActivities[city.name];
-      if (activityList) {
-        activityList.forEach((act) => {
-          allActivities.push({ ...act, city: city._id, isGlobal: true });
+    for (const city of createdCities) {
+      for (const tpl of activityTemplates) {
+        activitiesToInsert.push({
+          city: city._id,
+          name: `${city.name}: ${tpl.name}`,
+          description: `Experience the best of ${city.name}, ${city.country} with an expert curated ${tpl.category} activity.`,
+          category: tpl.category,
+          estimatedCost: Math.round(tpl.baseCost * (city.costIndex * 0.4 + 0.6)),
+          duration: tpl.duration,
+          rating: Number((tpl.rating - (Math.random() * 0.3)).toFixed(1)),
+          imageUrl: city.imageUrl,
+          isGlobal: true,
         });
       }
-    });
+    }
 
-    const insertedActivities = await Activity.insertMany(allActivities);
-    console.log('Inserted ' + insertedActivities.length + ' activities');
+    const createdActivities = await Activity.insertMany(activitiesToInsert);
+    console.log(`✅ Seeded ${createdActivities.length} curated activities across all cities.`);
 
-    // Create admin user — password gets hashed by the pre-save hook in User model
-    const admin = new User(adminUser);
-    await admin.save();
-    console.log('Admin user created — username: ' + adminUser.username + ' / password: ' + adminUser.password);
-
-    console.log('\nSeed completed successfully!');
-    console.log('------------------------------------');
-    console.log('Cities     : ' + insertedCities.length);
-    console.log('Activities : ' + insertedActivities.length);
-    console.log('Admin user : ' + adminUser.username + ' / ' + adminUser.password);
-    console.log('------------------------------------');
-    process.exit(0);
+    console.log('🎉 Database seeding complete with global countries and top cities!');
   } catch (error) {
-    console.error('Error seeding data:', error);
-    process.exit(1);
+    console.error('❌ Seeding error:', error);
   }
 };
 
-seedData();
+// If run directly via node seedData.js
+if (process.argv[1]?.includes('seedData.js')) {
+  seedDatabase().then(() => process.exit(0));
+}
+
+export default seedDatabase;

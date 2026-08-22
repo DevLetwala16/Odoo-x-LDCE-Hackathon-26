@@ -24,12 +24,12 @@ const activitySchema = new mongoose.Schema(
         'transport',
         'other',
       ],
-      required: [true, 'Category is required'],
+      default: 'sightseeing',
     },
     city: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'City',
-      required: true,
+      required: false, // Optional for custom user-created activities
       index: true,
     },
     estimatedCost: {
