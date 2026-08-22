@@ -23,6 +23,14 @@ const Navbar = () => {
     { name: 'Community', path: '/community', icon: <Users size={18} /> },
   ];
 
+  // If user is admin, also show Admin Panel link in nav
+  if (user?.role === 'admin') {
+    navLinks.push({ name: 'Admin', path: '/admin', icon: <Shield size={18} /> });
+  }
+
+  const displayName = user?.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : (user?.username || 'User');
+  const initial = user?.firstName?.[0] || user?.username?.[0] || 'U';
+
   return (
     <nav className={styles.navbar}>
       <div className={styles.container}>
@@ -55,23 +63,28 @@ const Navbar = () => {
                 onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
               >
                 <div className={styles.avatar}>
-                  {user.name ? user.name.charAt(0).toUpperCase() : <User size={18} />}
+                  {user.avatar ? (
+                    <img src={user.avatar} alt="Avatar" className={styles.avatarImg} />
+                  ) : (
+                    initial.toUpperCase()
+                  )}
                 </div>
               </button>
 
               {isProfileMenuOpen && (
                 <div className={styles.dropdownMenu}>
                   <div className={styles.userInfo}>
-                    <p className={styles.userName}>{user.name}</p>
+                    <p className={styles.userName}>{displayName}</p>
                     <p className={styles.userEmail}>{user.email}</p>
+                    <span className={styles.userRoleBadge}>{user.role?.toUpperCase()}</span>
                   </div>
                   <div className={styles.dropdownDivider}></div>
                   <Link to="/profile" className={styles.dropdownItem} onClick={() => setIsProfileMenuOpen(false)}>
-                    <User size={16} /> Profile
+                    <User size={16} /> My Profile
                   </Link>
                   {user.role === 'admin' && (
                     <Link to="/admin" className={styles.dropdownItem} onClick={() => setIsProfileMenuOpen(false)}>
-                      <Shield size={16} /> Admin
+                      <Shield size={16} /> Admin Portal
                     </Link>
                   )}
                   <button onClick={handleLogout} className={styles.dropdownItem}>
@@ -108,6 +121,16 @@ const Navbar = () => {
               <span>{link.name}</span>
             </Link>
           ))}
+          {user?.role === 'admin' && (
+            <Link
+              to="/admin"
+              className={`${styles.mobileNavLink} ${location.pathname === '/admin' ? styles.active : ''}`}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              <Shield size={18} />
+              <span>Admin Portal</span>
+            </Link>
+          )}
         </div>
       )}
     </nav>

@@ -136,6 +136,13 @@
   justify-content: center;
   font-weight: var(--font-weight-bold);
   font-size: 0.875rem;
+  overflow: hidden;
+}
+
+.avatarImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 /* ── Dropdown ── */
@@ -154,6 +161,9 @@
 
 .userInfo {
   padding: var(--space-4) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .userName {
@@ -166,7 +176,18 @@
 .userEmail {
   font-size: 0.8125rem;
   color: var(--color-text-secondary);
-  margin: 4px 0 0 0;
+  margin: 2px 0 6px 0;
+}
+
+.userRoleBadge {
+  display: inline-block;
+  align-self: flex-start;
+  font-size: 10px;
+  font-weight: var(--font-weight-bold);
+  background-color: var(--color-info);
+  color: var(--color-primary);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
 }
 
 .dropdownDivider {
