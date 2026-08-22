@@ -211,7 +211,7 @@ All models follow the exact schemas from §4 with `{ timestamps: true }`.
 
 ---
 
-### Phase 4 — Community & Admin (Screens 10, 12)
+### Phase 4 — Community & Admin (Screens 10, 12) [✅ COMPLETE]
 
 #### [NEW] [server/routes/communityRoutes.js](file:///d:/Project/odoo/server/routes/communityRoutes.js)
 #### [NEW] [server/controllers/communityController.js](file:///d:/Project/odoo/server/controllers/communityController.js)
