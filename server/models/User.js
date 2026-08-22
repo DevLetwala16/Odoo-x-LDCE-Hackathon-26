@@ -68,7 +68,10 @@ const userSchema = new mongoose.Schema(
       },
     ],
   },
-  { timestamps: true }
+  { 
+    timestamps: true,
+    collection: 'Registrartion_users' // Custom collection name requested for registered users
+  }
 );
 
 // Hash password before saving
@@ -91,5 +94,5 @@ userSchema.methods.toJSON = function () {
   return obj;
 };
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model('User', userSchema, 'Registrartion_users');
 export default User;

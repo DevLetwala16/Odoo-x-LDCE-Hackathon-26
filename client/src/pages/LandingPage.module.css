@@ -1,0 +1,216 @@
+.hero {
+  background-color: var(--color-primary);
+  background-image: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);
+  border-radius: var(--radius-xl);
+  padding: var(--space-3xl) var(--space-xl);
+  margin-bottom: var(--space-xl);
+  color: #FFFFFF;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&q=80') center/cover;
+  opacity: 0.15;
+  z-index: 0;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 1;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.heroTitle {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin: 0 0 var(--space-md) 0;
+  line-height: 1.2;
+}
+
+@media (min-width: 768px) {
+  .heroTitle {
+    font-size: 3.5rem;
+  }
+}
+
+.heroSubtitle {
+  font-size: var(--text-lg);
+  opacity: 0.9;
+  margin: 0 0 var(--space-xl) 0;
+}
+
+.ctaButton {
+  font-size: var(--text-lg);
+  padding: var(--space-md) var(--space-xl);
+}
+
+.filterSection {
+  margin-bottom: var(--space-2xl);
+}
+
+.section {
+  margin-bottom: var(--space-3xl);
+}
+
+.sectionHeader {
+  margin-bottom: var(--space-lg);
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--text-xl);
+  font-weight: bold;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.sectionIcon {
+  color: var(--color-primary);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: var(--space-md);
+}
+
+@media (min-width: 640px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.cityCard {
+  height: 200px;
+  padding: 0;
+  position: relative;
+}
+
+.cityImage {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.cityOverlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: var(--space-md);
+  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+  color: #FFFFFF;
+}
+
+.cityName {
+  margin: 0;
+  font-size: var(--text-lg);
+  font-weight: bold;
+}
+
+.cityCountry {
+  margin: 0;
+  font-size: var(--text-sm);
+  opacity: 0.8;
+}
+
+.tripsGrid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: var(--space-md);
+}
+
+@media (min-width: 768px) {
+  .tripsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .tripsGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.tripCard {
+  padding: var(--space-md);
+}
+
+.tripInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.tripName {
+  margin: 0 0 var(--space-xs) 0;
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.tripMeta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+}
+
+.emptyStateCard {
+  padding: var(--space-2xl);
+  text-align: center;
+  background-color: var(--color-surface);
+  border: 1px dashed var(--color-border);
+}
+
+.emptyStateContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.emptyStateIconWrapper {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-md);
+}
+
+.emptyStateTitle {
+  margin: 0 0 var(--space-xs) 0;
+  font-size: var(--text-xl);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.emptyStateText {
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--space-lg) 0;
+}

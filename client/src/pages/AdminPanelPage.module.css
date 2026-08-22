@@ -1,0 +1,29 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: var(--space-lg);
+}
+
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.statCard {
+  padding: var(--space-xl);
+  text-align: center;
+}
+
+.statCard h3 {
+  margin: 0 0 var(--space-sm) 0;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.statNumber {
+  margin: 0;
+  font-size: 3rem;
+  font-weight: bold;
+  color: var(--color-primary);
+}

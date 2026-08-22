@@ -1,56 +1,87 @@
-import './App.css'
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 
-/**
- * App — Top-level component.
- * Phase 1: Minimal shell verifying the design system works.
- * Phase 2 will add BrowserRouter, AuthProvider, and all routes.
- */
+// Providers
+import { AuthProvider } from './context/AuthContext';
+import { useAuth } from './hooks/useAuth';
+import { TripProvider } from './context/TripContext';
+
+// Pages
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import LandingPage from './pages/LandingPage';
+import CreateTripPage from './pages/CreateTripPage';
+import ItineraryBuilderPage from './pages/ItineraryBuilderPage';
+import MyTripsPage from './pages/MyTripsPage';
+import ProfilePage from './pages/ProfilePage';
+import SearchPage from './pages/SearchPage';
+import ItineraryViewPage from './pages/ItineraryViewPage';
+import CalendarPage from './pages/CalendarPage';
+import CommunityPage from './pages/CommunityPage';
+import AdminPanelPage from './pages/AdminPanelPage';
+
+const ProtectedRoute = ({ children }) => {
+  const { user, loading } = useAuth();
+  
+  if (loading) return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'var(--color-primary)' }}>Loading GlobeTrotter...</div>;
+  if (!user) return <Navigate to="/login" replace />;
+  
+  return children;
+};
+
+const AdminRoute = ({ children }) => {
+  const { user, loading } = useAuth();
+  
+  if (loading) return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'var(--color-primary)' }}>Loading...</div>;
+  if (!user || user.role !== 'admin') return <Navigate to="/" replace />;
+  
+  return children;
+};
+
 function App() {
   return (
-    <div style={{ 
-      display: 'flex', 
-      flexDirection: 'column', 
-      alignItems: 'center', 
-      justifyContent: 'center', 
-      minHeight: '100vh',
-      gap: 'var(--space-6)',
-      padding: 'var(--space-8)',
-    }}>
-      <h1 style={{ color: 'var(--color-primary)' }}>🌍 GlobeTrotter</h1>
-      <p style={{ color: 'var(--color-text-secondary)', fontSize: 'var(--font-size-lg)' }}>
-        Empowering Personalized Travel Planning
-      </p>
-      <div style={{ display: 'flex', gap: 'var(--space-4)' }}>
-        <button style={{
-          backgroundColor: 'var(--color-primary)',
-          color: '#FFFFFF',
-          padding: 'var(--space-3) var(--space-6)',
-          borderRadius: 'var(--radius-md)',
-          fontWeight: 'var(--font-weight-semibold)',
-          transition: 'background-color var(--transition-fast)',
-        }}>
-          Primary Button
-        </button>
-        <button style={{
-          backgroundColor: 'var(--color-accent)',
-          color: '#FFFFFF',
-          padding: 'var(--space-3) var(--space-6)',
-          borderRadius: 'var(--radius-md)',
-          fontWeight: 'var(--font-weight-semibold)',
-          transition: 'background-color var(--transition-fast)',
-        }}>
-          Accent CTA
-        </button>
-      </div>
-      <p style={{ 
-        color: 'var(--color-text-secondary)', 
-        fontSize: 'var(--font-size-sm)',
-        marginTop: 'var(--space-8)',
-      }}>
-        Phase 1 — Foundation & Infrastructure ✅
-      </p>
-    </div>
-  )
+    <AuthProvider>
+      <TripProvider>
+        <Router>
+          <Toaster 
+            position="top-right" 
+            toastOptions={{
+              style: {
+                background: 'var(--color-bg-surface)',
+                color: 'var(--color-text-primary)',
+                border: '1px solid var(--color-border)',
+                borderRadius: 'var(--radius-md)',
+                boxShadow: 'var(--shadow-md)',
+              },
+            }}
+          />
+          <Routes>
+            {/* Public */}
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            
+            {/* Protected */}
+            <Route path="/" element={<ProtectedRoute><LandingPage /></ProtectedRoute>} />
+            <Route path="/trips/new" element={<ProtectedRoute><CreateTripPage /></ProtectedRoute>} />
+            <Route path="/trips/:id/edit" element={<ProtectedRoute><ItineraryBuilderPage /></ProtectedRoute>} />
+            <Route path="/trips" element={<ProtectedRoute><MyTripsPage /></ProtectedRoute>} />
+            <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+            <Route path="/search" element={<ProtectedRoute><SearchPage /></ProtectedRoute>} />
+            <Route path="/trips/:id" element={<ProtectedRoute><ItineraryViewPage /></ProtectedRoute>} />
+            <Route path="/trips/:id/calendar" element={<ProtectedRoute><CalendarPage /></ProtectedRoute>} />
+            <Route path="/community" element={<ProtectedRoute><CommunityPage /></ProtectedRoute>} />
+            
+            {/* Admin */}
+            <Route path="/admin" element={<AdminRoute><AdminPanelPage /></AdminRoute>} />
+            
+            {/* Fallback */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Router>
+      </TripProvider>
+    </AuthProvider>
+  );
 }
 
-export default App
+export default App;

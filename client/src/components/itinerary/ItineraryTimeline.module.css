@@ -1,0 +1,111 @@
+.timeline {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  padding: var(--space-4) 0;
+}
+
+.empty {
+  padding: var(--space-4);
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.dayItem {
+  display: flex;
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  transition: background-color 0.2s;
+  position: relative;
+}
+
+.dayItem:hover {
+  background-color: var(--color-background-alt);
+}
+
+.dayItem.active {
+  background-color: var(--color-primary-light);
+}
+
+.lineIndicator {
+  width: 24px;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  margin-right: var(--space-3);
+}
+
+.lineIndicator::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: var(--color-border);
+}
+
+.dayItem:first-child .lineIndicator::before {
+  top: 50%;
+}
+
+.dayItem:last-child .lineIndicator::before {
+  bottom: 50%;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: var(--color-border);
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 2px solid var(--color-surface);
+  z-index: 1;
+}
+
+.dayItem.active .dot {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary-light);
+}
+
+.dayContent {
+  flex-grow: 1;
+  padding: var(--space-2) 0;
+}
+
+.dayHeader {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin-bottom: var(--space-1);
+}
+
+.dayTitle {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  font-size: var(--font-size-base);
+}
+
+.date {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.city {
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  margin-bottom: var(--space-1);
+}
+
+.activityBadge {
+  display: inline-block;
+  font-size: var(--font-size-xs);
+  padding: 2px var(--space-2);
+  background-color: var(--color-background);
+  border-radius: var(--radius-full);
+  color: var(--color-text-muted);
+}

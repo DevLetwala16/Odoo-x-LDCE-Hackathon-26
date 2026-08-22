@@ -1,4 +1,5 @@
 import User from '../models/User.js';
+import LoginData from '../models/LoginData.js';
 import Trip from '../models/Trip.js';
 import Stop from '../models/Stop.js';
 import Expense from '../models/Expense.js';
@@ -25,6 +26,7 @@ export const register = async (req, res, next) => {
       return next(err);
     }
 
+    // Creates user in Registrartion_users collection
     const user = await User.create({
       firstName,
       lastName,
@@ -37,6 +39,20 @@ export const register = async (req, res, next) => {
       country,
       additionalInfo,
     });
+
+    // Also record initial login data entry in Login_data collection
+    try {
+      await LoginData.create({
+        user: user._id,
+        username: user.username,
+        ipAddress: req.ip || req.headers['x-forwarded-for'] || '',
+        userAgent: req.headers['user-agent'] || '',
+        loginTime: new Date(),
+        status: 'success',
+      });
+    } catch (logErr) {
+      console.error('Error logging registration login data:', logErr);
+    }
 
     const token = generateToken(user._id, user.role);
 
@@ -56,9 +72,22 @@ export const login = async (req, res, next) => {
   try {
     const { username, password } = req.body;
 
-    // Find user by username and include password for comparison
+    // Find user by username in Registrartion_users collection
     const user = await User.findOne({ username }).select('+password');
     if (!user) {
+      // Record failed attempt in Login_data collection
+      try {
+        await LoginData.create({
+          username: username || 'unknown',
+          ipAddress: req.ip || req.headers['x-forwarded-for'] || '',
+          userAgent: req.headers['user-agent'] || '',
+          loginTime: new Date(),
+          status: 'failed',
+        });
+      } catch (logErr) {
+        console.error('Error recording failed login data:', logErr);
+      }
+
       const err = new Error('Invalid username or password');
       err.statusCode = 401;
       return next(err);
@@ -66,9 +95,37 @@ export const login = async (req, res, next) => {
 
     const isMatch = await user.matchPassword(password);
     if (!isMatch) {
+      // Record failed attempt in Login_data collection
+      try {
+        await LoginData.create({
+          user: user._id,
+          username: user.username,
+          ipAddress: req.ip || req.headers['x-forwarded-for'] || '',
+          userAgent: req.headers['user-agent'] || '',
+          loginTime: new Date(),
+          status: 'failed',
+        });
+      } catch (logErr) {
+        console.error('Error recording failed login data:', logErr);
+      }
+
       const err = new Error('Invalid username or password');
       err.statusCode = 401;
       return next(err);
+    }
+
+    // Record successful login in Login_data collection
+    try {
+      await LoginData.create({
+        user: user._id,
+        username: user.username,
+        ipAddress: req.ip || req.headers['x-forwarded-for'] || '',
+        userAgent: req.headers['user-agent'] || '',
+        loginTime: new Date(),
+        status: 'success',
+      });
+    } catch (logErr) {
+      console.error('Error recording login data:', logErr);
     }
 
     const token = generateToken(user._id, user.role);
@@ -140,6 +197,7 @@ export const deleteAccount = async (req, res, next) => {
     await Expense.deleteMany({ trip: { $in: tripIds } });
     await Trip.deleteMany({ user: userId });
     await CommunityPost.deleteMany({ user: userId });
+    await LoginData.deleteMany({ user: userId });
 
     await User.findByIdAndDelete(userId);
 

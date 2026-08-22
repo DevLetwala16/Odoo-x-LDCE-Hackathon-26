@@ -1,0 +1,177 @@
+.headerActions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-xl);
+  flex-wrap: wrap;
+  gap: var(--space-md);
+}
+
+.builderArea {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  position: relative;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 20px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: var(--color-border);
+  z-index: 0;
+}
+
+.stopCard {
+  position: relative;
+  z-index: 1;
+  margin-left: var(--space-2xl);
+}
+
+.stopCard::before {
+  content: '';
+  position: absolute;
+  left: calc(-1 * var(--space-2xl) + 14px);
+  top: var(--space-lg);
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  border: 2px solid var(--color-surface);
+}
+
+.stopHeader {
+  display: flex;
+  align-items: center;
+  padding: var(--space-md);
+  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+}
+
+.dragHandle {
+  cursor: grab;
+  color: var(--color-text-secondary);
+  padding: var(--space-xs);
+  margin-right: var(--space-sm);
+}
+
+.stopInfo {
+  flex: 1;
+}
+
+.cityName {
+  margin: 0 0 var(--space-xs) 0;
+  font-size: var(--text-lg);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.cityIcon {
+  color: var(--color-primary);
+}
+
+.stopDates {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+.stopActions {
+  display: flex;
+  gap: var(--space-xs);
+}
+
+.actionBtn {
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  transition: all 0.2s;
+}
+
+.actionBtn:hover:not(:disabled) {
+  background-color: var(--color-background);
+  color: var(--color-text);
+}
+
+.actionBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.deleteBtn:hover {
+  color: var(--color-error, #dc2626);
+  border-color: var(--color-error, #dc2626);
+  background-color: #fee2e2;
+}
+
+.activitiesArea {
+  padding: var(--space-md);
+  background-color: var(--color-background);
+}
+
+.activitiesTitle {
+  margin: 0 0 var(--space-sm) 0;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+}
+
+.activityList {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--space-md) 0;
+}
+
+.activityItem {
+  padding: var(--space-sm);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-xs);
+  font-size: var(--text-sm);
+}
+
+.emptyActivities {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-md);
+  font-style: italic;
+}
+
+.addActivityBtn {
+  width: 100%;
+}
+
+.modalContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.error {
+  text-align: center;
+  padding: var(--space-2xl);
+  color: var(--color-error, #dc2626);
+  font-weight: 500;
+}

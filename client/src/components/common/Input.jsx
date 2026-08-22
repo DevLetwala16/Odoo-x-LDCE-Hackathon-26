@@ -9,15 +9,17 @@ const Input = ({
   className = '',
   ...props
 }) => {
+  const inputId = id || props.name || undefined;
+
   return (
     <div className={`${styles.inputGroup} ${className}`}>
       {label && (
-        <label htmlFor={id} className={styles.label}>
+        <label htmlFor={inputId} className={styles.label}>
           {label}
         </label>
       )}
       <input
-        id={id}
+        id={inputId}
         type={type}
         className={`${styles.input} ${error ? styles.inputError : ''}`}
         {...props}
