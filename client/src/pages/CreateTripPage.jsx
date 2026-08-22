@@ -1,15 +1,33 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { MapPin, Check, Plus, ArrowRight, Search, X } from 'lucide-react';
+import { MapPin, Check, Plus, ArrowLeft, Search, X, Image as ImageIcon, Link as LinkIcon } from 'lucide-react';
 import PageShell from '../components/layout/PageShell';
-import Input from '../components/common/Input';
 import Button from '../components/common/Button';
 import Card from '../components/common/Card';
 import cityService from '../services/cityService';
 import tripService from '../services/tripService';
 import stopService from '../services/stopService';
 import styles from './CreateTripPage.module.css';
+
+const PRESET_COVERS = [
+  { label: "Tokyo Neon", url: "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=1000&auto=format&fit=crop" },
+  { label: "Paris Eiffel", url: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=1000&auto=format&fit=crop" },
+  { label: "New York Skyline", url: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=1000&auto=format&fit=crop" },
+  { label: "Rome Colosseum", url: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=1000&auto=format&fit=crop" },
+  { label: "Kyoto Bamboo & Temples", url: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=1000&auto=format&fit=crop" },
+  { label: "Santorini Sunset", url: "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=1000&auto=format&fit=crop" },
+  { label: "Swiss Alps & Lakes", url: "https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?w=1000&auto=format&fit=crop" },
+  { label: "Bali Jungle & Beaches", url: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=1000&auto=format&fit=crop" },
+  { label: "Dubai Modern Marvels", url: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1000&auto=format&fit=crop" },
+  { label: "London Thames & Tower", url: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=1000&auto=format&fit=crop" },
+  { label: "Barcelona Gaudí", url: "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=1000&auto=format&fit=crop" },
+  { label: "Sydney Opera & Harbour", url: "https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?w=1000&auto=format&fit=crop" },
+  { label: "Rio Copacabana & Peak", url: "https://images.unsplash.com/photo-1483729558449-99ef09a8c325?w=1000&auto=format&fit=crop" },
+  { label: "Cairo Great Pyramids", url: "https://images.unsplash.com/photo-1572252009286-268acec5ca0a?w=1000&auto=format&fit=crop" },
+  { label: "Tropical Beach Resort", url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1000&auto=format&fit=crop" },
+  { label: "Scenic Mountain Road", url: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1000&auto=format&fit=crop" },
+];
 
 const CreateTripPage = () => {
   const navigate = useNavigate();
@@ -19,6 +37,10 @@ const CreateTripPage = () => {
   const [loading, setLoading] = useState(false);
   const [cities, setCities] = useState([]);
   const [placeSearchQuery, setPlaceSearchQuery] = useState(initialSearchCity);
+  const [selectedCover, setSelectedCover] = useState(PRESET_COVERS[0].url);
+  const [customCoverUrl, setCustomCoverUrl] = useState('');
+  const [touched, setTouched] = useState({ startDate: false, endDate: false });
+
   const [formData, setFormData] = useState({
     name: initialSearchCity ? `Trip to ${initialSearchCity}` : '',
     selectedPlaceId: '',
@@ -26,8 +48,14 @@ const CreateTripPage = () => {
     endDate: '',
     totalBudget: '',
     description: '',
-    coverImage: '',
   });
+
+  const getTodayStr = () => {
+    const d = new Date();
+    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+    return d.toISOString().split("T")[0];
+  };
+  const todayStr = getTodayStr();
 
   useEffect(() => {
     const fetchCities = async () => {
@@ -48,8 +76,10 @@ const CreateTripPage = () => {
               ...prev,
               selectedPlaceId: match._id,
               name: prev.name || `Trip to ${match.name}`,
-              coverImage: prev.coverImage || match.imageUrl || '',
             }));
+            if (match.imageUrl) {
+              setSelectedCover(match.imageUrl);
+            }
           }
         }
       } catch (error) {
@@ -64,24 +94,31 @@ const CreateTripPage = () => {
   };
 
   const handleSelectPlace = (cityId) => {
+    const selectedCity = cities.find(c => c._id === cityId);
     setFormData((prev) => ({ 
       ...prev, 
       selectedPlaceId: cityId,
-      name: prev.name ? prev.name : `Trip to ${cities.find(c => c._id === cityId)?.name || 'Destination'}`
+      name: prev.name ? prev.name : `Trip to ${selectedCity?.name || 'Destination'}`
     }));
-    const selectedCity = cities.find(c => c._id === cityId);
+    if (selectedCity?.imageUrl) {
+      setSelectedCover(selectedCity.imageUrl);
+      setCustomCoverUrl('');
+    }
     toast.success(`Selected ${selectedCity?.name || 'City'} as destination`);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!formData.name || !formData.startDate || !formData.endDate) {
-      toast.error('Please fill in Trip Title, Start Date, and End Date');
-      return;
-    }
+  const activeCover = customCoverUrl.trim() || selectedCover;
 
-    if (new Date(formData.endDate) < new Date(formData.startDate)) {
-      toast.error('End Date cannot be before Start Date');
+  const isStartValid = formData.startDate ? formData.startDate >= todayStr : true;
+  const isEndValid = formData.endDate && formData.startDate ? formData.endDate >= formData.startDate : true;
+  const isFormValid = formData.name && formData.startDate && formData.endDate && isStartValid && isEndValid;
+
+  const handleSubmit = async (e) => {
+    if (e) e.preventDefault();
+    setTouched({ startDate: true, endDate: true });
+
+    if (!isFormValid) {
+      toast.error('Please fix validation errors before continuing');
       return;
     }
     
@@ -94,7 +131,7 @@ const CreateTripPage = () => {
         endDate: formData.endDate,
         totalBudget: Number(formData.totalBudget) || 0,
         description: formData.description,
-        coverImage: formData.coverImage || selectedCityObj?.imageUrl || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&q=80&w=800'
+        coverImage: activeCover || selectedCityObj?.imageUrl || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&q=80&w=800'
       };
       
       const res = await tripService.createTrip(payload);
@@ -139,22 +176,30 @@ const CreateTripPage = () => {
       subtitle="Plan a new trip and select recommended places to visit"
     >
       <div className={styles.container}>
-        {/* ── Screen 4: Plan a new trip Form Card ── */}
+        <Link to="/trips" className={styles.backBtn}>
+          <ArrowLeft size={12} /> Back to all trips
+        </Link>
+
+        {/* Plan a new trip Form Card */}
         <Card className={styles.formCard}>
           <h2 className={styles.panelTitle}>Plan a new trip</h2>
           
-          <form onSubmit={handleSubmit} className={styles.form}>
-            <Input 
-              label="Trip Title *" 
-              name="name" 
-              value={formData.name} 
-              onChange={handleChange} 
-              placeholder="e.g., European Summer Expedition" 
-              required 
-            />
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            <div className={styles.formGroup}>
+              <label className={styles.label}>Trip Title *</label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="e.g., European Summer Expedition"
+                className={styles.input}
+                required
+              />
+            </div>
 
-            <div className={styles.inputGroup}>
-              <label className={styles.label}>Select a Place</label>
+            <div className={styles.formGroup}>
+              <label className={styles.label}>Select Starting Destination</label>
               <select 
                 name="selectedPlaceId" 
                 value={formData.selectedPlaceId} 
@@ -167,50 +212,140 @@ const CreateTripPage = () => {
                 ))}
               </select>
             </div>
-            
-            <div className={styles.row}>
-              <Input 
-                type="date" 
-                label="Start Date *" 
-                name="startDate" 
-                value={formData.startDate} 
-                onChange={handleChange} 
-                required 
-              />
-              <Input 
-                type="date" 
-                label="End Date *" 
-                name="endDate" 
-                value={formData.endDate} 
-                onChange={handleChange} 
-                required 
-              />
-            </div>
-            
-            <Input 
-              type="number" 
-              label="Total Budget (₹)" 
-              name="totalBudget" 
-              value={formData.totalBudget} 
-              onChange={handleChange} 
-              placeholder="e.g. 75000" 
-            />
 
-            <div className={styles.inputGroup}>
-              <label className={styles.label}>Trip Notes & Description (Optional)</label>
-              <textarea 
-                name="description" 
-                value={formData.description} 
-                onChange={handleChange} 
-                className={styles.textarea}
-                placeholder="Notes or goals for this journey..."
-                rows="2"
-              ></textarea>
+            <div className={styles.formRow}>
+              <div className={styles.formGroup}>
+                <label className={styles.label}>
+                  <span>Start Date *</span>
+                  {touched.startDate && !isStartValid && <span className={styles.errorText}>Cannot be in the past</span>}
+                </label>
+                <input
+                  type="date"
+                  name="startDate"
+                  min={todayStr}
+                  value={formData.startDate}
+                  onChange={handleChange}
+                  onBlur={() => setTouched(prev => ({ ...prev, startDate: true }))}
+                  className={styles.input}
+                  required
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.label}>
+                  <span>End Date *</span>
+                  {touched.endDate && !isEndValid && <span className={styles.errorText}>Must be after start date</span>}
+                </label>
+                <input
+                  type="date"
+                  name="endDate"
+                  min={formData.startDate || todayStr}
+                  value={formData.endDate}
+                  onChange={handleChange}
+                  onBlur={() => setTouched(prev => ({ ...prev, endDate: true }))}
+                  className={styles.input}
+                  required
+                />
+              </div>
             </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.label}>Max Target Budget (₹)</label>
+              <input
+                type="number"
+                name="totalBudget"
+                value={formData.totalBudget}
+                onChange={handleChange}
+                placeholder="e.g. 50000"
+                className={styles.input}
+              />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.label}>Trip Notes & Description (Optional)</label>
+              <textarea
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                placeholder="Notes, goals, or vibes for this journey..."
+                className={styles.textarea}
+                rows="3"
+              />
+            </div>
+
+            {/* Cover Selector */}
+            <div className={styles.formGroup}>
+              <div className={styles.coverHeader}>
+                <label className={styles.label} style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                  <ImageIcon size={14} /> Select Cover Photo
+                </label>
+                <span style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>
+                  {PRESET_COVERS.length} curated covers
+                </span>
+              </div>
+
+              <div className={styles.coverGrid}>
+                {PRESET_COVERS.map((cov) => {
+                  const isSelected = !customCoverUrl && selectedCover === cov.url;
+                  return (
+                    <div
+                      key={cov.url}
+                      onClick={() => {
+                        setSelectedCover(cov.url);
+                        setCustomCoverUrl('');
+                      }}
+                      className={`${styles.coverOption} ${isSelected ? styles.coverOptionActive : ''}`}
+                    >
+                      <img src={cov.url} alt={cov.label} className={styles.coverImage} />
+                      <div className={styles.coverOverlay}>
+                        <span className={styles.coverLabel}>{cov.label}</span>
+                        {isSelected && (
+                          <div className={styles.coverCheck}>
+                            <Check size={10} />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className={styles.customCoverGroup}>
+                <label className={styles.label} style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginBottom: '0.5rem' }}>
+                  <LinkIcon size={12} /> Or Paste Custom Image URL
+                </label>
+                <input
+                  type="text"
+                  placeholder="https://images.unsplash.com/... or any public image URL"
+                  value={customCoverUrl}
+                  onChange={(e) => setCustomCoverUrl(e.target.value)}
+                  className={styles.input}
+                />
+              </div>
+
+              {activeCover && (
+                <div className={styles.previewContainer}>
+                  <img src={activeCover} alt="Cover Preview" className={styles.previewImage} />
+                  <div className={styles.previewBadge}>
+                    <span>Active Cover Preview</span>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <Button
+              type="submit"
+              variant="primary"
+              size="lg"
+              disabled={loading || !isFormValid}
+              className={styles.submitBtn}
+            >
+              {loading ? 'Creating Journey...' : 'Continue to Itinerary Builder'}
+            </Button>
           </form>
         </Card>
 
-        {/* ── Screen 4: Suggestions for Places to Visit / Activities in pattern ── */}
+        {/* Suggestions for Places to Visit */}
         <div className={styles.suggestionsSection}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', marginBottom: '12px' }}>
             <h3 className={styles.suggestionsTitle} style={{ margin: 0 }}>
@@ -223,7 +358,7 @@ const CreateTripPage = () => {
                 placeholder="Filter destination..." 
                 value={placeSearchQuery}
                 onChange={(e) => setPlaceSearchQuery(e.target.value)}
-                style={{ border: 'none', background: 'transparent', outline: 'none', fontSize: '0.8125rem', color: 'var(--color-ink)', width: '140px' }}
+                style={{ border: 'none', background: 'transparent', outline: 'none', fontSize: '0.8125rem', color: 'var(--color-text-primary)', width: '140px' }}
               />
               {placeSearchQuery && (
                 <button onClick={() => setPlaceSearchQuery('')} style={{ border: 'none', background: 'none', cursor: 'pointer', padding: 0, display: 'flex', color: 'var(--color-text-secondary)' }}>
@@ -262,16 +397,16 @@ const CreateTripPage = () => {
           </div>
         </div>
 
-        {/* Submit Action Button */}
+        {/* Submit Action Button at bottom */}
         <div className={styles.actionRow}>
           <Button 
             variant="primary" 
             size="lg" 
             onClick={handleSubmit} 
-            disabled={loading}
+            disabled={loading || !isFormValid}
             className={styles.submitBtn}
           >
-            {loading ? 'Creating...' : 'Create Trip & Customize Sections'} <ArrowRight size={16} />
+            {loading ? 'Creating...' : 'Create Trip & Customize Sections'}
           </Button>
         </div>
       </div>

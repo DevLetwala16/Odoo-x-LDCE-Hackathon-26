@@ -329,7 +329,7 @@
 
 .categoryPillActive {
   background-color: var(--color-text-primary);
-  color: var(--color-bg-base);
+  color: #ffffff;
   border-color: var(--color-text-primary);
   transform: scale(1.05);
   box-shadow: var(--shadow-md);

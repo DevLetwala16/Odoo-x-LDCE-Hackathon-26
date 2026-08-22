@@ -26,9 +26,10 @@ const SharedTripPage = () => {
     const fetchTrip = async () => {
       try {
         const response = await sharingService.viewPublicTrip(slug);
-        if (response.success) {
-          setTrip(response.data.trip);
-          setStops(response.data.stops);
+        if (response.success || response.data) {
+          const t = response.data?.trip || response.trip;
+          setTrip(t);
+          setStops(t?.stops || []);
         }
       } catch (error) {
         toast.error('Could not load shared trip. It may be private or deleted.');
@@ -49,9 +50,10 @@ const SharedTripPage = () => {
     setCopying(true);
     try {
       const response = await sharingService.copyPublicTrip(slug);
-      if (response.success) {
+      if (response.success || response.data) {
         toast.success('Trip copied successfully!');
-        navigate(`/trips/${response.newTripId}`);
+        const newTripId = response.data?.trip?._id || response.newTripId;
+        navigate(`/trips/${newTripId}`);
       }
     } catch (error) {
       toast.error('Failed to copy trip to your account');
@@ -139,40 +141,28 @@ const SharedTripPage = () => {
                   </div>
                 </div>
                 <div className={styles.stopDates}>
-                  {new Date(stop.startDate).toLocaleDateString()} - {new Date(stop.endDate).toLocaleDateString()}
+                  {new Date(stop.arrivalDate || stop.startDate).toLocaleDateString()} - {new Date(stop.departureDate || stop.endDate).toLocaleDateString()}
                 </div>
               </div>
 
               <div className={styles.daysList}>
-                {stop.days.map((day, dIdx) => (
-                  <div key={dIdx} className={styles.dayBlock}>
-                    <h4 className={styles.dayLabel}>
-                      {day.dayLabel} <span>({new Date(day.date).toLocaleDateString()})</span>
-                    </h4>
-                    
-                    {day.activities.length > 0 ? (
-                      <div className={styles.activityList}>
-                        {day.activities.map(act => (
-                          <div key={act._id} className={styles.activityItem}>
-                            <div className={styles.activityTime}>
-                              <Clock size={14} />
-                              {act.scheduledTime || 'Flexible'}
-                            </div>
-                            <div className={styles.activityInfo}>
-                              <p className={styles.activityName}>{act.name}</p>
-                              {act.category && <span className={styles.categoryBadge}>{act.category}</span>}
-                            </div>
-                            <div className={styles.activityCost}>
-                              {formatAmount(act.cost)}
-                            </div>
-                          </div>
-                        ))}
+                {stop.activities && stop.activities.length > 0 ? (
+                  <div className={styles.activityList}>
+                    {stop.activities.map(act => (
+                      <div key={act._id} className={styles.activityItem}>
+                        <div className={styles.activityInfo}>
+                          <p className={styles.activityName}>{act.name}</p>
+                          {act.category && <span className={styles.categoryBadge}>{act.category}</span>}
+                        </div>
+                        <div className={styles.activityCost}>
+                          {formatAmount(act.estimatedCost || act.cost || 0)}
+                        </div>
                       </div>
-                    ) : (
-                      <p className={styles.noActivities}>No activities planned for this day.</p>
-                    )}
+                    ))}
                   </div>
-                ))}
+                ) : (
+                  <p className={styles.noActivities}>No activities planned for this stop.</p>
+                )}
               </div>
             </Card>
           ))}

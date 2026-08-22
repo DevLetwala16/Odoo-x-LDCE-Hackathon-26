@@ -69,8 +69,9 @@ const ItineraryViewPage = () => {
     setIsSharing(true);
     try {
       const res = await sharingService.shareTrip(trip._id);
-      if (res.success) {
-        const fullUrl = `${window.location.origin}${res.shareUrl}`;
+      if (res.success || res.data) {
+        const slug = res.data?.shareSlug || res.shareSlug;
+        const fullUrl = `${window.location.origin}/shared/${slug}`;
         setShareUrl(fullUrl);
         navigator.clipboard.writeText(fullUrl);
         toast.success('Trip link copied to clipboard!');
