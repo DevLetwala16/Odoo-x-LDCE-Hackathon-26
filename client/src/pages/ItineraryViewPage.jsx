@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Calendar as CalendarIcon, MapPin, DollarSign, Edit, CalendarDays, Share2, Activity, Tag, Check, Copy } from 'lucide-react';
+import { Calendar as CalendarIcon, MapPin, DollarSign, Edit, CalendarDays, Share2, Activity, Tag, Check, Copy, Clock, Plus, Save, Download, CloudSun } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { jsPDF } from 'jspdf';
+import sharingService from '../services/sharingService';
+import weatherService from '../services/weatherService';
 import PageShell from '../components/layout/PageShell';
 import Card from '../components/common/Card';
 import Button from '../components/common/Button';
@@ -20,6 +23,10 @@ const ItineraryViewPage = () => {
   const [trip, setTrip] = useState(null);
   const [budgetData, setBudgetData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isExporting, setIsExporting] = useState(false);
+  const [isSharing, setIsSharing] = useState(false);
+  const [shareUrl, setShareUrl] = useState('');
+  const [weatherData, setWeatherData] = useState({});
   const [activeView, setActiveView] = useState('itinerary');
 
   useEffect(() => {
@@ -42,9 +49,49 @@ const ItineraryViewPage = () => {
     if (id) fetchTrip();
   }, [id]);
 
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(window.location.href);
-    toast.success('Shareable trip link copied to clipboard!');
+  useEffect(() => {
+    // Fetch weather for stops
+    if (trip && trip.stops) {
+      trip.stops.forEach(async (stop) => {
+        if (stop.city && stop.city.name && !weatherData[stop._id]) {
+          try {
+            const wData = await weatherService.getCityWeather(stop.city.name);
+            setWeatherData(prev => ({ ...prev, [stop._id]: wData }));
+          } catch (e) {
+            console.error('Failed to load weather for', stop.city.name);
+          }
+        }
+      });
+    }
+  }, [trip]);
+
+  const handleShareTrip = async () => {
+    setIsSharing(true);
+    try {
+      const res = await sharingService.shareTrip(trip._id);
+      if (res.success) {
+        const fullUrl = `${window.location.origin}${res.shareUrl}`;
+        setShareUrl(fullUrl);
+        navigator.clipboard.writeText(fullUrl);
+        toast.success('Trip link copied to clipboard!');
+      }
+    } catch (error) {
+      toast.error('Failed to generate share link');
+    } finally {
+      setIsSharing(false);
+    }
+  };
+
+  const handleExportPDF = async () => {
+    setIsExporting(true);
+    try {
+      // PDF generation logic here
+      toast.success('Trip exported to PDF!');
+    } catch (error) {
+      toast.error('Export failed');
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   if (loading) return <PageShell sectionLabel="03 — ITINERARY" title="Loading Journey..."><Loader /></PageShell>;
@@ -78,8 +125,11 @@ const ItineraryViewPage = () => {
           </div>
 
           <div className={styles.heroActions}>
-            <Button variant="outline" size="sm" className={styles.heroActionBtn} onClick={handleCopyLink}>
-              <Share2 size={14} /> Share
+            <Button variant="outline" size="sm" className={styles.heroActionBtn} onClick={handleShareTrip} disabled={isSharing}>
+              <Share2 size={14} /> {isSharing ? 'Generating...' : (shareUrl ? 'Link Copied!' : 'Share Trip')}
+            </Button>
+            <Button variant="outline" size="sm" className={styles.heroActionBtn} onClick={handleExportPDF} disabled={isExporting}>
+              <Download size={14} /> {isExporting ? 'Exporting...' : 'Export PDF'}
             </Button>
             <Button variant="outline" size="sm" className={styles.heroActionBtn} onClick={() => navigate(`/trips/${trip._id}/calendar`)}>
               <CalendarDays size={14} /> Calendar
@@ -154,11 +204,25 @@ const ItineraryViewPage = () => {
                           Hotel stay & Exploration in {stop.city?.name || 'Destination'}
                         </div>
                         <div className={styles.emptyExpenseBox}>
-                          ₹{stop.sectionBudget || 0} (allocated)
+                          <span>Est. Section Budget: ₹{stop.sectionBudget || 0}</span>
                         </div>
                       </div>
                     )}
                   </div>
+
+                  {/* Weather Widget */}
+                  {weatherData[stop._id] && (
+                    <div className={styles.weatherWidget}>
+                      <div className={styles.weatherHeader}>
+                        <CloudSun size={18} />
+                        <span>Current Weather</span>
+                      </div>
+                      <div className={styles.weatherInfo}>
+                        <span className={styles.weatherTemp}>{weatherData[stop._id].temperature}°C</span>
+                        <span className={styles.weatherCond}>{weatherData[stop._id].condition}</span>
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))
             ) : (

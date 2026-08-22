@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Globe, Menu, X, User, LogOut, Shield, Plus, ArrowRight, BarChart3 } from 'lucide-react';
+import { Globe, Menu, X, User, LogOut, Shield, Plus, ArrowRight, BarChart3, ChevronDown, ShieldAlert } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
+import { useCurrency } from '../../context/CurrencyContext';
 import styles from './Navbar.module.css';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
+  const { currency, setCurrency, availableCurrencies } = useCurrency();
   const navigate = useNavigate();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -20,10 +22,12 @@ const Navbar = () => {
 
   const navLinks = [
     { name: 'Home', path: '/' },
-    { name: 'Journeys', path: '/trips' },
     { name: 'Explore', path: '/search' },
+    { name: 'Trips', path: '/trips' },
+    { name: 'Calendar', path: '/calendar' },
     { name: 'Community', path: '/community' },
     { name: 'Analytics', path: '/admin' },
+    { name: 'Profile', path: '/profile' },
   ];
 
   const displayName = user?.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : (user?.username || 'User');
@@ -56,21 +60,58 @@ const Navbar = () => {
         {/* Right Actions */}
         <div className={styles.actions}>
           {user ? (
-            <div className={styles.userMenu}>
-              <Link to="/profile" className={`${styles.profileBtn} ${isHeroTransparent ? styles.transparentProfileBtn : ''}`}>
-                <User size={14} style={{ color: isHeroTransparent ? '#FDE047' : 'var(--color-accent)' }} />
-                <span>{user.firstName || user.name || 'Profile'}</span>
-              </Link>
-              <Link to="/admin" className={`${styles.profileBtn} ${isHeroTransparent ? styles.transparentProfileBtn : ''}`}>
-                <BarChart3 size={14} style={{ color: 'var(--color-primary)' }} />
-                <span>Dashboard</span>
-              </Link>
+            <div className={styles.authLinks}>
+              {/* Currency Switcher — pill button */}
               <button
-                className={`${styles.planTripCta} ${isHeroTransparent ? styles.transparentCta : ''}`}
-                onClick={() => navigate('/trips/new')}
+                className={`${styles.currencyPill} ${isHeroTransparent ? styles.currencyPillTransparent : ''}`}
+                onClick={() => {
+                  const idx = availableCurrencies.indexOf(currency);
+                  setCurrency(availableCurrencies[(idx + 1) % availableCurrencies.length]);
+                }}
+                title="Click to switch currency"
               >
-                Plan Trip <Plus size={14} />
+                <span className={styles.currencySymbol}>
+                  {currency === 'INR' ? '₹' : currency === 'USD' ? '$' : '€'}
+                </span>
+                <span className={styles.currencyCode}>{currency}</span>
               </button>
+
+              <div className={styles.userMenu}>
+                <div 
+                  className={styles.avatarContainer} 
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                >
+                  {user.avatar ? (
+                    <img src={user.avatar} alt="Avatar" className={styles.avatar} />
+                  ) : (
+                    <div className={styles.avatarPlaceholder}>
+                      {user.firstName?.charAt(0) || user.name?.charAt(0) || 'U'}
+                    </div>
+                  )}
+                  <ChevronDown size={14} className={styles.dropdownIcon} />
+                </div>
+                
+                {dropdownOpen && (
+                  <div className={styles.dropdownMenu}>
+                    <div className={styles.dropdownHeader}>
+                      <span className={styles.dropdownName}>{user.firstName} {user.lastName}</span>
+                      <span className={styles.dropdownRole}>{user.role}</span>
+                    </div>
+                    <div className={styles.dropdownDivider} />
+                    <Link to="/profile" className={styles.dropdownItem} onClick={() => setDropdownOpen(false)}>
+                      <User size={16} /> Profile
+                    </Link>
+                    {user.role === 'admin' && (
+                      <Link to="/admin" className={styles.dropdownItem} onClick={() => setDropdownOpen(false)}>
+                        <ShieldAlert size={16} /> Admin Portal
+                      </Link>
+                    )}
+                    <button className={styles.dropdownItem} onClick={handleLogout}>
+                      <LogOut size={16} /> Logout
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           ) : (
             <div className={styles.userMenu}>

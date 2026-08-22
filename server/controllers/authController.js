@@ -139,23 +139,23 @@ export const login = async (req, res, next) => {
   }
 };
 
-// @desc    Get current user profile
+// @desc    Get user profile
 // @route   GET /api/auth/me
 // @access  Private
-export const getMe = async (req, res, next) => {
+export const getProfile = async (req, res, next) => {
   try {
-    const user = await User.findById(req.user._id).populate('savedCities');
-    res.json({
-      success: true,
-      data: { user },
-    });
-  } catch (err) {
-    next(err);
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+    res.json({ success: true, data: user });
+  } catch (error) {
+    next(error);
   }
 };
 
 // @desc    Update user profile
-// @route   PUT /api/auth/profile
+// @route   PUT /api/auth/me
 // @access  Private
 export const updateProfile = async (req, res, next) => {
   try {

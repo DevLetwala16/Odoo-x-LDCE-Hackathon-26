@@ -24,6 +24,8 @@ const ItineraryBuilderPage = () => {
   const [isAddActivityModalOpen, setIsAddActivityModalOpen] = useState(false);
   const [activeStopId, setActiveStopId] = useState(null);
   const [availableActivities, setAvailableActivities] = useState([]);
+  const [countryFilter, setCountryFilter] = useState('');
+  const [citySearch, setCitySearch] = useState('');
 
   const [newSection, setNewSection] = useState({
     cityId: '',
@@ -183,6 +185,13 @@ const ItineraryBuilderPage = () => {
 
   const stops = trip.stops || [];
 
+  const uniqueCountries = [...new Set(cities.map(c => c.country).filter(Boolean))].sort();
+  const filteredCities = cities.filter(c => {
+    const matchesCountry = countryFilter ? c.country === countryFilter : true;
+    const matchesSearch = citySearch ? c.name.toLowerCase().includes(citySearch.toLowerCase()) : true;
+    return matchesCountry && matchesSearch;
+  });
+
   return (
     <PageShell 
       sectionLabel="03 — EDIT ITINERARY" 
@@ -328,18 +337,48 @@ const ItineraryBuilderPage = () => {
           />
 
           <div className={styles.inputGroup}>
-            <label className={styles.label}>Select Destination City *</label>
-            <select 
-              value={newSection.cityId} 
-              onChange={(e) => setNewSection({ ...newSection, cityId: e.target.value })} 
+            <label className={styles.label}>Filter by Country</label>
+            <select
+              value={countryFilter}
+              onChange={(e) => {
+                setCountryFilter(e.target.value);
+                setNewSection({ ...newSection, cityId: '' });
+              }}
               className={styles.select}
-              required
             >
-              <option value="">-- Choose City --</option>
-              {cities.map(c => (
-                <option key={c._id} value={c._id}>{c.name}, {c.country}</option>
+              <option value="">All Countries</option>
+              {uniqueCountries.map(country => (
+                <option key={country} value={country}>{country}</option>
               ))}
             </select>
+          </div>
+
+          <div className={styles.inputGroup}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+              <label className={styles.label} style={{ margin: 0 }}>Select Destination City *</label>
+              <input 
+                type="text" 
+                placeholder="Search city name..." 
+                value={citySearch} 
+                onChange={(e) => setCitySearch(e.target.value)} 
+                className={styles.smallSearchInput}
+              />
+            </div>
+            
+            <div className={styles.cityGrid}>
+               {filteredCities.slice(0, 6).map(c => (
+                 <div 
+                   key={c._id} 
+                   className={`${styles.cityCard} ${newSection.cityId === c._id ? styles.cityCardActive : ''}`}
+                   onClick={() => setNewSection({ ...newSection, cityId: c._id })}
+                 >
+                   <div className={styles.cityCardName}>{c.name}</div>
+                   <div className={styles.cityCardCountry}>{c.country}</div>
+                 </div>
+               ))}
+               {filteredCities.length === 0 && <p className={styles.noCities}>No cities found.</p>}
+            </div>
+            {filteredCities.length > 6 && <p className={styles.moreCities}>+ {filteredCities.length - 6} more matching cities. Refine your search to see them.</p>}
           </div>
 
           <div className={styles.modalRow}>

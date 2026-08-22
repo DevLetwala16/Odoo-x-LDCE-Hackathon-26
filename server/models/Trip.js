@@ -18,9 +18,23 @@ const tripSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
+    status: {
+      type: String,
+      enum: ['planned', 'active', 'completed'],
+      default: 'planned'
+    },
     coverImage: {
       type: String,
-      default: '',
+      default: ''
+    },
+    isPublic: {
+      type: Boolean,
+      default: false
+    },
+    publicSlug: {
+      type: String,
+      unique: true,
+      sparse: true
     },
     startDate: {
       type: Date,

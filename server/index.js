@@ -14,6 +14,9 @@ import cityRoutes from './routes/cityRoutes.js';
 import budgetRoutes from './routes/budgetRoutes.js';
 import communityRoutes from './routes/communityRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
+import weatherRoutes from './routes/weatherRoutes.js';
+import sharingRoutes from './routes/sharingRoutes.js';
+import calendarRoutes from './routes/calendarRoutes.js';
 
 const app = express();
 
@@ -35,6 +38,9 @@ app.use('/api/cities',     cityRoutes);
 app.use('/api/budget',     budgetRoutes);
 app.use('/api/community',  communityRoutes);
 app.use('/api/admin',      adminRoutes);
+app.use('/api/weather',    weatherRoutes);
+app.use('/api/sharing',    sharingRoutes);
+app.use('/api/calendar',   calendarRoutes);
 
 // Central error handler (MUST be last middleware)
 app.use(errorHandler);
