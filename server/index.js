@@ -6,19 +6,19 @@ import { errorHandler } from './middleware/errorHandler.js';
 import { config } from './config/env.js';
 
 // Route imports (uncomment as routes are created)
-// import authRoutes from './routes/authRoutes.js';
-// import tripRoutes from './routes/tripRoutes.js';
-// import stopRoutes from './routes/stopRoutes.js';
-// import activityRoutes from './routes/activityRoutes.js';
-// import cityRoutes from './routes/cityRoutes.js';
-// import budgetRoutes from './routes/budgetRoutes.js';
-// import communityRoutes from './routes/communityRoutes.js';
-// import adminRoutes from './routes/adminRoutes.js';
+import authRoutes from './routes/authRoutes.js';
+import tripRoutes from './routes/tripRoutes.js';
+import stopRoutes from './routes/stopRoutes.js';
+import activityRoutes from './routes/activityRoutes.js';
+import cityRoutes from './routes/cityRoutes.js';
+import budgetRoutes from './routes/budgetRoutes.js';
+import communityRoutes from './routes/communityRoutes.js';
+import adminRoutes from './routes/adminRoutes.js';
 
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
 app.use(express.json());
 
 // Health check
@@ -27,13 +27,14 @@ app.get('/api/health', (req, res) => {
 });
 
 // Mount routers (uncomment as routes are created)
-// app.use('/api/auth',       authRoutes);
-// app.use('/api/trips',      tripRoutes);
-// app.use('/api/stops',      stopRoutes);
-// app.use('/api/activities', activityRoutes);
-// app.use('/api/cities',     cityRoutes);
-// app.use('/api/community',  communityRoutes);
-// app.use('/api/admin',      adminRoutes);
+app.use('/api/auth',       authRoutes);
+app.use('/api/trips',      tripRoutes);
+app.use('/api/stops',      stopRoutes);
+app.use('/api/activities', activityRoutes);
+app.use('/api/cities',     cityRoutes);
+app.use('/api/budget',     budgetRoutes);
+app.use('/api/community',  communityRoutes);
+app.use('/api/admin',      adminRoutes);
 
 // Central error handler (MUST be last middleware)
 app.use(errorHandler);

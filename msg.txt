@@ -1,0 +1,9 @@
+feat: complete phase 2 backend architecture and models
+
+- Created all 7 Mongoose models (User, Trip, Stop, Activity, Expense, City, CommunityPost)
+- Implemented full CRUD controllers and routes for all 8 API modules
+- Added cascade deletion logic for data integrity (User, Trip, Stop)
+- Capped pagination limits across all endpoints to prevent DoS vulnerabilities
+- Wired up all routes to Express server and secured CORS for frontend
+- Added database seed script with 20 cities and 100 activities
+- Created environment templates and updated .gitignore

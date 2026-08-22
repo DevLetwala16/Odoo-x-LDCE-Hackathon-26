@@ -54,7 +54,7 @@ Set up the monorepo structure, install all dependencies, configure the design sy
 - JWT sign helper (7d expiry, payload: `{ id, role }`)
 
 #### [MODIFY] [client/index.html](file:///d:/Project/odoo/client/index.html)
-- Add Inter font from Google Fonts, update `<title>` to "GlobeTrotter"
+- Add Inter font     from Google Fonts, update `<title>` to "GlobeTrotter"
 
 #### [MODIFY] [client/src/index.css](file:///d:/Project/odoo/client/src/index.css)
 - Replace with full design token system (all CSS custom properties from §6.1) + CSS reset

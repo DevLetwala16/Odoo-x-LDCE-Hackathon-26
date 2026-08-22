@@ -1,0 +1,60 @@
+import mongoose from 'mongoose';
+
+const communityPostSchema = new mongoose.Schema(
+  {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+      index: true,
+    },
+    trip: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Trip',
+      default: null,
+    },
+    activity: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Activity',
+      default: null,
+    },
+    title: {
+      type: String,
+      required: [true, 'Post title is required'],
+      trim: true,
+    },
+    content: {
+      type: String,
+      required: [true, 'Post content is required'],
+    },
+    images: [
+      {
+        type: String,
+      },
+    ],
+    tags: [
+      {
+        type: String,
+        lowercase: true,
+        trim: true,
+      },
+    ],
+    likes: {
+      type: Number,
+      default: 0,
+    },
+    likedBy: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
+  },
+  { timestamps: true }
+);
+
+// Text index for search
+communityPostSchema.index({ title: 'text', content: 'text', tags: 'text' });
+
+const CommunityPost = mongoose.model('CommunityPost', communityPostSchema);
+export default CommunityPost;
