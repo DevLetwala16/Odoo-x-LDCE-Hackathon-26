@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { User, Lock, Globe } from 'lucide-react';
+import { Globe } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import Button from '../components/common/Button';
 import Input from '../components/common/Input';
@@ -39,53 +39,59 @@ const LoginPage = () => {
 
   return (
     <div className={styles.container}>
-      <Card className={styles.loginCard}>
-        {/* Top Photo Avatar Circle (Wireframe Screen 1) */}
-        <div className={styles.photoCircleWrapper}>
-          <div className={styles.photoCircle}>
-            <User size={40} className={styles.avatarIcon} />
-            <span className={styles.photoLabel}>Photo</span>
-          </div>
+      {/* Left Panel: Hero Image & Branding */}
+      <div className={styles.leftPanel}>
+        <div className={styles.brandContainer}>
+          <Globe className={styles.brandIcon} />
+          <h1 className={styles.brandName}>GlobeTrotter</h1>
         </div>
+        <p className={styles.tagline}>
+          Your personal AI travel planner. Create custom itineraries, manage budgets, and explore the world with personalized recommendations.
+        </p>
+      </div>
 
-        <h1 className={styles.brandTitle}>GlobeTrotter</h1>
-        <p className={styles.subtitle}>Sign in to manage and plan your trips</p>
-        
-        <form onSubmit={handleSubmit} className={styles.form}>
-          <Input
-            label="Username"
-            name="username"
-            type="text"
-            value={formData.username}
-            onChange={handleChange}
-            placeholder="Enter username"
-            required
-          />
+      {/* Right Panel: Login Form */}
+      <div className={styles.rightPanel}>
+        <Card className={styles.loginCard}>
+          <h2 className={styles.title}>Welcome back</h2>
+          <p className={styles.subtitle}>Sign in to manage and plan your trips</p>
           
-          <Input
-            label="Password"
-            name="password"
-            type="password"
-            value={formData.password}
-            onChange={handleChange}
-            placeholder="Enter password"
-            required
-          />
+          <form onSubmit={handleSubmit} className={styles.form}>
+            <Input
+              label="Username"
+              name="username"
+              type="text"
+              value={formData.username}
+              onChange={handleChange}
+              placeholder="Enter username"
+              required
+            />
+            
+            <Input
+              label="Password"
+              name="password"
+              type="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Enter password"
+              required
+            />
+            
+            <Button 
+              type="submit" 
+              variant="accent" 
+              className={styles.submitBtn}
+              disabled={loading}
+            >
+              {loading ? 'Signing in...' : 'Login'}
+            </Button>
+          </form>
           
-          <Button 
-            type="submit" 
-            variant="accent" 
-            className={styles.submitBtn}
-            disabled={loading}
-          >
-            {loading ? 'Signing in...' : 'Login'}
-          </Button>
-        </form>
-        
-        <div className={styles.footer}>
-          <p>Don't have an account? <Link to="/register" className={styles.link}>Register here</Link></p>
-        </div>
-      </Card>
+          <div className={styles.footer}>
+            <p>Don't have an account? <Link to="/register" className={styles.link}>Register here</Link></p>
+          </div>
+        </Card>
+      </div>
     </div>
   );
 };
