@@ -7,29 +7,30 @@
 /* ── Design Tokens ── */
 :root {
   /* ── Backgrounds ── */
-  --color-bg-page:        #FAF9F6;  /* warm off-white */
+  --color-bg-page:        #F9F9FF;  /* warm off-white / serene background */
   --color-bg-surface:     #FFFFFF;  /* card surfaces */
-  --color-bg-sunken:      #F0EEE6;  /* nested sections, inputs, dividers */
+  --color-bg-sunken:      #F0F3FF;  /* nested sections, inputs, dividers */
 
   /* ── Primary (ocean teal) ── */
   --color-primary:        #0E7C86;  /* navbar, active states, links, icons */
-  --color-primary-hover:  #0B646D;  /* button hover / active */
+  --color-primary-hover:  #0B646D;  /* button hover / active (Deep Sea) */
+  --color-primary-light:  #E7EEFF;  /* light container backgrounds */
 
   /* ── Accent / CTA (coral-orange) — ONE per view ── */
-  --color-accent:         #F2703C;  /* primary action buttons ONLY */
-  --color-accent-hover:   #D65E2C;
+  --color-accent:         #F2703C;  /* primary action buttons ONLY (Sunset Orange) */
+  --color-accent-hover:   #D65E2C;  /* slightly darker for hover */
 
   /* ── Text ── */
-  --color-text-primary:   #2B2D33;  /* headings, body */
-  --color-text-secondary: #6B6E76;  /* captions, meta, timestamps */
+  --color-text-primary:   #111C2D;  /* headings, body (Dark Slate) */
+  --color-text-secondary: #64748B;  /* captions, meta, timestamps */
 
   /* ── Borders ── */
-  --color-border:         #E4E1D8;  /* hairline borders on cards & inputs */
+  --color-border:         #BEC8CA;  /* hairline borders on cards & inputs */
 
   /* ── Semantic (ONLY for status meaning) ── */
   --color-success:        #2FA36B;  /* under-budget, confirmations */
-  --color-warning:        #E0574C;  /* over-budget, delete, destructive */
-  --color-info:           #DCEFF0;  /* badges, filter chips, tags */
+  --color-warning:        #BA1A1A;  /* over-budget, error */
+  --color-info:           #D8E3FB;  /* badges, filter chips, tags */
 
   /* ── Typography ── */
   --font-family:          'Inter', 'Segoe UI', system-ui, sans-serif;

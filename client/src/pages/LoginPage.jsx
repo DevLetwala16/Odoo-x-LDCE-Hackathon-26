@@ -48,7 +48,7 @@ const LoginPage = () => {
       </div>
       
       <div className={styles.rightPanel}>
-        <Card className={styles.loginCard}>
+        <div className={styles.loginCard}>
           <h2 className={styles.title}>Welcome Back</h2>
           <p className={styles.subtitle}>Sign in to continue planning your trips</p>
           
@@ -86,7 +86,7 @@ const LoginPage = () => {
           <div className={styles.footer}>
             <p>Don't have an account? <Link to="/register" className={styles.link}>Sign up</Link></p>
           </div>
-        </Card>
+        </div>
       </div>
     </div>
   );

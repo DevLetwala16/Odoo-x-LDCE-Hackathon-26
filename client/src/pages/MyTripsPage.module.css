@@ -1,8 +1,14 @@
+/* ═══════════════════════════════════════════════════
+   My Trips Page — Serene Horizon Design System
+   Premium trip cards with cover images, status badges,
+   hover-lift with image zoom
+   ═══════════════════════════════════════════════════ */
+
 .header {
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
-  margin-bottom: var(--space-lg);
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
 }
 
 @media (min-width: 600px) {
@@ -13,42 +19,47 @@
   }
 }
 
+/* ── Tabs ── */
 .tabs {
   display: flex;
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-xs);
+  background-color: #FFFFFF;
+  border: 1px solid rgba(190, 200, 202, 0.3);
+  border-radius: 12px;
+  padding: 4px;
   overflow-x: auto;
+  box-shadow: 0 2px 8px rgba(30, 41, 59, 0.04);
 }
 
 .tab {
-  padding: var(--space-sm) var(--space-lg);
+  padding: 10px 24px;
   background: none;
   border: none;
-  border-radius: var(--radius-md);
-  font-size: var(--text-sm);
+  border-radius: 8px;
+  font-size: 0.875rem;
   font-weight: 500;
   color: var(--color-text-secondary);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
   white-space: nowrap;
 }
 
 .tab:hover {
-  color: var(--color-text);
+  color: var(--color-text-primary);
+  background-color: rgba(14, 124, 134, 0.04);
 }
 
 .activeTab {
   background-color: var(--color-primary-light);
   color: var(--color-primary);
   font-weight: 600;
+  box-shadow: 0 1px 3px rgba(14, 124, 134, 0.1);
 }
 
+/* ── Trip Card Grid ── */
 .grid {
   display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  gap: var(--space-lg);
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
 }
 
 @media (min-width: 640px) {
@@ -67,85 +78,127 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #FFFFFF;
+  box-shadow: 0 4px 20px rgba(30, 41, 59, 0.05);
+  border: 1px solid rgba(190, 200, 202, 0.2);
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.tripCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 36px rgba(30, 41, 59, 0.1);
 }
 
 .tripCover {
-  height: 160px;
+  height: 200px;
   background-size: cover;
   background-position: center;
   position: relative;
+  overflow: hidden;
+}
+
+.tripCover::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(17, 28, 45, 0.4) 0%, transparent 60%);
+  z-index: 1;
+}
+
+.tripCard:hover .tripCover {
+  /* Image zoom handled by inner element if needed */
 }
 
 .statusBadge {
   position: absolute;
-  top: var(--space-sm);
-  right: var(--space-sm);
+  top: 12px;
+  right: 12px;
+  z-index: 2;
 }
 
 .tripContent {
-  padding: var(--space-md);
+  padding: var(--space-5);
   display: flex;
   flex-direction: column;
   flex: 1;
 }
 
 .tripName {
-  margin: 0 0 var(--space-sm) 0;
-  font-size: var(--text-lg);
+  margin: 0 0 8px 0;
+  font-size: 1.0625rem;
   font-weight: 600;
-  color: var(--color-text);
+  color: var(--color-text-primary);
+  letter-spacing: -0.01em;
 }
 
 .tripDetails {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-md);
-  margin-bottom: var(--space-sm);
+  gap: var(--space-4);
+  margin-bottom: 8px;
 }
 
 .detailItem {
   display: flex;
   align-items: center;
-  gap: var(--space-xs);
+  gap: 6px;
   color: var(--color-text-secondary);
-  font-size: var(--text-sm);
+  font-size: 0.8125rem;
 }
 
 .tripDescription {
   margin: 0;
   color: var(--color-text-secondary);
-  font-size: var(--text-sm);
-  line-height: 1.5;
+  font-size: 0.8125rem;
+  line-height: 1.6;
   flex: 1;
 }
 
+/* ── Empty State ── */
 .emptyState {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: var(--space-3xl) var(--space-md);
+  padding: 80px var(--space-6);
   text-align: center;
-  background-color: var(--color-surface);
-  border-radius: var(--radius-lg);
-  border: 1px dashed var(--color-border);
+  background-color: #FFFFFF;
+  border-radius: 16px;
+  border: 2px dashed rgba(190, 200, 202, 0.35);
+  box-shadow: 0 4px 20px rgba(30, 41, 59, 0.03);
 }
 
 .emptyIcon {
-  color: var(--color-primary-light);
-  margin-bottom: var(--space-md);
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-primary-light), rgba(14, 124, 134, 0.08));
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-5);
 }
 
 .emptyState h3 {
-  margin: 0 0 var(--space-xs) 0;
-  color: var(--color-text);
+  margin: 0 0 8px 0;
+  color: var(--color-text-primary);
+  font-size: 1.25rem;
+  font-weight: 600;
 }
 
 .emptyState p {
   color: var(--color-text-secondary);
-  margin: 0 0 var(--space-lg) 0;
+  margin: 0 0 var(--space-6) 0;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  max-width: 400px;
 }
 
 .emptyBtn {
-  margin-top: var(--space-sm);
+  margin-top: var(--space-2);
 }

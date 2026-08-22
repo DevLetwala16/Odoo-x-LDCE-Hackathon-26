@@ -1,19 +1,29 @@
+/* ═══════════════════════════════════════════════════
+   Login Page — Serene Horizon Design System
+   Split-screen layout with hero image + login card
+   ═══════════════════════════════════════════════════ */
+
 .container {
   display: flex;
   min-height: 100vh;
-  background-color: var(--color-background);
+  background-color: #F9F9FF;
 }
 
+/* ── Left Panel: Hero Image ── */
 .leftPanel {
   display: none;
   flex: 1;
-  background-color: var(--color-primary);
-  color: #FFFFFF;
-  padding: var(--space-2xl);
+  position: relative;
+  overflow: hidden;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
+  background-image:
+    linear-gradient(135deg, rgba(11, 100, 109, 0.85), rgba(14, 124, 134, 0.7)),
+    url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=1200');
+  background-size: cover;
+  background-position: center;
 }
 
 @media (min-width: 768px) {
@@ -25,77 +35,110 @@
 .brandContainer {
   display: flex;
   align-items: center;
-  gap: var(--space-md);
-  margin-bottom: var(--space-lg);
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+  position: relative;
+  z-index: 1;
 }
 
 .brandIcon {
-  color: var(--color-accent);
+  color: #FFFFFF;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 .brandName {
   font-size: 3rem;
-  font-weight: 800;
+  font-weight: 700;
   margin: 0;
+  color: #FFFFFF;
+  letter-spacing: -0.02em;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .tagline {
-  font-size: var(--text-xl);
-  opacity: 0.9;
+  font-size: 1.125rem;
+  color: rgba(255, 255, 255, 0.9);
   max-width: 400px;
+  line-height: 1.7;
+  position: relative;
+  z-index: 1;
+  font-weight: 300;
+  letter-spacing: 0.02em;
 }
 
+/* ── Right Panel: Login Form ── */
 .rightPanel {
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: var(--space-md);
+  padding: var(--space-6);
+  background-color: #FFFFFF;
 }
 
 .loginCard {
   width: 100%;
-  max-width: 450px;
-  padding: var(--space-xl);
+  max-width: 440px;
+  padding: var(--space-10);
+  border: none;
+  box-shadow: none;
+  background: transparent;
+}
+
+@media (max-width: 767px) {
+  .loginCard {
+    padding: var(--space-6);
+    box-shadow: 0 4px 20px rgba(30, 41, 59, 0.05);
+    background: #FFFFFF;
+    border-radius: 16px;
+  }
 }
 
 .title {
-  font-size: var(--text-2xl);
-  font-weight: bold;
-  color: var(--color-text);
-  margin: 0 0 var(--space-xs) 0;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0 0 6px 0;
   text-align: center;
+  letter-spacing: -0.01em;
 }
 
 .subtitle {
   color: var(--color-text-secondary);
   text-align: center;
-  margin-bottom: var(--space-xl);
+  margin-bottom: var(--space-8);
+  font-size: 0.9375rem;
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
+  gap: var(--space-5);
 }
 
 .submitBtn {
-  margin-top: var(--space-md);
+  margin-top: var(--space-2);
+  width: 100%;
+  padding: 14px 24px;
+  font-size: 1rem;
+  border-radius: var(--radius-md);
 }
 
 .footer {
-  margin-top: var(--space-xl);
+  margin-top: var(--space-8);
   text-align: center;
   color: var(--color-text-secondary);
-  font-size: var(--text-sm);
+  font-size: 0.875rem;
 }
 
 .link {
   color: var(--color-primary);
   text-decoration: none;
   font-weight: 600;
+  transition: color 0.2s ease;
 }
 
 .link:hover {
+  color: var(--color-primary-hover);
   text-decoration: underline;
 }

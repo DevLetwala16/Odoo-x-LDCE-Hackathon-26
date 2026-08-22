@@ -1,27 +1,47 @@
+/* ═══════════════════════════════════════════════════
+   Navbar — Serene Horizon Design System
+   Glassmorphism sticky header with backdrop blur
+   ═══════════════════════════════════════════════════ */
+
 .navbar {
-  background-color: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
   position: sticky;
   top: 0;
   z-index: 50;
-  box-shadow: var(--shadow-sm);
+  background-color: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(190, 200, 202, 0.3);
+  box-shadow: 0 1px 3px rgba(30, 41, 59, 0.04);
+  transition: box-shadow var(--transition-normal);
 }
 
 .container {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 var(--space-md);
-  height: 64px;
+  padding: 0 var(--space-6);
+  height: 68px;
   max-width: 1200px;
   margin: 0 auto;
+}
+
+@media (max-width: 767px) {
+  .container {
+    padding: 0 var(--space-4);
+  }
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: var(--space-xs);
+  gap: var(--space-2);
   text-decoration: none;
+  color: var(--color-primary);
+  transition: transform 0.2s ease;
+}
+
+.brand:hover {
+  transform: scale(1.02);
   color: var(--color-primary);
 }
 
@@ -30,14 +50,15 @@
 }
 
 .brandText {
-  font-size: var(--text-lg);
-  font-weight: bold;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
 .desktopNav {
   display: none;
   align-items: center;
-  gap: var(--space-md);
+  gap: var(--space-1);
 }
 
 @media (min-width: 768px) {
@@ -49,29 +70,33 @@
 .navLink {
   display: flex;
   align-items: center;
-  gap: var(--space-xs);
+  gap: 6px;
   color: var(--color-text-secondary);
   text-decoration: none;
-  padding: var(--space-xs) var(--space-sm);
+  padding: 8px 14px;
   border-radius: var(--radius-md);
-  transition: background-color 0.2s, color 0.2s;
-  font-weight: 500;
+  transition: all 0.2s ease;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
 }
 
 .navLink:hover {
-  background-color: var(--color-background);
+  background-color: var(--color-primary-light);
   color: var(--color-primary);
 }
 
 .navLink.active {
   color: var(--color-primary);
   background-color: var(--color-primary-light);
+  border-bottom: 2px solid var(--color-primary);
 }
 
+/* ── User Menu ── */
 .userMenu {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
+  gap: var(--space-3);
 }
 
 .profileDropdown {
@@ -83,80 +108,108 @@
   border: none;
   cursor: pointer;
   padding: 0;
+  transition: transform 0.15s ease;
+}
+
+.profileBtn:hover {
+  transform: scale(1.05);
+}
+
+.profileBtn:active {
+  transform: scale(0.95);
 }
 
 .avatar {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  background-color: var(--color-primary);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-hover));
   color: #FFFFFF;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
+  font-weight: 700;
+  font-size: 0.875rem;
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 2px 8px rgba(30, 41, 59, 0.12);
 }
 
+/* ── Dropdown ── */
 .dropdownMenu {
   position: absolute;
-  top: 100%;
+  top: calc(100% + 8px);
   right: 0;
-  margin-top: var(--space-xs);
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-md);
-  min-width: 200px;
+  background-color: #FFFFFF;
+  border: 1px solid rgba(190, 200, 202, 0.4);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 10px 40px rgba(30, 41, 59, 0.12);
+  min-width: 220px;
   overflow: hidden;
+  animation: dropdownSlideIn 0.15s ease-out;
+}
+
+@keyframes dropdownSlideIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .userInfo {
-  padding: var(--space-sm);
+  padding: var(--space-3) var(--space-4);
 }
 
 .userName {
-  font-weight: bold;
-  color: var(--color-text);
+  font-weight: 700;
+  color: var(--color-text-primary);
   margin: 0;
+  font-size: 0.9375rem;
 }
 
 .userEmail {
-  font-size: var(--text-sm);
+  font-size: 0.8125rem;
   color: var(--color-text-secondary);
-  margin: 0;
+  margin: 2px 0 0 0;
 }
 
 .dropdownDivider {
   height: 1px;
-  background-color: var(--color-border);
+  background-color: rgba(190, 200, 202, 0.3);
 }
 
 .dropdownItem {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
+  gap: var(--space-3);
   width: 100%;
-  padding: var(--space-sm);
+  padding: 10px var(--space-4);
   background: none;
   border: none;
   text-align: left;
   cursor: pointer;
-  color: var(--color-text);
+  color: var(--color-text-primary);
   text-decoration: none;
-  font-size: var(--text-sm);
+  font-size: 0.875rem;
+  transition: background-color 0.15s ease;
 }
 
 .dropdownItem:hover {
-  background-color: var(--color-background);
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
 }
 
+/* ── Mobile ── */
 .mobileMenuBtn {
   background: none;
   border: none;
-  color: var(--color-text);
+  color: var(--color-text-primary);
   cursor: pointer;
-  padding: var(--space-xs);
+  padding: 6px;
+  border-radius: var(--radius-md);
   display: block;
+  transition: background-color 0.15s ease;
+}
+
+.mobileMenuBtn:hover {
+  background-color: var(--color-primary-light);
 }
 
 @media (min-width: 768px) {
@@ -166,10 +219,11 @@
 }
 
 .mobileNav {
-  border-top: 1px solid var(--color-border);
-  padding: var(--space-sm) 0;
+  border-top: 1px solid rgba(190, 200, 202, 0.3);
+  padding: var(--space-2) 0;
   display: flex;
   flex-direction: column;
+  background-color: rgba(255, 255, 255, 0.95);
 }
 
 @media (min-width: 768px) {
@@ -181,27 +235,33 @@
 .mobileNavLink {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-sm) var(--space-md);
-  color: var(--color-text);
+  gap: var(--space-3);
+  padding: 12px var(--space-6);
+  color: var(--color-text-primary);
   text-decoration: none;
   font-weight: 500;
+  transition: all 0.15s ease;
 }
 
 .mobileNavLink:hover, .mobileNavLink.active {
-  background-color: var(--color-background);
+  background-color: var(--color-primary-light);
   color: var(--color-primary);
 }
 
 .loginBtn {
-  background-color: var(--color-primary);
+  background-color: var(--color-accent);
   color: #FFFFFF;
   text-decoration: none;
-  padding: var(--space-xs) var(--space-md);
-  border-radius: var(--radius-md);
-  font-weight: bold;
+  padding: 8px 20px;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  box-shadow: 0 2px 8px rgba(242, 112, 60, 0.25);
+  transition: all 0.2s ease;
 }
 
 .loginBtn:hover {
-  background-color: var(--color-primary-dark);
+  background-color: var(--color-accent-hover);
+  transform: scale(1.02);
+  color: #FFFFFF;
 }
