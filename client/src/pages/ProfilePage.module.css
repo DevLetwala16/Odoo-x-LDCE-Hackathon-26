@@ -1,11 +1,13 @@
 /* ═══════════════════════════════════════════════════
-   Profile Page — ODOO-LDCE Editorial Style
+   Profile Page & Personal Dashboard Styles
    ═══════════════════════════════════════════════════ */
 
 .container {
   display: flex;
   flex-direction: column;
   gap: var(--space-8);
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .profileHeaderCard {
@@ -13,7 +15,7 @@
   flex-direction: column;
   gap: var(--space-6);
   padding: var(--space-8);
-  border-radius: var(--radius-2xl);
+  border-radius: var(--radius-xl);
   background-color: var(--color-bg-surface);
   border: 1px solid var(--color-border);
 }
@@ -41,11 +43,12 @@
   width: 96px;
   height: 96px;
   border-radius: 50%;
-  background-color: var(--color-sand);
-  color: var(--color-ink);
+  background-color: var(--color-bg-sunken);
+  color: var(--color-text-primary);
   display: flex;
   align-items: center;
   justify-content: center;
+  border: 2px solid var(--color-border);
 }
 
 .userDetailsContent {
@@ -64,10 +67,9 @@
 }
 
 .userName {
-  font-family: var(--font-display);
-  font-size: 2rem;
-  font-weight: 400;
-  color: var(--color-ink);
+  font-size: 1.75rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
   margin: 0;
 }
 
@@ -101,6 +103,557 @@
   margin: 0;
 }
 
+.editForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.label {
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.textarea {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  background-color: var(--color-bg-sunken);
+  color: var(--color-text-primary);
+  font-family: inherit;
+  resize: vertical;
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+/* ── Real Analytics Section ── */
+.analyticsSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.sectionHeaderBetween {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.accentLabel {
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: 2px;
+}
+
+.sectionTitle {
+  font-size: 1.5rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+/* ── 3 Main Navigation Tabs Row (Matching Screen 12) ── */
+.mainNavTabsRow {
+  display: flex;
+  gap: var(--space-2);
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: var(--space-2);
+  margin-bottom: var(--space-4);
+  overflow-x: auto;
+}
+
+.mainNavTabBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--color-bg-sunken);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 10px 18px;
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+}
+
+.mainNavTabBtn:hover {
+  background-color: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  border-color: var(--color-primary);
+}
+
+.activeMainNavTabBtn {
+  background-color: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  border-color: var(--color-border);
+  border-bottom: 2px solid var(--color-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.tabContentBlock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+/* ── Destination Cards Grid (Tab 2) ── */
+.destinationCardsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--space-4);
+}
+
+.cityCardMini {
+  padding: 0;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-surface);
+  display: flex;
+  flex-direction: column;
+}
+
+.cityCardImg {
+  height: 120px;
+  background-size: cover;
+  background-position: center;
+}
+
+.cityCardInfo {
+  padding: var(--space-3) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cityNameText {
+  font-size: 1rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.citySubText {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.cityCardFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 6px;
+  font-size: 0.75rem;
+}
+
+.cityRatingBadge {
+  color: var(--color-accent);
+  font-weight: var(--font-weight-bold);
+}
+
+.cityCostBadge {
+  color: var(--color-text-secondary);
+}
+
+/* ── Activities Cards Grid (Tab 3) ── */
+.activitiesCardsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--space-4);
+}
+
+.activityCardMini {
+  padding: var(--space-4);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-surface);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.activityCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.actTitleText {
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.actRatingStar {
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-bold);
+  color: #F39C12;
+  white-space: nowrap;
+}
+
+.actCityText {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+}
+
+.actCardFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.actCategoryBadge {
+  font-size: 0.6875rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-secondary);
+  background: var(--color-bg-sunken);
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+}
+
+.actCostBadge {
+  font-size: 0.8125rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
+
+/* ── Custom Rich Hover Tooltips ── */
+.customTooltip {
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-3) var(--space-4);
+  box-shadow: var(--shadow-md);
+  min-width: 200px;
+}
+
+.tooltipTitle {
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin: 0 0 6px 0;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 4px;
+}
+
+.tooltipGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.75rem;
+  color: var(--color-text-primary);
+}
+
+.tooltipItem {
+  font-size: 0.8125rem;
+  color: var(--color-text-primary);
+  margin: 2px 0;
+}
+
+.tooltipSub {
+  font-size: 0.6875rem;
+  color: var(--color-text-secondary);
+  margin-top: 2px;
+}
+
+.savingsText {
+  color: var(--color-success);
+  font-weight: var(--font-weight-semibold);
+}
+
+.deficitText {
+  color: var(--color-warning);
+  font-weight: var(--font-weight-semibold);
+}
+
+.popoverTripName {
+  font-size: 0.6875rem;
+  color: var(--color-text-secondary);
+  margin-top: 2px;
+}
+
+/* ── KPI Grid ── */
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-4);
+}
+
+.kpiCard {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+}
+
+.kpiIconWrap {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.kpiLabel {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 2px;
+}
+
+.kpiValue {
+  font-size: 1.35rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+/* ── Chart Card ── */
+.chartCard {
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+}
+
+.chartHeaderRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
+.chartCardTitle {
+  font-size: 1.125rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 4px 0;
+}
+
+.chartCardSubtitle {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.intervalButtons {
+  display: flex;
+  gap: 6px;
+  background-color: var(--color-bg-sunken);
+  padding: 4px;
+  border-radius: var(--radius-full);
+}
+
+.intervalBtn {
+  background: none;
+  border: none;
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.activeIntervalBtn {
+  background-color: var(--color-primary);
+  color: #FFFFFF;
+  box-shadow: var(--shadow-sm);
+}
+
+.chartBody {
+  width: 100%;
+  min-height: 280px;
+}
+
+.noDataText {
+  padding: var(--space-8);
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+}
+
+/* ── Two Column Charts Grid ── */
+.twoColumnGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+}
+
+@media (min-width: 860px) {
+  .twoColumnGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.pieContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.categoryLegendList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  justify-content: center;
+  width: 100%;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8125rem;
+  color: var(--color-text-primary);
+}
+
+.colorDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.legendName {
+  font-weight: var(--font-weight-medium);
+}
+
+.legendAmount {
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-secondary);
+}
+
+/* ── User Destinations Map Pins Area ── */
+.userMapArea {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-top: var(--space-3);
+}
+
+.userMapPinsGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.mapPinItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: var(--color-bg-sunken);
+  border: 1px solid var(--color-border);
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.mapPinItem:hover {
+  border-color: var(--color-primary);
+  background-color: rgba(14, 124, 134, 0.1);
+}
+
+.pinDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--color-accent);
+}
+
+.pinLabel {
+  font-size: 0.8125rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.pinCostTag {
+  font-size: 0.6875rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+  background: rgba(14, 124, 134, 0.1);
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+}
+
+.hoverCostPopover {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background-color: var(--color-bg-sunken);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  align-items: center;
+}
+
+.hoverCityImg {
+  width: 50px;
+  height: 50px;
+  border-radius: var(--radius-md);
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+}
+
+.hoverCityDetails h4 {
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin: 0 0 2px 0;
+}
+
+.popoverCost {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+/* ── Trips Section ── */
 .tripsSection {
   display: flex;
   flex-direction: column;
@@ -113,14 +666,6 @@
   justify-content: space-between;
   padding-bottom: var(--space-3);
   border-bottom: 1px solid var(--color-border);
-}
-
-.sectionTitle {
-  font-family: var(--font-display);
-  font-size: 1.75rem;
-  font-weight: 400;
-  color: var(--color-ink);
-  margin: 0;
 }
 
 .tripsGrid {
@@ -142,7 +687,7 @@
 }
 
 .tripCard {
-  border-radius: var(--radius-2xl);
+  border-radius: var(--radius-xl);
   overflow: hidden;
   border: 1px solid var(--color-border);
   background: var(--color-bg-surface);
@@ -165,10 +710,9 @@
 }
 
 .tripTitle {
-  font-family: var(--font-display);
-  font-size: 1.375rem;
-  font-weight: 400;
-  color: var(--color-ink);
+  font-size: 1.125rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
   margin: 0;
 }
 
@@ -183,8 +727,11 @@
 .tripBudget {
   font-size: 0.8125rem;
   color: var(--color-text-secondary);
-
   font-weight: var(--font-weight-semibold);
+}
+
+.viewBtn {
+  margin-top: 4px;
 }
 
 .emptyText {

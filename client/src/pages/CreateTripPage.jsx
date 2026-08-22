@@ -44,13 +44,13 @@ const CreateTripPage = () => {
   const handleSelectPlace = (cityId) => {
     setFormData((prev) => ({ ...prev, selectedPlaceId: cityId }));
     const selectedCity = cities.find(c => c._id === cityId);
-    toast.success(`Selected ${selectedCity?.name || 'City'} as primary destination`);
+    toast.success(`Selected ${selectedCity?.name || 'City'} as destination`);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.name || !formData.startDate || !formData.endDate) {
-      toast.error('Please fill in Trip Name, Start Date, and End Date');
+      toast.error('Please fill in Trip Title, Start Date, and End Date');
       return;
     }
 
@@ -77,7 +77,7 @@ const CreateTripPage = () => {
         try {
           await stopService.createStop(trip._id, {
             city: formData.selectedPlaceId,
-            title: 'Stop 1',
+            title: 'Section 1',
             description: `Exploration in ${cities.find(c => c._id === formData.selectedPlaceId)?.name || 'destination'}`,
             arrivalDate: formData.startDate,
             departureDate: formData.endDate,
@@ -100,17 +100,18 @@ const CreateTripPage = () => {
 
   return (
     <PageShell 
-      sectionLabel="02 — NEW JOURNEY" 
-      title="Design a trip"
-      subtitle="Set dates, total budget, and choose your starting regional destinations."
+      sectionLabel="Screen 4" 
+      title="Create a New Trip"
+      subtitle="Plan a new trip and select recommended places to visit"
     >
       <div className={styles.container}>
+        {/* ── Screen 4: Plan a new trip Form Card ── */}
         <Card className={styles.formCard}>
-          <h2 className={styles.panelTitle}>Trip Details</h2>
+          <h2 className={styles.panelTitle}>Plan a new trip</h2>
           
           <form onSubmit={handleSubmit} className={styles.form}>
             <Input 
-              label="Trip Name *" 
+              label="Trip Title *" 
               name="name" 
               value={formData.name} 
               onChange={handleChange} 
@@ -119,7 +120,7 @@ const CreateTripPage = () => {
             />
 
             <div className={styles.inputGroup}>
-              <label className={styles.label}>Select Starting Destination</label>
+              <label className={styles.label}>Select a Place</label>
               <select 
                 name="selectedPlaceId" 
                 value={formData.selectedPlaceId} 
@@ -175,10 +176,10 @@ const CreateTripPage = () => {
           </form>
         </Card>
 
-        {/* Suggestions Section */}
+        {/* ── Screen 4: Suggestions for Places to Visit / Activities in pattern ── */}
         <div className={styles.suggestionsSection}>
           <h3 className={styles.suggestionsTitle}>
-            Recommended Regional Destinations
+            Suggestions for Places to Visit / Activities in pattern
           </h3>
 
           <div className={styles.suggestionsGrid}>
@@ -210,6 +211,7 @@ const CreateTripPage = () => {
           </div>
         </div>
 
+        {/* Submit Action Button */}
         <div className={styles.actionRow}>
           <Button 
             variant="primary" 
@@ -218,7 +220,7 @@ const CreateTripPage = () => {
             disabled={loading}
             className={styles.submitBtn}
           >
-            {loading ? 'Creating...' : 'Create Trip & Customize Stops'} <ArrowRight size={16} />
+            {loading ? 'Creating...' : 'Create Trip & Customize Sections'} <ArrowRight size={16} />
           </Button>
         </div>
       </div>

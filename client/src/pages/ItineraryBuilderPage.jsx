@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { Plus, GripVertical, Trash2, MapPin, Calendar, DollarSign, ArrowUp, ArrowDown, Check, ArrowRight } from 'lucide-react';
+import { Plus, GripVertical, Trash2, MapPin, Calendar, DollarSign, ArrowUp, ArrowDown } from 'lucide-react';
 import PageShell from '../components/layout/PageShell';
 import Button from '../components/common/Button';
 import Card from '../components/common/Card';
@@ -25,15 +25,17 @@ const ItineraryBuilderPage = () => {
   const [activeStopId, setActiveStopId] = useState(null);
   const [availableActivities, setAvailableActivities] = useState([]);
 
+  // New Section form state
   const [newSection, setNewSection] = useState({
     cityId: '',
     title: '',
-    description: 'All necessary details about this stop, including hotel bookings and exploration goals.',
+    description: 'All the necessary information about this section. This includes anything like hotel booking, visit or any other activity',
     arrivalDate: '',
     departureDate: '',
     sectionBudget: '',
   });
 
+  // Custom Activity form state
   const [newActivity, setNewActivity] = useState({
     name: '',
     category: 'sightseeing',
@@ -53,12 +55,13 @@ const ItineraryBuilderPage = () => {
       setTrip(fetchedTrip);
       setCities(citiesData?.cities || citiesData || []);
 
+      // If trip has no stops, set default dates from trip
       if (fetchedTrip) {
         setNewSection(prev => ({
           ...prev,
           arrivalDate: fetchedTrip.startDate?.split('T')[0] || '',
           departureDate: fetchedTrip.endDate?.split('T')[0] || '',
-          title: `Stop ${(fetchedTrip.stops?.length || 0) + 1}`,
+          title: `Section ${(fetchedTrip.stops?.length || 0) + 1}`,
         }));
       }
     } catch (error) {
@@ -82,29 +85,29 @@ const ItineraryBuilderPage = () => {
     try {
       await stopService.createStop(id, {
         city: newSection.cityId,
-        title: newSection.title || `Stop ${(trip.stops?.length || 0) + 1}`,
+        title: newSection.title || `Section ${(trip.stops?.length || 0) + 1}`,
         description: newSection.description,
         arrivalDate: newSection.arrivalDate,
         departureDate: newSection.departureDate,
         order: trip.stops?.length || 0,
         sectionBudget: Number(newSection.sectionBudget) || 0,
       });
-      toast.success('New stop added!');
+      toast.success('New section added!');
       setIsAddSectionModalOpen(false);
       fetchTripData();
     } catch (error) {
-      toast.error(error.message || 'Failed to add stop');
+      toast.error(error.message || 'Failed to add section');
     }
   };
 
   const handleDeleteSection = async (stopId) => {
-    if (!window.confirm('Are you sure you want to remove this stop?')) return;
+    if (!window.confirm('Are you sure you want to remove this section?')) return;
     try {
       await stopService.deleteStop(stopId);
-      toast.success('Stop deleted');
+      toast.success('Section deleted');
       fetchTripData();
     } catch (error) {
-      toast.error(error.message || 'Failed to delete stop');
+      toast.error(error.message || 'Failed to delete section');
     }
   };
 
@@ -119,9 +122,9 @@ const ItineraryBuilderPage = () => {
     try {
       await stopService.reorderStops(id, reordered.map(s => s._id));
       setTrip({ ...trip, stops: reordered });
-      toast.success('Stops reordered');
+      toast.success('Sections reordered');
     } catch (error) {
-      toast.error('Failed to reorder stops');
+      toast.error('Failed to reorder sections');
       fetchTripData();
     }
   };
@@ -153,7 +156,7 @@ const ItineraryBuilderPage = () => {
     if (!activeStopId) return;
     try {
       await activityService.addActivityToStop(activeStopId, activityData);
-      toast.success('Activity added to stop!');
+      toast.success('Activity added to section!');
       setIsAddActivityModalOpen(false);
       setNewActivity({
         name: '',
@@ -178,41 +181,42 @@ const ItineraryBuilderPage = () => {
     }
   };
 
-  if (loading) return <PageShell sectionLabel="03 — EDIT ITINERARY" title="Loading Builder..."><Loader /></PageShell>;
-  if (!trip) return <PageShell sectionLabel="03 — EDIT ITINERARY" title="Trip Not Found"><p>Trip not found.</p></PageShell>;
+  if (loading) return <PageShell title="Build Itinerary Screen"><Loader text="Loading Itinerary Builder..." /></PageShell>;
+  if (!trip) return <PageShell title="Build Itinerary Screen"><div className={styles.error}>Trip not found</div></PageShell>;
 
   const stops = trip.stops || [];
 
   return (
-    <PageShell 
-      sectionLabel="03 — EDIT ITINERARY" 
-      title={trip.name}
-      subtitle="Add stops, arrange city order, set dates, and schedule physical activities."
-    >
+    <PageShell title="Build Itinerary Screen (Screen 5)">
       <div className={styles.container}>
+        {/* Header summary & Save CTA */}
         <div className={styles.topBar}>
           <div>
-            <h2 className={styles.panelTitle}>Journey Timeline & Stops</h2>
+            <h1 className={styles.tripTitle}>{trip.name}</h1>
             <p className={styles.tripDates}>
-              <Calendar size={14} /> 
-              {new Date(trip.startDate).toLocaleDateString()} – {new Date(trip.endDate).toLocaleDateString()} • Total Budget: ₹{trip.totalBudget || 0}
+              <Calendar size={15} /> 
+              {new Date(trip.startDate).toLocaleDateString()} – {new Date(trip.endDate).toLocaleDateString()}
+              <span className={styles.dot}>•</span>
+              Total Budget: ₹{trip.totalBudget || 0}
             </p>
           </div>
           <Button variant="primary" onClick={() => navigate(`/trips/${trip._id}`)}>
-            Save & View Itinerary <ArrowRight size={14} />
+            Save & View Itinerary
           </Button>
         </div>
 
+        {/* ── Screen 5: Stacked Sections ── */}
         <div className={styles.sectionsList}>
           {stops.length > 0 ? (
             stops.map((stop, index) => (
               <Card key={stop._id} className={styles.sectionCard}>
+                {/* Section Header (Wireframe Screen 5) */}
                 <div className={styles.sectionCardHeader}>
                   <div className={styles.sectionTitleBlock}>
                     <GripVertical size={18} className={styles.gripIcon} />
                     <h2 className={styles.sectionNumberTitle}>
-                      {stop.title || `Stop ${index + 1}`}
-                      <span className={styles.cityName}> ({stop.city?.name || 'Destination'})</span>
+                      {stop.title || `Section ${index + 1}`}
+                      <span className={styles.cityName}>({stop.city?.name || 'Destination'})</span>
                     </h2>
                   </div>
                   <div className={styles.sectionControlBtns}>
@@ -222,7 +226,7 @@ const ItineraryBuilderPage = () => {
                       className={styles.orderBtn}
                       title="Move Up"
                     >
-                      <ArrowUp size={14} />
+                      <ArrowUp size={16} />
                     </button>
                     <button 
                       onClick={() => handleMoveSection(index, 1)} 
@@ -230,22 +234,24 @@ const ItineraryBuilderPage = () => {
                       className={styles.orderBtn}
                       title="Move Down"
                     >
-                      <ArrowDown size={14} />
+                      <ArrowDown size={16} />
                     </button>
                     <button 
                       onClick={() => handleDeleteSection(stop._id)} 
                       className={styles.deleteBtn}
-                      title="Delete Stop"
+                      title="Delete Section"
                     >
-                      <Trash2 size={14} />
+                      <Trash2 size={16} />
                     </button>
                   </div>
                 </div>
 
+                {/* Section Description Text (Wireframe Screen 5) */}
                 <p className={styles.sectionDescription}>
-                  {stop.description || 'All necessary details about this stop, including hotel bookings and exploration goals.'}
+                  {stop.description || 'All the necessary information about this section. This includes anything like hotel booking, visit or any other activity'}
                 </p>
 
+                {/* Section Date Range & Budget Bar (Wireframe Screen 5) */}
                 <div className={styles.sectionMetaBar}>
                   <div className={styles.metaBadge}>
                     <span className={styles.metaLabel}>Date Range:</span>
@@ -254,13 +260,14 @@ const ItineraryBuilderPage = () => {
                     </span>
                   </div>
                   <div className={styles.metaBadge}>
-                    <span className={styles.metaLabel}>Section Budget:</span>
+                    <span className={styles.metaLabel}>Budget of this section:</span>
                     <span className={styles.metaValue}>₹{stop.sectionBudget || 0}</span>
                   </div>
                 </div>
 
+                {/* Activities inside this Section */}
                 <div className={styles.activitiesSection}>
-                  <h4 className={styles.activitiesHeader}>Scheduled Activities:</h4>
+                  <h4 className={styles.activitiesHeader}>Planned Activities in this Section:</h4>
                   {stop.activities && stop.activities.length > 0 ? (
                     <div className={styles.activitiesGrid}>
                       {stop.activities.map(act => (
@@ -280,7 +287,7 @@ const ItineraryBuilderPage = () => {
                       ))}
                     </div>
                   ) : (
-                    <p className={styles.noActivitiesText}>No activities added to this stop yet.</p>
+                    <p className={styles.noActivitiesText}>No physical activities added to this section yet.</p>
                   )}
                   
                   <Button 
@@ -289,18 +296,19 @@ const ItineraryBuilderPage = () => {
                     onClick={() => openActivityModal(stop)}
                     className={styles.addActivityBtn}
                   >
-                    <Plus size={14} /> Add Activity
+                    <Plus size={14} /> Add Activity to Section
                   </Button>
                 </div>
               </Card>
             ))
           ) : (
             <Card className={styles.emptyState}>
-              <p>No stops added to this itinerary yet.</p>
+              <p>No sections added to this itinerary yet.</p>
             </Card>
           )}
         </div>
 
+        {/* ── Prominent "Add another Section" Button (Wireframe Screen 5) ── */}
         <div className={styles.bottomActionArea}>
           <Button 
             variant="accent" 
@@ -308,23 +316,23 @@ const ItineraryBuilderPage = () => {
             className={styles.addSectionCta}
             onClick={() => setIsAddSectionModalOpen(true)}
           >
-            <Plus size={18} /> Add another Stop / Destination
+            <Plus size={20} /> Add another Section
           </Button>
         </div>
       </div>
 
-      {/* Modal: Add New Section */}
+      {/* ── Modal: Add New Section ── */}
       <Modal 
         isOpen={isAddSectionModalOpen} 
         onClose={() => setIsAddSectionModalOpen(false)} 
-        title="Add Stop / Destination"
+        title="Add another Section"
       >
         <form onSubmit={handleAddSection} className={styles.modalForm}>
           <Input 
-            label="Stop Title" 
+            label="Section Title" 
             value={newSection.title} 
             onChange={(e) => setNewSection({ ...newSection, title: e.target.value })} 
-            placeholder="e.g. Stop 1, Paris Stay"
+            placeholder="e.g. Section 1, Paris Stay"
           />
 
           <div className={styles.inputGroup}>
@@ -361,14 +369,14 @@ const ItineraryBuilderPage = () => {
 
           <Input 
             type="number" 
-            label="Budget for this Stop (₹)" 
+            label="Budget for this Section (₹)" 
             value={newSection.sectionBudget} 
             onChange={(e) => setNewSection({ ...newSection, sectionBudget: e.target.value })} 
             placeholder="e.g. 15000" 
           />
 
           <div className={styles.inputGroup}>
-            <label className={styles.label}>Stop Information & Notes</label>
+            <label className={styles.label}>Section Information / Notes</label>
             <textarea 
               value={newSection.description} 
               onChange={(e) => setNewSection({ ...newSection, description: e.target.value })} 
@@ -379,16 +387,16 @@ const ItineraryBuilderPage = () => {
 
           <div className={styles.modalActions}>
             <Button variant="outline" onClick={() => setIsAddSectionModalOpen(false)}>Cancel</Button>
-            <Button type="submit" variant="accent">Add Stop</Button>
+            <Button type="submit" variant="accent">Add Section</Button>
           </div>
         </form>
       </Modal>
 
-      {/* Modal: Add Activity to Stop */}
+      {/* ── Modal: Add Activity to Section ── */}
       <Modal
         isOpen={isAddActivityModalOpen}
         onClose={() => setIsAddActivityModalOpen(false)}
-        title="Add Activity to Stop"
+        title="Add Activity to Section"
       >
         <div className={styles.activityModalBody}>
           {availableActivities.length > 0 && (

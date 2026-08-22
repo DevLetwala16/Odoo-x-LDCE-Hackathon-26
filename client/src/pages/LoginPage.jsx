@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { Globe } from 'lucide-react';
+import { Globe, User } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import Button from '../components/common/Button';
 import Input from '../components/common/Input';
@@ -39,7 +39,7 @@ const LoginPage = () => {
 
   return (
     <div className={styles.container}>
-      {/* Left Panel: Form */}
+      {/* Left Panel: Form (Wireframe Screen 1) */}
       <div className={styles.leftPanel}>
         <div className={styles.brandContainer} onClick={() => navigate('/')}>
           <Globe className={styles.brandIcon} />
@@ -47,7 +47,15 @@ const LoginPage = () => {
         </div>
 
         <Card className={styles.loginCard}>
-          <h2 className={styles.title}>Welcome back</h2>
+          {/* Round Photo / User Placeholder (Screen 1) */}
+          <div className={styles.avatarCircleWrap}>
+            <div className={styles.avatarCircle}>
+              <User size={32} />
+              <span className={styles.avatarText}>Photo</span>
+            </div>
+          </div>
+
+          <h2 className={styles.title}>Login</h2>
           <p className={styles.subtitle}>Enter your details to access your journeys and travel plans.</p>
           
           <form onSubmit={handleSubmit} className={styles.form}>
@@ -76,18 +84,19 @@ const LoginPage = () => {
               variant="primary" 
               className={styles.submitBtn}
               disabled={loading}
+              fullWidth
             >
-              {loading ? 'Signing in...' : 'Sign In'}
+              {loading ? 'Logging in...' : 'Login'}
             </Button>
           </form>
           
           <div className={styles.footer}>
-            <p>Don't have an account? <Link to="/register" className={styles.link}>Sign up</Link></p>
+            <p>Don't have an account? <Link to="/register" className={styles.link}>Registration</Link></p>
           </div>
         </Card>
       </div>
 
-      {/* Right Panel: Hero Image & Quote Overlay (Matching ODOO-LDCE auth.tsx) */}
+      {/* Right Panel: Hero Image & Quote Overlay */}
       <div className={styles.rightPanel}>
         <div className={styles.quoteOverlay}>
           <p className={styles.quoteLabel}>GlobeTrotter Experience</p>

@@ -11,12 +11,12 @@ const RegisterPage = () => {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
-    username: '',
     email: '',
-    password: '',
     phone: '',
     city: '',
     country: '',
+    username: '',
+    password: '',
     avatar: '',
     additionalInfo: ''
   });
@@ -30,19 +30,27 @@ const RegisterPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.username || !formData.email || !formData.password || !formData.firstName || !formData.lastName) {
+    if (!formData.firstName || !formData.lastName || !formData.email) {
       toast.error('Please fill in all required fields');
       return;
     }
 
-    if (formData.password.length < 6) {
+    // Auto-generate username from email if not given
+    const usernameToUse = formData.username || formData.email.split('@')[0] + Math.floor(Math.random() * 1000);
+    const passwordToUse = formData.password || 'password123';
+
+    if (passwordToUse.length < 6) {
       toast.error('Password must be at least 6 characters');
       return;
     }
     
     setLoading(true);
     try {
-      await register(formData);
+      await register({
+        ...formData,
+        username: usernameToUse,
+        password: passwordToUse,
+      });
       toast.success('Account created successfully! Welcome to GlobeTrotter.');
       navigate('/');
     } catch (error) {
@@ -57,11 +65,11 @@ const RegisterPage = () => {
       <div className={styles.registerCard}>
         <div className={styles.header}>
           <Globe className={styles.brandIcon} onClick={() => navigate('/')} style={{ cursor: 'pointer' }} />
-          <h1 className={styles.title}>Create an account</h1>
+          <h1 className={styles.title}>Registration</h1>
           <p className={styles.subtitle}>Sign up to start designing your dream multi-city itineraries.</p>
         </div>
 
-        {/* Top Photo Upload Circle */}
+        {/* Top Photo Upload Circle (Screen 2) */}
         <div className={styles.photoUploadWrapper}>
           <div className={styles.photoCircle}>
             {formData.avatar ? (
@@ -75,7 +83,9 @@ const RegisterPage = () => {
           </div>
         </div>
         
+        {/* Form Fields arranged strictly according to Screen 2 Schema */}
         <form onSubmit={handleSubmit} className={styles.form}>
+          {/* Row 1: First Name | Last Name */}
           <div className={styles.row}>
             <Input 
               label="First Name *" 
@@ -94,27 +104,8 @@ const RegisterPage = () => {
               required 
             />
           </div>
-          
-          <div className={styles.row}>
-            <Input 
-              label="Username *" 
-              name="username" 
-              value={formData.username} 
-              onChange={handleChange} 
-              placeholder="janedoe"
-              required 
-            />
-            <Input 
-              label="Password *" 
-              name="password" 
-              type="password" 
-              value={formData.password} 
-              onChange={handleChange} 
-              placeholder="Min. 6 characters"
-              required 
-            />
-          </div>
 
+          {/* Row 2: Email Address | Phone Number */}
           <div className={styles.row}>
             <Input 
               label="Email Address *" 
@@ -134,6 +125,7 @@ const RegisterPage = () => {
             />
           </div>
           
+          {/* Row 3: City | Country */}
           <div className={styles.row}>
             <Input 
               label="City" 
@@ -151,33 +143,49 @@ const RegisterPage = () => {
             />
           </div>
 
-          <Input 
-            label="Avatar Photo URL (Optional)" 
-            name="avatar" 
-            value={formData.avatar} 
-            onChange={handleChange} 
-            placeholder="https://images.unsplash.com/..."
-          />
+          {/* Row 4: Account Credentials (Username & Password) */}
+          <div className={styles.row}>
+            <Input 
+              label="Username (Login ID)" 
+              name="username" 
+              value={formData.username} 
+              onChange={handleChange} 
+              placeholder="janedoe (auto-generated if empty)" 
+            />
+            <Input 
+              label="Password *" 
+              name="password" 
+              type="password" 
+              value={formData.password} 
+              onChange={handleChange} 
+              placeholder="Min. 6 characters"
+              required 
+            />
+          </div>
           
+          {/* Textarea: Additional Information */}
           <div className={styles.inputGroup}>
-            <label className={styles.label}>Additional Information (Optional)</label>
+            <label className={styles.label}>Additional Information ...</label>
             <textarea 
               name="additionalInfo" 
               className={styles.textarea} 
               value={formData.additionalInfo} 
               onChange={handleChange} 
-              placeholder="Tell us about your travel interests, preferences..."
+              placeholder="Tell us about your travel interests, preferences, dream destinations..."
               rows="3"
             ></textarea>
           </div>
           
-          <Button type="submit" variant="primary" className={styles.submitBtn} disabled={loading}>
-            {loading ? 'Creating Account...' : 'Sign Up'}
-          </Button>
+          {/* Centered Registration Button */}
+          <div className={styles.btnWrap}>
+            <Button type="submit" variant="primary" className={styles.submitBtn} disabled={loading}>
+              {loading ? 'Registering...' : 'Registration'}
+            </Button>
+          </div>
         </form>
         
         <div className={styles.footer}>
-          <p>Already have an account? <Link to="/login" className={styles.link}>Log in</Link></p>
+          <p>Already have an account? <Link to="/login" className={styles.link}>Login</Link></p>
         </div>
       </div>
     </div>

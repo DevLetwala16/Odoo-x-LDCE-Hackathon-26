@@ -90,6 +90,7 @@ const SearchPage = () => {
           <Loader text="Searching database..." />
         ) : (
           <div className={styles.resultsStack}>
+            <h3 className={styles.resultsHeading}>Results</h3>
             {activeTab === 'cities' ? (
               cities.length > 0 ? (
                 cities.map(city => (

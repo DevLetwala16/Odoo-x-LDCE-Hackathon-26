@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Globe, Menu, X, User, LogOut, Shield, Plus, ArrowRight, BarChart3 } from 'lucide-react';
+import { Globe, Menu, X, User, LogOut, Shield, Plus, ArrowRight } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import styles from './Navbar.module.css';
 
@@ -9,7 +9,6 @@ const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -23,10 +22,7 @@ const Navbar = () => {
     { name: 'Journeys', path: '/trips' },
     { name: 'Explore', path: '/search' },
     { name: 'Community', path: '/community' },
-    { name: 'Analytics', path: '/admin' },
   ];
-
-  const displayName = user?.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : (user?.username || 'User');
 
   return (
     <header className={`${styles.navbar} ${isHeroTransparent ? styles.transparentNavbar : ''}`}>
@@ -60,10 +56,6 @@ const Navbar = () => {
               <Link to="/profile" className={`${styles.profileBtn} ${isHeroTransparent ? styles.transparentProfileBtn : ''}`}>
                 <User size={14} style={{ color: isHeroTransparent ? '#FDE047' : 'var(--color-accent)' }} />
                 <span>{user.firstName || user.name || 'Profile'}</span>
-              </Link>
-              <Link to="/admin" className={`${styles.profileBtn} ${isHeroTransparent ? styles.transparentProfileBtn : ''}`}>
-                <BarChart3 size={14} style={{ color: 'var(--color-primary)' }} />
-                <span>Dashboard</span>
               </Link>
               <button
                 className={`${styles.planTripCta} ${isHeroTransparent ? styles.transparentCta : ''}`}
@@ -112,11 +104,11 @@ const Navbar = () => {
               </Link>
             ))}
             <Link
-              to="/admin"
+              to="/profile"
               className={styles.mobileNavLink}
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              Personal Analytics & Admin
+              My Profile & Dashboard
             </Link>
             {user ? (
               <button onClick={handleLogout} className={styles.mobileNavLink} style={{ color: 'var(--color-warning)', textAlign: 'left' }}>

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MapPin, Calendar, Compass, Sparkles, ArrowRight, Search } from 'lucide-react';
+import { MapPin, Calendar, Compass, Sparkles, ArrowRight, Search, Plus } from 'lucide-react';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
+import FilterBar from '../components/common/FilterBar';
 import Button from '../components/common/Button';
 import Card from '../components/common/Card';
 import Loader from '../components/common/Loader';
@@ -15,6 +16,8 @@ const LandingPage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [searchValue, setSearchValue] = useState('');
+  const [sortValue, setSortValue] = useState('popularity');
+  const [regionFilter, setRegionFilter] = useState('all');
   const [cities, setCities] = useState([]);
   const [previousTrips, setPreviousTrips] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -24,34 +27,37 @@ const LandingPage = () => {
       try {
         setLoading(true);
         const [citiesData, tripsData] = await Promise.all([
-          cityService.getCities({ limit: 6, sortBy: 'popularity' }),
-          tripService.getTrips({ limit: 3 })
+          cityService.getCities({ limit: 8, sortBy: sortValue }),
+          tripService.getTrips({ limit: 6 })
         ]);
         setCities(citiesData?.cities || citiesData || []);
         setPreviousTrips(tripsData?.trips || tripsData || []);
       } catch (error) {
-        console.error('Failed to fetch dashboard data:', error);
+        console.error('Failed to fetch landing data:', error);
       } finally {
         setLoading(false);
       }
     };
     fetchData();
-  }, []);
+  }, [sortValue]);
 
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    if (searchValue.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchValue.trim())}`);
-    } else {
-      navigate('/search');
+  const handleSearch = (val) => {
+    setSearchValue(val);
+    if (val.trim()) {
+      navigate(`/search?q=${encodeURIComponent(val.trim())}`);
     }
   };
+
+  const filteredCities = cities.filter(c => {
+    if (regionFilter === 'all') return true;
+    return c.region?.toLowerCase() === regionFilter.toLowerCase();
+  });
 
   return (
     <div className={styles.landing}>
       <Navbar />
 
-      {/* ── Hero Section (Matching ODOO-LDCE index.tsx) ── */}
+      {/* ── Screen 3: Banner Image Header ── */}
       <section className={styles.hero}>
         <div className={styles.heroBg} />
         <div className={styles.heroOverlay} />
@@ -59,31 +65,16 @@ const LandingPage = () => {
         <div className={styles.heroContent}>
           <div className={styles.badgePill}>
             <Sparkles size={14} style={{ color: '#FCD34D' }} />
-            <span>{user ? `Welcome back, ${user.firstName || user.name}` : 'Personalized Travel Planning'}</span>
+            <span>{user ? `Welcome back, ${user.firstName || user.name || 'Traveler'}` : 'Personalized Travel Planning'}</span>
           </div>
 
           <h1 className={styles.heroTitle}>
-            Empower Your Personalized Travel Journey.
+            Banner Image & Travel Hub
           </h1>
 
           <p className={styles.heroSubtitle}>
-            Dream, design, and organize multi-city trips with ease. Discover destinations, visualize timelines, and track budgets in one seamless platform.
+            Empower your personalized travel journey. Dream, design, and organize multi-city trips with smart timelines and live budgets.
           </p>
-
-          {/* Hero Floating Search Bar */}
-          <form onSubmit={handleSearchSubmit} className={styles.heroSearchForm}>
-            <Search size={20} className={styles.heroSearchIcon} />
-            <input
-              type="text"
-              placeholder="Search city, country or activity (e.g., Tokyo, Paris, Alps)..."
-              value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
-              className={styles.heroSearchInput}
-            />
-            <Button type="submit" variant="accent" size="sm" className={styles.heroSearchBtn}>
-              Explore
-            </Button>
-          </form>
 
           <div className={styles.heroButtons}>
             <Button
@@ -91,7 +82,7 @@ const LandingPage = () => {
               size="lg"
               onClick={() => navigate(user ? '/trips/new' : '/login')}
             >
-              {user ? 'Plan Your Trip' : 'Get Started'} <ArrowRight size={16} />
+              {user ? 'Plan a Trip' : 'Get Started'} <ArrowRight size={16} />
             </Button>
             <Button
               variant="outline"
@@ -105,104 +96,48 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* ── User's Recent Trips (If Logged In & Has Trips) ── */}
-      {user && previousTrips.length > 0 && (
-        <section className={styles.recentTripsSection}>
-          <div className={styles.sectionInner}>
-            <div className={styles.sectionHeaderBetween}>
-              <div>
-                <p className={styles.accentLabel}>Your Itineraries</p>
-                <h2 className={styles.sectionTitle}>Recent Trips</h2>
-              </div>
-              <Button variant="ghost" size="sm" onClick={() => navigate('/trips')}>
-                View all trips <ArrowRight size={14} />
-              </Button>
-            </div>
-
-            <div className={styles.recentTripsGrid}>
-              {previousTrips.map((t) => (
-                <div
-                  key={t._id}
-                  className={styles.recentTripCard}
-                  onClick={() => navigate(`/trips/${t._id}`)}
-                >
-                  <img
-                    src={t.coverImage || 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&q=80&w=500'}
-                    alt={t.name}
-                    className={styles.recentTripImg}
-                  />
-                  <div className={styles.recentTripOverlay} />
-                  <div className={styles.recentTripInfo}>
-                    <h3 className={styles.recentTripTitle}>{t.name}</h3>
-                    <p className={styles.recentTripMeta}>
-                      View day-wise itinerary & budget →
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ── Core Features Section (Matching ODOO-LDCE) ── */}
-      <section className={styles.featuresSection}>
-        <div className={styles.sectionInner}>
-          <div className={styles.featuresGrid}>
-            <div className={styles.featureCard}>
-              <div className={styles.featureIconBox}>
-                <MapPin size={28} />
-              </div>
-              <h3 className={styles.featureTitle}>Multi-City Routes</h3>
-              <p className={styles.featureText}>
-                Seamlessly add stops, set individual city durations, and reorder legs across your global journey.
-              </p>
-            </div>
-
-            <div className={styles.featureCard}>
-              <div className={styles.featureIconBox}>
-                <Calendar size={28} />
-              </div>
-              <h3 className={styles.featureTitle}>Smart Timelines</h3>
-              <p className={styles.featureText}>
-                Visualize your day-by-day plan with scheduled activities, times, and comprehensive month calendars.
-              </p>
-            </div>
-
-            <div className={styles.featureCard}>
-              <div className={styles.featureIconBox}>
-                <span className={styles.currencySymbol}>₹</span>
-              </div>
-              <h3 className={styles.featureTitle}>Live Budget Breakdown</h3>
-              <p className={styles.featureText}>
-                Auto-computed financial visibility into stays, transport, meals, and activities with overbudget alerts.
-              </p>
-            </div>
-          </div>
+      <div className={styles.pageBodyContainer}>
+        {/* ── Screen 3: Search bar ...... | Group by | Filter | Sort by... ── */}
+        <div className={styles.filterBarWrapper}>
+          <FilterBar
+            searchValue={searchValue}
+            onSearch={handleSearch}
+            sortValue={sortValue}
+            onSort={setSortValue}
+            sortOptions={[
+              { value: 'popularity', label: 'Sort by: Popularity' },
+              { value: 'name', label: 'Sort by: Name (A-Z)' },
+              { value: 'costIndex', label: 'Sort by: Budget' },
+            ]}
+            filterValue={regionFilter}
+            onFilter={setRegionFilter}
+            filterOptions={[
+              { value: 'all', label: 'Filter: All Regions' },
+              { value: 'Asia', label: 'Filter: Asia' },
+              { value: 'Europe', label: 'Filter: Europe' },
+              { value: 'Americas', label: 'Filter: Americas' },
+              { value: 'Middle East', label: 'Filter: Middle East' },
+            ]}
+          />
         </div>
-      </section>
 
-      {/* ── Top Regional Destinations (Matching ODOO-LDCE) ── */}
-      <section className={styles.destinationsSection}>
-        <div className={styles.sectionInner}>
+        {/* ── Screen 3 Section 1: Top Regional Selections ── */}
+        <section className={styles.destinationsSection}>
           <div className={styles.sectionHeaderBetween}>
             <div>
-              <p className={styles.accentLabel}>Inspiration</p>
-              <h2 className={styles.sectionTitle}>Top Regional Destinations</h2>
-              <p className={styles.sectionSubtitle}>
-                Explore world-renowned cities and add them directly to your stops.
-              </p>
+              <p className={styles.accentLabel}>Curated Destinations</p>
+              <h2 className={styles.sectionTitle}>Top Regional Selections</h2>
             </div>
-            <Button variant="ghost" onClick={() => navigate('/search')}>
-              Explore all cities <ArrowRight size={14} />
+            <Button variant="ghost" size="sm" onClick={() => navigate('/search')}>
+              View all <ArrowRight size={14} />
             </Button>
           </div>
 
           {loading ? (
-            <Loader text="Loading destinations..." />
+            <Loader text="Loading regional selections..." />
           ) : (
             <div className={styles.citiesGrid}>
-              {cities.slice(0, 6).map((city) => (
+              {filteredCities.slice(0, 6).map((city) => (
                 <div
                   key={city._id}
                   className={styles.cityCard}
@@ -218,33 +153,66 @@ const LandingPage = () => {
                     <p className={styles.cityCountry}>{city.country}</p>
                     <h3 className={styles.cityName}>{city.name}</h3>
                     <p className={styles.cityLinkText}>
-                      Discover top activities & weather →
+                      Explore activities & itinerary →
                     </p>
                   </div>
                 </div>
               ))}
             </div>
           )}
-        </div>
-      </section>
+        </section>
 
-      {/* ── Footer Banner (Matching ODOO-LDCE) ── */}
-      <section className={styles.ctaBanner}>
-        <div className={styles.ctaBannerInner}>
-          <h2 className={styles.ctaTitle}>Ready to see the world?</h2>
-          <p className={styles.ctaSubtitle}>
-            Join thousands of travelers who plan their personalized multi-city journeys with GlobeTrotter.
-          </p>
-          <Button
-            size="lg"
-            variant="secondary"
-            className={styles.ctaBtn}
-            onClick={() => navigate(user ? '/trips/new' : '/login')}
-          >
-            {user ? 'Start New Itinerary' : 'Create an Account'}
-          </Button>
-        </div>
-      </section>
+        {/* ── Screen 3 Section 2: Previous Trips ── */}
+        <section className={styles.recentTripsSection}>
+          <div className={styles.sectionHeaderBetween}>
+            <div>
+              <p className={styles.accentLabel}>Travel Journeys</p>
+              <h2 className={styles.sectionTitle}>Previous Trips</h2>
+            </div>
+          </div>
+
+          <div className={styles.recentTripsGrid}>
+            {previousTrips.length > 0 ? (
+              previousTrips.map((t) => (
+                <div
+                  key={t._id}
+                  className={styles.recentTripCard}
+                  onClick={() => navigate(`/trips/${t._id}`)}
+                >
+                  <img
+                    src={t.coverImage || 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&q=80&w=500'}
+                    alt={t.name}
+                    className={styles.recentTripImg}
+                  />
+                  <div className={styles.recentTripOverlay} />
+                  <div className={styles.recentTripInfo}>
+                    <h3 className={styles.recentTripTitle}>{t.name}</h3>
+                    <p className={styles.recentTripMeta}>
+                      {new Date(t.startDate).toLocaleDateString()} • {t.destination || 'Multi-city'}
+                    </p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <Card className={styles.emptyTripsCard}>
+                <p>No previous trips found. Create your first journey!</p>
+              </Card>
+            )}
+          </div>
+
+          {/* Bottom Right '+ Plan a Trip' Button (Screen 3 Schema) */}
+          <div className={styles.planTripBtnRow}>
+            <Button
+              variant="accent"
+              size="lg"
+              className={styles.bottomPlanBtn}
+              onClick={() => navigate(user ? '/trips/new' : '/login')}
+            >
+              <Plus size={18} /> Plan a Trip
+            </Button>
+          </div>
+        </section>
+      </div>
 
       <Footer />
     </div>

@@ -469,3 +469,32 @@
 .ctaBtn:hover {
   background-color: var(--sand);
 }
+
+.pageBodyContainer {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 var(--space-6);
+}
+
+.filterBarWrapper {
+  margin: var(--space-6) 0 var(--space-8) 0;
+}
+
+.planTripBtnRow {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--space-6);
+}
+
+.bottomPlanBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: var(--shadow-lg);
+}
+
+.emptyTripsCard {
+  padding: var(--space-8);
+  text-align: center;
+  color: var(--color-text-secondary);
+}
