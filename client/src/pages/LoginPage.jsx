@@ -28,7 +28,7 @@ const LoginPage = () => {
     setLoading(true);
     try {
       await login(formData.username, formData.password);
-      toast.success('Logged in successfully!');
+      toast.success('Welcome back to GlobeTrotter!');
       navigate('/');
     } catch (error) {
       toast.error(error.message || 'Failed to login');
@@ -39,58 +39,61 @@ const LoginPage = () => {
 
   return (
     <div className={styles.container}>
-      {/* Left Panel: Hero Image & Branding */}
+      {/* Left Panel: Form */}
       <div className={styles.leftPanel}>
-        <div className={styles.brandContainer}>
+        <div className={styles.brandContainer} onClick={() => navigate('/')}>
           <Globe className={styles.brandIcon} />
           <h1 className={styles.brandName}>GlobeTrotter</h1>
         </div>
-        <p className={styles.tagline}>
-          Your personal AI travel planner. Create custom itineraries, manage budgets, and explore the world with personalized recommendations.
-        </p>
-      </div>
 
-      {/* Right Panel: Login Form */}
-      <div className={styles.rightPanel}>
         <Card className={styles.loginCard}>
           <h2 className={styles.title}>Welcome back</h2>
-          <p className={styles.subtitle}>Sign in to manage and plan your trips</p>
+          <p className={styles.subtitle}>Enter your details to access your journeys and travel plans.</p>
           
           <form onSubmit={handleSubmit} className={styles.form}>
             <Input
-              label="Username"
+              label="Username *"
               name="username"
               type="text"
               value={formData.username}
               onChange={handleChange}
-              placeholder="Enter username"
+              placeholder="Enter your username"
               required
             />
             
             <Input
-              label="Password"
+              label="Password *"
               name="password"
               type="password"
               value={formData.password}
               onChange={handleChange}
-              placeholder="Enter password"
+              placeholder="••••••••"
               required
             />
             
             <Button 
               type="submit" 
-              variant="accent" 
+              variant="primary" 
               className={styles.submitBtn}
               disabled={loading}
             >
-              {loading ? 'Signing in...' : 'Login'}
+              {loading ? 'Signing in...' : 'Sign In'}
             </Button>
           </form>
           
           <div className={styles.footer}>
-            <p>Don't have an account? <Link to="/register" className={styles.link}>Register here</Link></p>
+            <p>Don't have an account? <Link to="/register" className={styles.link}>Sign up</Link></p>
           </div>
         </Card>
+      </div>
+
+      {/* Right Panel: Hero Image & Quote Overlay (Matching ODOO-LDCE auth.tsx) */}
+      <div className={styles.rightPanel}>
+        <div className={styles.quoteOverlay}>
+          <p className={styles.quoteLabel}>GlobeTrotter Experience</p>
+          <h3 className={styles.quoteTitle}>“To travel is to live.”</h3>
+          <p className={styles.quoteSubtitle}>Multi-city routes, live budgets, and smart timelines.</p>
+        </div>
       </div>
     </div>
   );

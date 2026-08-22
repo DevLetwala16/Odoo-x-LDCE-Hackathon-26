@@ -1,6 +1,5 @@
 /* ═══════════════════════════════════════════════════
-   Profile Page — Airbnb-inspired Premium Design
-   Cover area, prominent avatar, clean info layout
+   Profile Page — ODOO-LDCE Editorial Style
    ═══════════════════════════════════════════════════ */
 
 .container {
@@ -9,235 +8,187 @@
   gap: var(--space-8);
 }
 
-@media (min-width: 768px) {
+.profileHeaderCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding: var(--space-8);
+  border-radius: var(--radius-2xl);
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+}
+
+@media (min-width: 640px) {
   .profileHeaderCard {
     flex-direction: row;
     align-items: flex-start;
   }
 }
 
-/* ── Sidebar ── */
-.sidebar {
+.userPhotoCircleWrapper {
   flex-shrink: 0;
-  width: 100%;
 }
 
-@media (min-width: 768px) {
-  .sidebar {
-    width: 280px;
-    position: sticky;
-    top: 92px;
-  }
-}
-
-.avatarCard {
-  padding: var(--space-8);
-  border-radius: var(--radius-2xl);
-  text-align: center;
-  position: relative;
-  overflow: visible;
-}
-
-.avatarCard::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 100px;
-  background: linear-gradient(135deg, var(--color-primary), #2FA36B);
-  border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
-}
-
-.avatarWrapper {
-  position: relative;
-  z-index: 1;
-  margin-bottom: var(--space-4);
-  margin-top: var(--space-4);
-  display: flex;
-  justify-content: center;
-}
-
-.avatarImage {
-  width: 100px;
-  height: 100px;
+.userPhoto {
+  width: 96px;
+  height: 96px;
   border-radius: 50%;
   object-fit: cover;
-  border: 4px solid var(--color-bg-surface);
-  box-shadow: var(--shadow-lg);
+  border: 2px solid var(--color-border);
 }
 
-.avatarPlaceholder {
-  width: 100px;
-  height: 100px;
+.userPhotoCircle {
+  width: 96px;
+  height: 96px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--color-primary), #2FA36B);
-  color: white;
+  background-color: var(--color-sand);
+  color: var(--color-ink);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2.5rem;
-  font-weight: var(--font-weight-bold);
-  font-family: var(--font-display);
-  border: 4px solid var(--color-bg-surface);
-  box-shadow: var(--shadow-lg);
 }
 
-.userName {
-  font-family: var(--font-display);
-  font-size: 1.25rem;
-  font-weight: var(--font-weight-bold);
-  color: var(--color-text-primary);
-  margin: 0 0 2px 0;
-}
-
-.userUsername {
-  color: var(--color-text-secondary);
-  font-size: 0.875rem;
-  margin: 0 0 var(--space-5) 0;
-}
-
-.contactInfo {
+.userDetailsContent {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
-  text-align: left;
-  padding-top: var(--space-5);
-  border-top: 1px solid var(--color-border-light);
+  gap: var(--space-4);
 }
 
-.infoItem {
+.nameRow {
   display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  color: var(--color-text-secondary);
-  font-size: 0.875rem;
-}
-
-.infoItem svg {
-  color: var(--color-text-tertiary);
-  flex-shrink: 0;
-}
-
-/* ── Main Content ── */
-.mainContent {
-  flex: 1;
-  min-width: 0;
-}
-
-.detailsCard {
-  padding: var(--space-8);
-  border-radius: var(--radius-2xl);
-}
-
-.cardHeader {
-  display: flex;
-  align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--space-6);
+  align-items: flex-start;
   flex-wrap: wrap;
   gap: var(--space-3);
 }
 
-.cardTitle {
+.userName {
   font-family: var(--font-display);
-  font-size: 1.25rem;
-  font-weight: var(--font-weight-bold);
+  font-size: 2rem;
+  font-weight: 400;
+  color: var(--color-ink);
   margin: 0;
-  color: var(--color-text-primary);
 }
 
 .userHandle {
-  font-size: var(--font-size-sm);
+  font-size: 0.8125rem;
   color: var(--color-text-secondary);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-top: 2px;
 }
 
 .metaInfoGrid {
   display: flex;
-  gap: var(--space-2);
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin: var(--space-2) 0;
 }
 
-/* ── Edit Form ── */
-.editForm {
+.metaInfoItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+
+.additionalInfoText {
+  font-size: 0.9375rem;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.tripsSection {
   display: flex;
   flex-direction: column;
-  gap: var(--space-5);
+  gap: var(--space-4);
 }
 
-.row {
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.sectionTitle {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 400;
+  color: var(--color-ink);
+  margin: 0;
+}
+
+.tripsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+}
+
+@media (min-width: 640px) {
+  .tripsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .tripsGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.tripCard {
+  border-radius: var(--radius-2xl);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-surface);
+  padding: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-5);
 }
 
-@media (min-width: 600px) {
-  .row {
-    flex-direction: row;
-    gap: var(--space-4);
-  }
-  .row > * {
-    flex: 1;
-  }
+.tripImage {
+  height: 140px;
+  background-size: cover;
+  background-position: center;
 }
 
-.inputGroup {
+.tripCardContent {
+  padding: var(--space-5);
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.label {
+.tripTitle {
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  font-weight: 400;
+  color: var(--color-ink);
+  margin: 0;
+}
+
+.tripDates {
   font-size: 0.75rem;
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text-primary);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.textarea {
-  padding: 14px 18px;
-  border: 1.5px solid var(--color-border);
-  border-radius: var(--radius-md);
-  background-color: var(--color-bg-surface);
-  color: var(--color-text-primary);
-  font-size: 1rem;
-  resize: vertical;
-  outline: none;
-  font-family: inherit;
-  line-height: 1.5;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.textarea:focus {
-  border-color: var(--color-text-primary);
-  box-shadow: 0 0 0 1px var(--color-text-primary);
-}
-
-/* ── View Mode ── */
-.viewInfo {
+  color: var(--color-text-secondary);
   display: flex;
-  flex-direction: column;
-  gap: var(--space-5);
-}
-
-.infoGroup {
-  display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: 4px;
 }
 
-.infoLabel {
-  font-size: 0.75rem;
-  font-weight: var(--font-weight-semibold);
+.tripBudget {
+  font-size: 0.8125rem;
   color: var(--color-text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  margin: 0;
+
+  font-weight: var(--font-weight-semibold);
 }
 
-.infoValue {
-  color: var(--color-text-primary);
-  font-size: 1rem;
-  line-height: 1.6;
-  margin: 0;
+.emptyText {
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  font-style: italic;
 }

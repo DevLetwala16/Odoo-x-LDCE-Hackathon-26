@@ -1,34 +1,41 @@
 /* ═══════════════════════════════════════════════════
-   Input — Airbnb-inspired Premium Design
-   Large touch targets, smooth focus, clean labels
+   Input Component — ODOO-LDCE Editorial Style
+   Muted/sand background, h-11, clean labels
    ═══════════════════════════════════════════════════ */
 
 .inputGroup {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
+  width: 100%;
 }
 
 .label {
-  font-size: 0.8125rem;
+  font-size: 0.6875rem;
   font-weight: var(--font-weight-semibold);
-  color: var(--color-text-primary);
-  letter-spacing: 0.01em;
+  color: var(--color-text-secondary);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+}
+
+.inputContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .input {
   width: 100%;
-  padding: 14px 18px;
-  border: 1.5px solid var(--color-border);
-  border-radius: var(--radius-md);
-  background-color: var(--color-bg-surface);
-  font-size: 1rem;
-  color: var(--color-text-primary);
-  line-height: 1.5;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background-color: rgba(240, 237, 231, 0.5);
+  color: var(--color-ink);
+  font-size: 0.9375rem;
+  font-family: var(--font-family);
+  outline: none;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .input::placeholder {
@@ -37,25 +44,47 @@
 
 .input:hover:not(:focus) {
   border-color: var(--color-text-secondary);
+  background-color: var(--color-sand);
 }
 
 .input:focus {
-  outline: none;
-  border-color: var(--color-text-primary);
-  box-shadow: 0 0 0 1px var(--color-text-primary);
-  background-color: var(--color-bg-surface);
+  border-color: var(--color-ink);
+  background-color: #FFFFFF;
+  box-shadow: 0 0 0 1px var(--color-ink);
 }
 
-.inputError {
-  border-color: var(--color-warning);
+.hasIconLeft {
+  padding-left: 44px;
 }
 
-.inputError:focus {
-  box-shadow: 0 0 0 1px var(--color-warning);
+.hasIconRight {
+  padding-right: 44px;
+}
+
+.iconLeft,
+.iconRight {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-tertiary);
+  pointer-events: none;
+}
+
+.iconLeft {
+  left: 14px;
+}
+
+.iconRight {
+  right: 14px;
 }
 
 .errorText {
   font-size: 0.75rem;
   color: var(--color-warning);
   margin-top: 2px;
+}
+
+.inputError {
+  border-color: var(--color-warning) !important;
 }

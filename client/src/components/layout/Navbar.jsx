@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Globe, Menu, X, User, LogOut, Home, Map, Search, Users, Shield } from 'lucide-react';
+import { Globe, Menu, X, User, LogOut, Shield, Plus, ArrowRight } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import styles from './Navbar.module.css';
 
@@ -16,78 +16,74 @@ const Navbar = () => {
     navigate('/login');
   };
 
+  const isHeroTransparent = location.pathname === '/';
+
   const navLinks = [
-    { name: 'Home', path: '/', icon: <Home size={18} /> },
-    { name: 'My Trips', path: '/trips', icon: <Map size={18} /> },
-    { name: 'Search', path: '/search', icon: <Search size={18} /> },
-    { name: 'Community', path: '/community', icon: <Users size={18} /> },
+    { name: 'Home', path: '/' },
+    { name: 'Journeys', path: '/trips' },
+    { name: 'Explore', path: '/search' },
+    { name: 'Community', path: '/community' },
   ];
 
   return (
-    <nav className={styles.navbar}>
+    <header className={`${styles.navbar} ${isHeroTransparent ? styles.transparentNavbar : ''}`}>
       <div className={styles.container}>
         {/* Brand */}
-        <Link to="/" className={styles.brand}>
-          <Globe className={styles.brandIcon} />
+        <Link to="/" className={`${styles.brand} ${isHeroTransparent ? styles.transparentBrand : ''}`}>
+          <Globe className={styles.brandIcon} size={20} />
           <span className={styles.brandText}>GlobeTrotter</span>
         </Link>
 
         {/* Desktop Navigation */}
-        <div className={styles.desktopNav}>
-          {navLinks.map((link) => (
-            <Link
-              key={link.path}
-              to={link.path}
-              className={`${styles.navLink} ${location.pathname === link.path ? styles.active : ''}`}
-            >
-              {link.icon}
-              <span>{link.name}</span>
-            </Link>
-          ))}
-        </div>
-
-        {/* User Menu */}
-        <div className={styles.userMenu}>
-          {user ? (
-            <div className={styles.profileDropdown}>
-              <button
-                className={styles.profileBtn}
-                onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+        <nav className={styles.navLinks}>
+          {navLinks.map((link) => {
+            const isActive = location.pathname === link.path;
+            return (
+              <Link
+                key={link.path}
+                to={link.path}
+                className={`${styles.navLink} ${isActive ? styles.activeNavLink : ''} ${isHeroTransparent ? styles.transparentNavLink : ''}`}
               >
-                <div className={styles.avatar}>
-                  {user.name ? user.name.charAt(0).toUpperCase() : <User size={18} />}
-                </div>
-              </button>
+                {link.name}
+              </Link>
+            );
+          })}
+        </nav>
 
-              {isProfileMenuOpen && (
-                <div className={styles.dropdownMenu}>
-                  <div className={styles.userInfo}>
-                    <p className={styles.userName}>{user.name}</p>
-                    <p className={styles.userEmail}>{user.email}</p>
-                  </div>
-                  <div className={styles.dropdownDivider}></div>
-                  <Link to="/profile" className={styles.dropdownItem} onClick={() => setIsProfileMenuOpen(false)}>
-                    <User size={16} /> Profile
-                  </Link>
-                  {user.role === 'admin' && (
-                    <Link to="/admin" className={styles.dropdownItem} onClick={() => setIsProfileMenuOpen(false)}>
-                      <Shield size={16} /> Admin
-                    </Link>
-                  )}
-                  <button onClick={handleLogout} className={styles.dropdownItem}>
-                    <LogOut size={16} /> Logout
-                  </button>
-                </div>
-              )}
+        {/* Right Actions */}
+        <div className={styles.actions}>
+          {user ? (
+            <div className={styles.userMenu}>
+              <Link to="/profile" className={`${styles.profileBtn} ${isHeroTransparent ? styles.transparentProfileBtn : ''}`}>
+                <User size={14} style={{ color: isHeroTransparent ? '#FDE047' : 'var(--color-accent)' }} />
+                <span>{user.firstName || user.name || 'Profile'}</span>
+              </Link>
+              <button
+                className={`${styles.planTripCta} ${isHeroTransparent ? styles.transparentCta : ''}`}
+                onClick={() => navigate('/trips/new')}
+              >
+                Plan Trip <Plus size={14} />
+              </button>
             </div>
           ) : (
-            <Link to="/login" className={styles.loginBtn}>Login</Link>
+            <div className={styles.userMenu}>
+              <Link to="/login" className={`${styles.signInLink} ${isHeroTransparent ? styles.transparentSignIn : ''}`}>
+                Sign In
+              </Link>
+              <button
+                className={`${styles.planTripCta} ${isHeroTransparent ? styles.transparentCta : ''}`}
+                onClick={() => navigate('/login')}
+              >
+                Get Started <ArrowRight size={14} />
+              </button>
+            </div>
           )}
 
           {/* Mobile Menu Toggle */}
           <button
-            className={styles.mobileMenuBtn}
+            className={`${styles.mobileToggle} ${isHeroTransparent ? styles.transparentMobileToggle : ''}`}
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label="Toggle menu"
           >
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -96,21 +92,40 @@ const Navbar = () => {
 
       {/* Mobile Navigation */}
       {isMobileMenuOpen && (
-        <div className={styles.mobileNav}>
-          {navLinks.map((link) => (
-            <Link
-              key={link.path}
-              to={link.path}
-              className={`${styles.mobileNavLink} ${location.pathname === link.path ? styles.active : ''}`}
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              {link.icon}
-              <span>{link.name}</span>
-            </Link>
-          ))}
+        <div className={styles.mobileMenu}>
+          <div className={styles.mobileMenuContent}>
+            {navLinks.map((link) => (
+              <Link
+                key={link.path}
+                to={link.path}
+                className={styles.mobileNavLink}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                {link.name}
+              </Link>
+            ))}
+            {user && user.role === 'admin' && (
+              <Link
+                to="/admin"
+                className={styles.mobileNavLink}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Admin Panel
+              </Link>
+            )}
+            {user ? (
+              <button onClick={handleLogout} className={styles.mobileNavLink} style={{ color: 'var(--color-warning)', textAlign: 'left' }}>
+                Sign Out
+              </button>
+            ) : (
+              <Link to="/login" className={styles.mobileNavLink} style={{ color: 'var(--color-primary)' }} onClick={() => setIsMobileMenuOpen(false)}>
+                Sign In / Register
+              </Link>
+            )}
+          </div>
         </div>
       )}
-    </nav>
+    </header>
   );
 };
 

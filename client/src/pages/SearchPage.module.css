@@ -1,148 +1,202 @@
 /* ═══════════════════════════════════════════════════
-   Search Page — Airbnb-inspired Premium Design
-   Pill category tabs, card grid, hover effects
+   Search/Explore Page — ODOO-LDCE Editorial Style
+   Pill tabs, search bar, row-style result cards
    ═══════════════════════════════════════════════════ */
 
-/* ── Tabs ── */
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* ── Category Tabs ── */
+.tabsHeader {
+  display: flex;
+  justify-content: flex-start;
+}
+
 .tabs {
   display: flex;
-  background: var(--color-bg-surface);
-  border: 1px solid var(--color-border-light);
-  border-radius: var(--radius-full);
-  padding: 4px;
-  margin-bottom: var(--space-6);
-  box-shadow: var(--shadow-xs);
-  max-width: 320px;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--color-border);
+  width: 100%;
 }
 
 .tab {
-  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   padding: 10px 20px;
-  background: none;
-  border: none;
   border-radius: var(--radius-full);
-  font-size: 0.875rem;
-  font-weight: var(--font-weight-medium);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
   color: var(--color-text-secondary);
+  border: none;
+  background: none;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .tab:hover {
-  color: var(--color-text-primary);
+  color: var(--color-ink);
+  background-color: rgba(244, 242, 238, 0.5);
 }
 
 .activeTab {
-  background-color: var(--color-text-primary);
-  color: #FFFFFF;
-  font-weight: var(--font-weight-semibold);
+  background-color: var(--color-ink);
+  color: var(--color-bg-page);
 }
 
-/* ── Results Grid ── */
-.resultsGrid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-6);
+.activeTab:hover {
+  background-color: var(--color-ink);
+  color: var(--color-bg-page);
 }
 
+/* ── Results Stack ── */
+.resultsStack {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* ── Row Card (matches ODOO-LDCE explore list style) ── */
 .optionRowCard {
   display: flex;
   flex-direction: column;
-  overflow: hidden;
   padding: 0;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  background-color: var(--color-bg-surface);
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  border-radius: 0;
+  border: none;
+  border-top: none;
+  background: transparent;
+  transition: background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@media (min-width: 650px) {
+@media (min-width: 640px) {
   .optionRowCard {
     flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 24px 20px;
+    border-radius: var(--radius-xl);
   }
 }
 
 .optionRowCard:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  background-color: rgba(244, 242, 238, 0.4);
+  transform: none;
+  box-shadow: none;
+  border-color: transparent;
 }
 
 .optionImage {
   width: 100%;
-  height: 140px;
+  height: 200px;
   background-size: cover;
   background-position: center;
   flex-shrink: 0;
-}
-
-@media (min-width: 650px) {
-  .optionImage {
-    width: 200px;
-    height: auto;
-  }
-}
-
-/* ── Result Card ── */
-.resultCard {
-  padding: 0;
   border-radius: var(--radius-xl);
   overflow: hidden;
 }
 
-.cardImage {
-  height: 180px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
+@media (min-width: 640px) {
+  .optionImage {
+    display: none;
+  }
 }
 
-.placeholderIcon {
-  color: var(--color-primary);
-  opacity: 0.6;
-}
-
-.cardContent {
-  padding: var(--space-5);
+.optionContent {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
+  padding: 20px 0;
 }
 
-.cardTitle {
-  font-family: var(--font-display);
-  font-size: 1.0625rem;
-  font-weight: var(--font-weight-semibold);
-  margin: 0;
-  color: var(--color-text-primary);
+@media (min-width: 640px) {
+  .optionContent {
+    padding: 0;
+  }
 }
 
-.cardSubtitle {
-  font-size: 0.8125rem;
+.optionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.optionTitle {
+  font-family: var(--font-sans);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-ink);
+  margin: 0 0 2px 0;
+  transition: color 0.3s ease;
+}
+
+.optionRowCard:hover .optionTitle {
+  color: var(--color-accent);
+}
+
+.optionCountry {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
   color: var(--color-text-secondary);
   margin: 0;
-}
-
-.cardMeta {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
-  color: var(--color-text-secondary);
+  gap: 4px;
+}
+
+.optionDescription {
   font-size: 0.8125rem;
-  margin: var(--space-1) 0;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin: 0;
+  max-width: 600px;
 }
 
-.price {
-  font-weight: var(--font-weight-bold);
-  color: var(--color-text-primary);
-  font-size: 1rem;
+.optionFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 12px;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
-.actionBtn {
-  margin-top: var(--space-2);
+.popularityScore,
+.activityStats {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.activityStats span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ── Empty State ── */
+.emptyState {
+  padding: 64px 32px;
+  text-align: center;
+  background-color: rgba(244, 242, 238, 0.3);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-2xl);
+  color: var(--color-text-secondary);
+  font-size: 0.9375rem;
 }

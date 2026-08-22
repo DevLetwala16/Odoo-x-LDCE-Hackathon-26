@@ -6,7 +6,6 @@ import PageShell from '../components/layout/PageShell';
 import Card from '../components/common/Card';
 import Button from '../components/common/Button';
 import Input from '../components/common/Input';
-import Loader from '../components/common/Loader';
 import { useAuth } from '../hooks/useAuth';
 import tripService from '../services/tripService';
 import { getTripStatus } from '../utils/tripStatus';
@@ -63,7 +62,6 @@ const ProfilePage = () => {
 
   if (!user) return null;
 
-  // Preplanned (Upcoming/Ongoing) vs Previous (Completed) Trips (Wireframe Screen 7)
   const preplannedTrips = trips.filter(t => getTripStatus(t.startDate, t.endDate) !== 'completed');
   const previousTrips = trips.filter(t => getTripStatus(t.startDate, t.endDate) === 'completed');
 
@@ -89,24 +87,26 @@ const ProfilePage = () => {
           onClick={() => navigate(`/trips/${trip._id}`)}
           className={styles.viewBtn}
         >
-          View
+          View Itinerary
         </Button>
       </div>
     </Card>
   );
 
   return (
-    <PageShell title="User Profile Page">
+    <PageShell 
+      sectionLabel="07 — PROFILE" 
+      title="User profile"
+      subtitle="Personal account details, travel history, and preplanned itineraries."
+    >
       <div className={styles.container}>
-        {/* ── Screen 7 Top Card: User Details with appropriate option to edit ── */}
         <Card className={styles.profileHeaderCard}>
           <div className={styles.userPhotoCircleWrapper}>
             {user.avatar ? (
               <img src={user.avatar} alt="User Photo" className={styles.userPhoto} />
             ) : (
               <div className={styles.userPhotoCircle}>
-                <User size={48} />
-                <span className={styles.photoTag}>Photo</span>
+                <User size={36} />
               </div>
             )}
           </div>
@@ -126,22 +126,22 @@ const ProfilePage = () => {
 
                 <div className={styles.metaInfoGrid}>
                   <div className={styles.metaInfoItem}>
-                    <Mail size={16} /> <span>{user.email}</span>
+                    <Mail size={14} /> <span>{user.email}</span>
                   </div>
                   {user.phone && (
                     <div className={styles.metaInfoItem}>
-                      <Phone size={16} /> <span>{user.phone}</span>
+                      <Phone size={14} /> <span>{user.phone}</span>
                     </div>
                   )}
                   {(user.city || user.country) && (
                     <div className={styles.metaInfoItem}>
-                      <MapPin size={16} /> <span>{user.city}{user.city && user.country ? ', ' : ''}{user.country}</span>
+                      <MapPin size={14} /> <span>{user.city}{user.city && user.country ? ', ' : ''}{user.country}</span>
                     </div>
                   )}
                 </div>
 
                 <p className={styles.additionalInfoText}>
-                  {user.additionalInfo || 'User Details with appropriate option to edit these information...'}
+                  {user.additionalInfo || 'Passionate traveler exploring global destinations, multi-city routes, and local experiences.'}
                 </p>
               </>
             ) : (
@@ -159,7 +159,7 @@ const ProfilePage = () => {
                   <Input label="Country" name="country" value={formData.country} onChange={handleChange} />
                 </div>
                 <div className={styles.inputGroup}>
-                  <label className={styles.label}>Additional Information ...</label>
+                  <label className={styles.label}>Additional Information</label>
                   <textarea 
                     name="additionalInfo" 
                     value={formData.additionalInfo} 
@@ -172,7 +172,7 @@ const ProfilePage = () => {
                   <Button variant="outline" size="sm" onClick={() => setIsEditing(false)}>
                     <X size={14} /> Cancel
                   </Button>
-                  <Button type="submit" variant="accent" size="sm" disabled={loading}>
+                  <Button type="submit" variant="primary" size="sm" disabled={loading}>
                     <Save size={14} /> {loading ? 'Saving...' : 'Save Details'}
                   </Button>
                 </div>
@@ -181,7 +181,7 @@ const ProfilePage = () => {
           </div>
         </Card>
 
-        {/* ── Screen 7 Section 1: Preplanned Trips ── */}
+        {/* Preplanned Trips */}
         <section className={styles.tripsSection}>
           <div className={styles.sectionHeader}>
             <h3 className={styles.sectionTitle}>Preplanned Trips</h3>
@@ -198,7 +198,7 @@ const ProfilePage = () => {
           </div>
         </section>
 
-        {/* ── Screen 7 Section 2: Previous Trips ── */}
+        {/* Previous Trips */}
         <section className={styles.tripsSection}>
           <div className={styles.sectionHeader}>
             <h3 className={styles.sectionTitle}>Previous Trips</h3>

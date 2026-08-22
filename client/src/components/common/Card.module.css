@@ -1,21 +1,21 @@
 /* ═══════════════════════════════════════════════════
-   Card — Airbnb-inspired Premium Design
-   Borderless shadows, smooth hover-lift, image zoom
+   Card Component — ODOO-LDCE Editorial Style
+   Minimal border, sand background, subtle shadow
    ═══════════════════════════════════════════════════ */
 
 .card {
   background-color: var(--color-bg-surface);
-  border: none;
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-card);
-  overflow: hidden;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-6);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
 }
 
 .hoverable:hover {
-  box-shadow: var(--shadow-card-hover);
-  transform: translateY(-4px);
+  border-color: var(--color-text-secondary);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
 }
 
 .clickable {

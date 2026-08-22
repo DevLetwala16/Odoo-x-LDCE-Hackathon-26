@@ -1,166 +1,175 @@
-import React, { useState } from 'react';
-import { Plus, Search, ChevronLeft, ChevronRight, Info, Heart, MessageSquare, Share2, Compass } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
+import { Heart, MessageCircle, Share2, Send, User } from 'lucide-react';
 import PageShell from '../components/layout/PageShell';
-import FilterBar from '../components/common/FilterBar';
-import PostCard from '../components/community/PostCard';
-import PostForm from '../components/community/PostForm';
 import Card from '../components/common/Card';
 import Button from '../components/common/Button';
+import Input from '../components/common/Input';
 import Loader from '../components/common/Loader';
+import communityService from '../services/communityService';
 import { useAuth } from '../hooks/useAuth';
-import useCommunity from '../hooks/useCommunity';
-import toast from 'react-hot-toast';
 import styles from './CommunityPage.module.css';
 
 const CommunityPage = () => {
   const { user } = useAuth();
-  const {
-    posts, total, loading, error,
-    filters, createPost, deletePost, toggleLike,
-    updateFilters, nextPage, prevPage,
-  } = useCommunity();
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [newPostContent, setNewPostContent] = useState('');
+  const [postImage, setPostImage] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
-  const [showForm, setShowForm] = useState(false);
-  const [searchInput, setSearchInput] = useState('');
+  useEffect(() => {
+    fetchPosts();
+  }, []);
 
-  const handleCreatePost = async (postData) => {
+  const fetchPosts = async () => {
     try {
-      await createPost(postData);
-      toast.success('Post shared with community!');
-      setShowForm(false);
+      setLoading(true);
+      const res = await communityService.getPosts({ limit: 10 });
+      setPosts(res?.posts || res?.data?.posts || res || []);
     } catch (err) {
-      toast.error(err.response?.data?.error?.message || 'Failed to create post');
+      console.error('Fetch community posts error:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('Delete this post?')) return;
+  const handleCreatePost = async (e) => {
+    e.preventDefault();
+    if (!newPostContent.trim()) {
+      toast.error('Post content cannot be empty');
+      return;
+    }
+
+    setSubmitting(true);
     try {
-      await deletePost(id);
-      toast.success('Post deleted');
+      await communityService.createPost({
+        content: newPostContent,
+        imageUrl: postImage || undefined,
+      });
+      toast.success('Field note published!');
+      setNewPostContent('');
+      setPostImage('');
+      fetchPosts();
     } catch (err) {
-      toast.error('Failed to delete post');
+      toast.error(err.message || 'Failed to publish post');
+    } finally {
+      setSubmitting(false);
     }
   };
 
-  const handleLike = async (id) => {
+  const handleLike = async (postId) => {
     try {
-      await toggleLike(id);
+      const res = await communityService.likePost(postId);
+      setPosts(prev => prev.map(p => p._id === postId ? { ...p, likesCount: res.likesCount || p.likesCount + 1 } : p));
     } catch (err) {
-      toast.error('Failed to like post');
+      console.error('Like error:', err);
     }
   };
-
-  const totalPages = Math.ceil(total / filters.limit);
 
   return (
-    <PageShell title="Community Tab">
+    <PageShell 
+      sectionLabel="05 — FIELD NOTES" 
+      title="Community & field notes"
+      subtitle="Discover honest travel stories, recommendations, and field notes from fellow explorers."
+    >
       <div className={styles.container}>
-        {/* Header (Wireframe Screen 10) */}
-        <div className={styles.topBar}>
-          <div>
-            <h1 className={styles.title}>Community Tab</h1>
-            <p className={styles.subtitle}>Discover travel stories, tips, and cloned itineraries from fellow globe trotters</p>
-          </div>
-          <Button variant="accent" onClick={() => setShowForm(!showForm)}>
-            <Plus size={18} /> Share Your Trip Story
-          </Button>
-        </div>
-
-        {/* FilterBar (Wireframe Screen 10) */}
-        <FilterBar 
-          searchValue={searchInput}
-          onSearch={(val) => {
-            setSearchInput(val);
-            updateFilters({ q: val });
-          }}
-          placeholder="Search community posts by destination, keywords, tag..."
-          sortOptions={[
-            { label: 'Most Recent', value: 'recent' },
-            { label: 'Most Liked', value: 'popular' },
-          ]}
-          sortValue={filters.sortBy}
-          onSort={(val) => updateFilters({ sortBy: val })}
-        />
-
-        <div className={styles.layoutWithSidebar}>
-          {/* Main Feed Area */}
-          <div className={styles.mainFeed}>
-            {showForm && (
-              <PostForm onSubmit={handleCreatePost} onCancel={() => setShowForm(false)} />
-            )}
-
-            {error && <p className={styles.error}>{error}</p>}
-            {loading && <Loader text="Loading community posts..." />}
-
-            {!loading && posts.length === 0 && (
-              <Card className={styles.emptyCard}>
-                <Compass size={40} className={styles.emptyIcon} />
-                <h3>No community posts yet</h3>
-                <p>Be the first traveler to share a story or itinerary with the GlobeTrotter community!</p>
-                <Button variant="accent" size="sm" onClick={() => setShowForm(true)}>
-                  Create First Post
-                </Button>
-              </Card>
-            )}
-
-            {!loading && posts.map((post) => (
-              <PostCard
-                key={post._id}
-                post={post}
-                currentUserId={user?._id}
-                onLike={handleLike}
-                onDelete={handleDelete}
+        {/* Create Post Section */}
+        {user && (
+          <Card className={styles.createPostCard}>
+            <div className={styles.createHeader}>
+              <div className={styles.userAvatar}>
+                {user.firstName ? user.firstName.charAt(0).toUpperCase() : <User size={18} />}
+              </div>
+              <input 
+                type="text"
+                className={styles.createInput}
+                placeholder="Share a field note, trip recommendation, or travel tip..."
+                value={newPostContent}
+                onChange={(e) => setNewPostContent(e.target.value)}
               />
-            ))}
+            </div>
+            {newPostContent && (
+              <div className={styles.expandedPostForm}>
+                <Input 
+                  placeholder="Optional Photo URL (https://...)" 
+                  value={postImage} 
+                  onChange={(e) => setPostImage(e.target.value)} 
+                />
+                <div className={styles.postSubmitRow}>
+                  <Button 
+                    variant="primary" 
+                    size="sm" 
+                    onClick={handleCreatePost} 
+                    disabled={submitting}
+                  >
+                    {submitting ? 'Publishing...' : 'Publish Note'} <Send size={14} />
+                  </Button>
+                </div>
+              </div>
+            )}
+          </Card>
+        )}
 
-            {/* Pagination */}
-            {!loading && totalPages > 1 && (
-              <div className={styles.pagination}>
-                <button
-                  className={styles.pageBtn}
-                  onClick={prevPage}
-                  disabled={filters.page <= 1}
-                >
-                  <ChevronLeft size={18} /> Previous
-                </button>
-                <span className={styles.pageInfo}>
-                  Page {filters.page} of {totalPages}
-                </span>
-                <button
-                  className={styles.pageBtn}
-                  onClick={nextPage}
-                  disabled={filters.page >= totalPages}
-                >
-                  Next <ChevronRight size={18} />
-                </button>
+        {/* Posts Feed */}
+        {loading ? (
+          <Loader text="Loading field notes..." />
+        ) : (
+          <div className={styles.feed}>
+            {posts.length > 0 ? (
+              posts.map((post) => (
+                <Card key={post._id} className={styles.postCard}>
+                  <div className={styles.postHeader}>
+                    <div className={styles.postAuthorInfo}>
+                      <div className={styles.authorAvatar}>
+                        {post.user?.avatar ? (
+                          <img src={post.user.avatar} alt={post.user.firstName} />
+                        ) : (
+                          <span>{post.user?.firstName ? post.user.firstName.charAt(0) : 'U'}</span>
+                        )}
+                      </div>
+                      <div className={styles.authorDetails}>
+                        <h4 className={styles.authorName}>
+                          {post.user?.firstName ? `${post.user.firstName} ${post.user.lastName || ''}` : 'Explorer'}
+                        </h4>
+                        <p className={styles.postTime}>
+                          {new Date(post.createdAt).toLocaleDateString()}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <p className={styles.postContent}>{post.content}</p>
+
+                  {post.imageUrl && (
+                    <img src={post.imageUrl} alt="Post attachment" className={styles.postImage} />
+                  )}
+
+                  <div className={styles.postActions}>
+                    <button 
+                      className={`${styles.actionBtn} ${post.isLiked ? styles.liked : ''}`}
+                      onClick={() => handleLike(post._id)}
+                    >
+                      <Heart size={16} fill={post.isLiked ? 'var(--color-accent)' : 'none'} color={post.isLiked ? 'var(--color-accent)' : 'currentColor'} /> 
+                      <span>{post.likesCount || 0}</span>
+                    </button>
+                    <button className={styles.actionBtn}>
+                      <MessageCircle size={16} /> 
+                      <span>{post.comments?.length || 0}</span>
+                    </button>
+                    <button className={styles.actionBtn}>
+                      <Share2 size={16} />
+                    </button>
+                  </div>
+                </Card>
+              ))
+            ) : (
+              <div className={styles.emptyFeed}>
+                No community field notes published yet. Be the first to share your journey!
               </div>
             )}
           </div>
-
-          {/* ── Screen 10 Right Sidebar Note Box ── */}
-          <div className={styles.sidebarNote}>
-            <Card className={styles.noteCard}>
-              <div className={styles.noteHeader}>
-                <Info size={20} className={styles.noteIcon} />
-                <h3 className={styles.noteTitle}>Community Hub</h3>
-              </div>
-              <p className={styles.noteText}>
-                Community posts where users share trip/activity experiences. Users can search by destination/tag, view experiences, and clone them into their own trips.
-              </p>
-              <div className={styles.noteList}>
-                <div className={styles.noteItem}>
-                  <Heart size={14} className={styles.itemIcon} />
-                  <span>Like and interact with traveler stories</span>
-                </div>
-                <div className={styles.noteItem}>
-                  <Share2 size={14} className={styles.itemIcon} />
-                  <span>Publish your public itineraries</span>
-                </div>
-              </div>
-            </Card>
-          </div>
-        </div>
+        )}
       </div>
     </PageShell>
   );

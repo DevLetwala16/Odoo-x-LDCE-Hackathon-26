@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Calendar as CalendarIcon, MapPin, DollarSign, Edit, CalendarDays, Plus, Activity, Tag } from 'lucide-react';
+import { Calendar as CalendarIcon, MapPin, DollarSign, Edit, CalendarDays, Share2, Activity, Tag, Check, Copy } from 'lucide-react';
+import toast from 'react-hot-toast';
 import PageShell from '../components/layout/PageShell';
 import Card from '../components/common/Card';
 import Button from '../components/common/Button';
@@ -41,30 +42,50 @@ const ItineraryViewPage = () => {
     if (id) fetchTrip();
   }, [id]);
 
-  if (loading) return <PageShell><Loader text="Loading Itinerary..." /></PageShell>;
-  if (!trip) return <PageShell><div className={styles.error}>Trip not found</div></PageShell>;
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(window.location.href);
+    toast.success('Shareable trip link copied to clipboard!');
+  };
+
+  if (loading) return <PageShell sectionLabel="03 — ITINERARY" title="Loading Journey..."><Loader /></PageShell>;
+  if (!trip) return <PageShell sectionLabel="03 — ITINERARY" title="Trip Not Found"><p>This journey could not be located.</p></PageShell>;
 
   const stops = trip.stops || [];
 
   return (
-    <PageShell title="Itinerary View with Budget Section">
+    <PageShell 
+      sectionLabel="03 — ITINERARY" 
+      title={trip.name}
+      subtitle={`${new Date(trip.startDate).toLocaleDateString()} – ${new Date(trip.endDate).toLocaleDateString()} • Total Budget: ₹${trip.totalBudget || 0}`}
+    >
       <div className={styles.container}>
-        {/* ── Screen 9: Title & Destination Banner ── */}
-        <div className={styles.heroBanner}>
+        {/* Hero Cover Banner */}
+        <div className={styles.hero}>
+          <div 
+            className={styles.heroBg} 
+            style={{ 
+              backgroundImage: `url(${trip.coverImage || 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=1200'})` 
+            }} 
+          />
+          <div className={styles.heroOverlay} />
           <div className={styles.heroContent}>
-            <h1 className={styles.pageTitle}>Itinerary for a selected place: {trip.name}</h1>
-            <div className={styles.tripMetaRow}>
+            <h1 className={styles.title}>{trip.name}</h1>
+            <div className={styles.meta}>
               <span><CalendarIcon size={14} /> {new Date(trip.startDate).toLocaleDateString()} – {new Date(trip.endDate).toLocaleDateString()}</span>
-              <span><DollarSign size={14} /> Allocated Budget: ₹{trip.totalBudget || 0}</span>
+              <span><DollarSign size={14} /> Budget: ₹{trip.totalBudget || 0}</span>
               <span><MapPin size={14} /> {stops.length} Stops</span>
             </div>
           </div>
+
           <div className={styles.heroActions}>
-            <Button variant="outline" size="sm" onClick={() => navigate(`/trips/${trip._id}/calendar`)}>
-              <CalendarDays size={16} /> Calendar View
+            <Button variant="outline" size="sm" className={styles.heroActionBtn} onClick={handleCopyLink}>
+              <Share2 size={14} /> Share
+            </Button>
+            <Button variant="outline" size="sm" className={styles.heroActionBtn} onClick={() => navigate(`/trips/${trip._id}/calendar`)}>
+              <CalendarDays size={14} /> Calendar
             </Button>
             <Button variant="accent" size="sm" onClick={() => navigate(`/trips/${trip._id}/edit`)}>
-              <Edit size={16} /> Edit Itinerary
+              <Edit size={14} /> Edit Stops
             </Button>
           </div>
         </div>
@@ -75,42 +96,38 @@ const ItineraryViewPage = () => {
             className={`${styles.viewTab} ${activeView === 'itinerary' ? styles.activeTab : ''}`}
             onClick={() => setActiveView('itinerary')}
           >
-            Physical Activities & Expenses
+            Day-by-Day Activities & Expenses
           </button>
           <button 
             className={`${styles.viewTab} ${activeView === 'budget' ? styles.activeTab : ''}`}
             onClick={() => setActiveView('budget')}
           >
-            Budget Breakdown & Charts
+            Budget & Financial Analytics
           </button>
         </div>
 
         {activeView === 'itinerary' ? (
           <div className={styles.itineraryTableContainer}>
-            {/* ── Screen 9: Two-column Physical Activity vs Expense Table ── */}
             <div className={styles.tableHeader}>
-              <div className={styles.headerCol}>Physical Activity</div>
-              <div className={styles.headerCol}>Expense</div>
+              <div className={styles.headerCol}>Physical Activity / Sight</div>
+              <div className={styles.headerCol}>Allocated Expense</div>
             </div>
 
             {stops.length > 0 ? (
               stops.map((stop, stopIndex) => (
                 <div key={stop._id || stopIndex} className={styles.dayBlock}>
-                  {/* Day Header */}
                   <div className={styles.dayTitleBar}>
-                    <span className={styles.dayTag}>Day {stopIndex + 1} ({stop.city?.name || stop.title || 'Stop'})</span>
+                    <span className={styles.dayTag}>Day {stopIndex + 1}: {stop.city?.name || stop.title || 'Stop'}</span>
                     <span className={styles.dayDates}>
                       {new Date(stop.arrivalDate).toLocaleDateString()} – {new Date(stop.departureDate).toLocaleDateString()}
                     </span>
-                    <span className={styles.sectionBudgetTag}>Section Budget: ₹{stop.sectionBudget || 0}</span>
+                    <span className={styles.sectionBudgetTag}>Budget: ₹{stop.sectionBudget || 0}</span>
                   </div>
 
-                  {/* Activity and Expense Rows (Wireframe Screen 9) */}
                   <div className={styles.activityExpenseRows}>
                     {stop.activities && stop.activities.length > 0 ? (
                       stop.activities.map((activity, actIndex) => (
                         <div key={activity._id || actIndex} className={styles.activityExpensePair}>
-                          {/* Physical Activity Box */}
                           <div className={styles.activityBox}>
                             <div className={styles.actTitleLine}>
                               <Activity size={16} className={styles.actIcon} />
@@ -121,7 +138,6 @@ const ItineraryViewPage = () => {
                             </p>
                           </div>
 
-                          {/* Expense Box */}
                           <div className={styles.expenseBox}>
                             <div className={styles.expenseAmount}>
                               ₹{activity.estimatedCost || 0}
@@ -147,15 +163,14 @@ const ItineraryViewPage = () => {
               ))
             ) : (
               <Card className={styles.emptyCard}>
-                <p>No itinerary sections or activities added yet.</p>
+                <p>No stops or activities added to this journey yet.</p>
                 <Button variant="accent" onClick={() => navigate(`/trips/${trip._id}/edit`)}>
-                  + Add Itinerary Sections
+                  + Customize Journey Stops
                 </Button>
               </Card>
             )}
           </div>
         ) : (
-          /* ── Budget & Visual Analytics Section ── */
           <div className={styles.budgetView}>
             <BudgetAlert 
               overBudget={budgetData?.overBudget} 

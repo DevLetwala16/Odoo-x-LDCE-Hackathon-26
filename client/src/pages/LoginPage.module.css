@@ -1,6 +1,7 @@
 /* ═══════════════════════════════════════════════════
-   Login Page — Airbnb-inspired Premium Design
-   Full-bleed hero with Ken Burns, elegant card form
+   Login Page — ODOO-LDCE Editorial Split Screen Style
+   Left: Form with Instrument Serif title
+   Right: Image preview with overlay & quote
    ═══════════════════════════════════════════════════ */
 
 .container {
@@ -9,20 +10,113 @@
   background-color: var(--color-bg-page);
 }
 
-/* ── Left Panel: Full-bleed Hero ── */
+/* ── Left Panel: Form ── */
 .leftPanel {
-  display: none;
-  flex: 1.1;
-  position: relative;
-  overflow: hidden;
+  flex: 1;
+  display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  align-items: flex-start;
-  text-align: left;
-  padding: var(--space-12);
+  justify-content: center;
+  padding: var(--space-8);
+  max-width: 600px;
+  margin: 0 auto;
 }
 
-.leftPanel::before {
+@media (min-width: 768px) {
+  .leftPanel {
+    padding: var(--space-12) var(--space-16);
+  }
+}
+
+.brandContainer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: var(--space-10);
+  cursor: pointer;
+}
+
+.brandIcon {
+  color: var(--color-accent);
+  width: 24px;
+  height: 24px;
+}
+
+.brandName {
+  font-size: 0.875rem;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-ink);
+  font-family: var(--font-family);
+  margin: 0;
+}
+
+.loginCard {
+  border: none;
+  background: transparent;
+  padding: 0;
+  box-shadow: none;
+  width: 100%;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 400;
+  color: var(--color-ink);
+  margin: 0 0 var(--space-2) 0;
+  letter-spacing: -0.015em;
+}
+
+.subtitle {
+  color: var(--color-text-secondary);
+  font-size: 0.9375rem;
+  margin-bottom: var(--space-8);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.submitBtn {
+  margin-top: var(--space-4);
+  width: 100%;
+  height: 52px;
+  border-radius: var(--radius-full);
+}
+
+.footer {
+  margin-top: var(--space-8);
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+
+.link {
+  color: var(--color-ink);
+  font-weight: var(--font-weight-bold);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* ── Right Panel: Full Image Preview (Matching auth.tsx) ── */
+.rightPanel {
+  display: none;
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--color-sand);
+}
+
+@media (min-width: 768px) {
+  .rightPanel {
+    display: flex;
+  }
+}
+
+.rightPanel::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -30,154 +124,46 @@
   background-size: cover;
   background-position: center;
   animation: kenBurns 25s ease-in-out infinite;
-  z-index: 0;
 }
 
-.leftPanel::after {
+.rightPanel::after {
   content: '';
   position: absolute;
   inset: 0;
   background: linear-gradient(
     to top,
-    rgba(0, 0, 0, 0.65) 0%,
-    rgba(0, 0, 0, 0.2) 40%,
-    rgba(0, 0, 0, 0.05) 100%
+    rgba(0, 0, 0, 0.6) 0%,
+    rgba(0, 0, 0, 0.1) 60%
   );
-  z-index: 1;
 }
 
-@media (min-width: 768px) {
-  .leftPanel {
-    display: flex;
-  }
-}
-
-.brandContainer {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  margin-bottom: var(--space-4);
-  position: relative;
-  z-index: 2;
-}
-
-.brandIcon {
+.quoteOverlay {
+  position: absolute;
+  bottom: 48px;
+  left: 48px;
+  right: 48px;
   color: #FFFFFF;
-  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
-  width: 40px;
-  height: 40px;
+  z-index: 10;
 }
 
-.brandName {
+.quoteLabel {
+  font-size: 0.6875rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  opacity: 0.8;
+  margin-bottom: 8px;
+}
+
+.quoteTitle {
   font-family: var(--font-display);
-  font-size: 3rem;
-  font-weight: var(--font-weight-black);
-  margin: 0;
+  font-size: 2.25rem;
+  font-weight: 400;
   color: #FFFFFF;
-  letter-spacing: -0.03em;
-  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
-}
-
-.tagline {
-  font-size: 1.25rem;
-  color: rgba(255, 255, 255, 0.88);
-  max-width: 420px;
-  line-height: 1.7;
-  position: relative;
-  z-index: 2;
-  font-weight: var(--font-weight-normal);
-  letter-spacing: 0.01em;
-}
-
-/* ── Right Panel: Form ── */
-.rightPanel {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: var(--space-8);
-  background-color: var(--color-bg-surface);
-}
-
-.loginCard {
-  width: 100%;
-  max-width: 420px;
-  animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) both;
-}
-
-@media (max-width: 767px) {
-  .rightPanel {
-    padding: var(--space-6);
-  }
-  .loginCard {
-    padding: 0;
-  }
-}
-
-.title {
-  font-family: var(--font-display);
-  font-size: 1.875rem;
-  font-weight: var(--font-weight-black);
-  color: var(--color-text-primary);
   margin: 0 0 6px 0;
-  text-align: left;
-  letter-spacing: -0.02em;
 }
 
-.subtitle {
-  color: var(--color-text-secondary);
-  text-align: left;
-  margin-bottom: var(--space-8);
-  font-size: 1rem;
-  line-height: 1.5;
-}
-
-.form {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-  text-align: left;
-}
-
-.divider {
-  display: flex;
-  align-items: center;
-  gap: var(--space-4);
-  margin: var(--space-2) 0;
-  color: var(--color-text-tertiary);
-  font-size: var(--font-size-sm);
-}
-
-.divider::before,
-.divider::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background-color: var(--color-border-light);
-}
-
-.submitBtn {
-  margin-top: var(--space-2);
-  width: 100%;
-  padding: 16px 24px;
-  font-size: 1rem;
-}
-
-.footer {
-  margin-top: var(--space-6);
-  text-align: center;
-  font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
-}
-
-.link {
-  color: var(--color-accent);
-  text-decoration: none;
-  font-weight: var(--font-weight-semibold);
-  transition: color 0.2s ease;
-}
-
-.link:hover {
-  color: var(--color-accent-hover);
-  text-decoration: underline;
+.quoteSubtitle {
+  font-size: 0.875rem;
+  opacity: 0.8;
+  margin: 0;
 }

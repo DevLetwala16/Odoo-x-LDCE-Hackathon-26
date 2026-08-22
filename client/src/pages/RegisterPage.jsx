@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { Camera, User } from 'lucide-react';
+import { Globe, Camera } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import Button from '../components/common/Button';
 import Input from '../components/common/Input';
-import Card from '../components/common/Card';
 import styles from './RegisterPage.module.css';
 
 const RegisterPage = () => {
@@ -32,7 +31,7 @@ const RegisterPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.username || !formData.email || !formData.password || !formData.firstName || !formData.lastName) {
-      toast.error('Please fill in all required fields (First & Last Name, Username, Email, Password)');
+      toast.error('Please fill in all required fields');
       return;
     }
 
@@ -44,7 +43,7 @@ const RegisterPage = () => {
     setLoading(true);
     try {
       await register(formData);
-      toast.success('Registration successful! Welcome to GlobeTrotter.');
+      toast.success('Account created successfully! Welcome to GlobeTrotter.');
       navigate('/');
     } catch (error) {
       toast.error(error.message || 'Registration failed');
@@ -55,33 +54,35 @@ const RegisterPage = () => {
 
   return (
     <div className={styles.container}>
-      <Card className={styles.registerCard}>
-        {/* Top Photo Upload Circle (Wireframe Screen 2) */}
+      <div className={styles.registerCard}>
+        <div className={styles.header}>
+          <Globe className={styles.brandIcon} onClick={() => navigate('/')} style={{ cursor: 'pointer' }} />
+          <h1 className={styles.title}>Create an account</h1>
+          <p className={styles.subtitle}>Sign up to start designing your dream multi-city itineraries.</p>
+        </div>
+
+        {/* Top Photo Upload Circle */}
         <div className={styles.photoUploadWrapper}>
           <div className={styles.photoCircle}>
             {formData.avatar ? (
               <img src={formData.avatar} alt="Avatar" className={styles.avatarPreview} />
             ) : (
               <div className={styles.photoPlaceholder}>
-                <Camera size={32} className={styles.photoIcon} />
+                <Camera size={24} />
                 <span className={styles.photoText}>Photo</span>
               </div>
             )}
           </div>
         </div>
-
-        <h1 className={styles.title}>Registration</h1>
-        <p className={styles.subtitle}>Create your GlobeTrotter account</p>
         
         <form onSubmit={handleSubmit} className={styles.form}>
-          {/* Row 1: First Name | Last Name */}
           <div className={styles.row}>
             <Input 
               label="First Name *" 
               name="firstName" 
               value={formData.firstName} 
               onChange={handleChange} 
-              placeholder="First Name"
+              placeholder="Jane"
               required 
             />
             <Input 
@@ -89,19 +90,18 @@ const RegisterPage = () => {
               name="lastName" 
               value={formData.lastName} 
               onChange={handleChange} 
-              placeholder="Last Name"
+              placeholder="Doe"
               required 
             />
           </div>
           
-          {/* Username & Password */}
           <div className={styles.row}>
             <Input 
               label="Username *" 
               name="username" 
               value={formData.username} 
               onChange={handleChange} 
-              placeholder="Username"
+              placeholder="janedoe"
               required 
             />
             <Input 
@@ -115,7 +115,6 @@ const RegisterPage = () => {
             />
           </div>
 
-          {/* Row 2: Email Address | Phone Number */}
           <div className={styles.row}>
             <Input 
               label="Email Address *" 
@@ -123,7 +122,7 @@ const RegisterPage = () => {
               type="email" 
               value={formData.email} 
               onChange={handleChange} 
-              placeholder="email@example.com"
+              placeholder="jane@example.com"
               required 
             />
             <Input 
@@ -131,25 +130,24 @@ const RegisterPage = () => {
               name="phone" 
               value={formData.phone} 
               onChange={handleChange} 
-              placeholder="+91 9876543210"
+              placeholder="+1 (555) 000-0000"
             />
           </div>
           
-          {/* Row 3: City | Country */}
           <div className={styles.row}>
             <Input 
               label="City" 
               name="city" 
               value={formData.city} 
               onChange={handleChange} 
-              placeholder="Your City"
+              placeholder="New York"
             />
             <Input 
               label="Country" 
               name="country" 
               value={formData.country} 
               onChange={handleChange} 
-              placeholder="Your Country"
+              placeholder="United States"
             />
           </div>
 
@@ -161,9 +159,8 @@ const RegisterPage = () => {
             placeholder="https://images.unsplash.com/..."
           />
           
-          {/* Row 4: Additional Information ... */}
           <div className={styles.inputGroup}>
-            <label className={styles.label}>Additional Information ...</label>
+            <label className={styles.label}>Additional Information (Optional)</label>
             <textarea 
               name="additionalInfo" 
               className={styles.textarea} 
@@ -174,15 +171,15 @@ const RegisterPage = () => {
             ></textarea>
           </div>
           
-          <Button type="submit" variant="accent" className={styles.submitBtn} disabled={loading}>
-            {loading ? 'Registering...' : 'Registration'}
+          <Button type="submit" variant="primary" className={styles.submitBtn} disabled={loading}>
+            {loading ? 'Creating Account...' : 'Sign Up'}
           </Button>
         </form>
         
         <div className={styles.footer}>
           <p>Already have an account? <Link to="/login" className={styles.link}>Log in</Link></p>
         </div>
-      </Card>
+      </div>
     </div>
   );
 };

@@ -1,6 +1,5 @@
 /* ═══════════════════════════════════════════════════
-   Admin Panel Page — Airbnb-inspired Premium Design
-   Dashboard stat cards, clean tables, charts
+   Admin Panel Page — ODOO-LDCE Editorial Style
    ═══════════════════════════════════════════════════ */
 
 .container {
@@ -9,48 +8,10 @@
   gap: var(--space-8);
 }
 
-/* ── Tabs ── */
-.tabs {
-  display: flex;
-  background: var(--color-bg-surface);
-  border: 1px solid var(--color-border-light);
-  border-radius: var(--radius-full);
-  padding: 4px;
-  margin-bottom: var(--space-2);
-  box-shadow: var(--shadow-xs);
-  max-width: 400px;
-}
-
-.tab {
-  flex: 1;
-  padding: 10px 20px;
-  background: none;
-  border: none;
-  border-radius: var(--radius-full);
-  font-size: 0.875rem;
-  font-weight: var(--font-weight-medium);
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-align: center;
-}
-
-.tab:hover {
-  color: var(--color-text-primary);
-}
-
-.active {
-  background-color: var(--color-text-primary);
-  color: #FFFFFF;
-  font-weight: var(--font-weight-semibold);
-}
-
-/* ── Stats Grid ── */
 .statsGrid {
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--space-5);
-  margin-bottom: var(--space-8);
 }
 
 @media (min-width: 640px) {
@@ -60,173 +21,61 @@
 }
 
 .statCard {
-  padding: var(--space-6);
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-2xl);
+  padding: var(--space-6);
   display: flex;
   align-items: center;
   gap: var(--space-5);
 }
 
-.statIcon {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.statLabel {
-  font-size: 0.8125rem;
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin: 0 0 4px 0;
-}
-
 .statNumber {
   font-family: var(--font-display);
-  font-size: 1.75rem;
-  font-weight: var(--font-weight-bold);
-  color: var(--color-text-primary);
+  font-size: 2.25rem;
+  font-weight: 400;
+  color: var(--color-ink);
   margin: 0;
   line-height: 1;
 }
 
-/* ── Charts ── */
-.chartCard {
-  padding: var(--space-6);
-  border-radius: var(--radius-2xl);
-  margin-bottom: var(--space-8);
+.statLabel {
+  font-size: 0.6875rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  margin-bottom: 4px;
 }
 
-.chartTitle {
-  font-family: var(--font-display);
-  font-size: 1.25rem;
-  font-weight: var(--font-weight-bold);
-  color: var(--color-text-primary);
-  margin: 0 0 var(--space-6) 0;
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-
-.chartWrapper {
-  width: 100%;
-  overflow-x: auto;
-}
-
-/* ── Table ── */
 .tableCard {
-  padding: var(--space-6);
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-2xl);
+  padding: var(--space-6);
 }
 
 .tableTitle {
   font-family: var(--font-display);
-  font-size: 1.25rem;
-  font-weight: var(--font-weight-bold);
-  color: var(--color-text-primary);
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: var(--color-ink);
   margin: 0 0 var(--space-6) 0;
-}
-
-.tableWrapper {
-  overflow-x: auto;
-}
-
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
 }
 
 .table th {
   padding: var(--space-3) var(--space-4);
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-secondary);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border-bottom: 2px solid var(--color-border-light);
+  letter-spacing: 0.16em;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .table td {
   padding: var(--space-4);
   font-size: 0.875rem;
-  color: var(--color-text-primary);
+  color: var(--color-ink);
   border-bottom: 1px solid var(--color-border-light);
-  vertical-align: middle;
-}
-
-.table tr:last-child td {
-  border-bottom: none;
-}
-
-.nameCell {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  font-weight: var(--font-weight-medium);
-}
-
-.userAvatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background-color: var(--color-primary-light);
-  color: var(--color-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: var(--font-weight-bold);
-  font-size: 0.75rem;
-  overflow: hidden;
-}
-
-.userAvatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.roleBadge {
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: var(--radius-full);
-  font-size: 0.75rem;
-  font-weight: var(--font-weight-semibold);
-  background-color: var(--color-bg-sunken);
-  color: var(--color-text-secondary);
-}
-
-.adminBadge {
-  background-color: var(--color-primary-light);
-  color: var(--color-primary);
-}
-
-.deleteUserBtn {
-  background: none;
-  border: none;
-  color: var(--color-text-tertiary);
-  cursor: pointer;
-  padding: 6px;
-  border-radius: var(--radius-full);
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.deleteUserBtn:hover {
-  background-color: var(--color-warning-light);
-  color: var(--color-warning);
-}
-
-.noData {
-  text-align: center;
-  padding: var(--space-8);
-  color: var(--color-text-secondary);
-  font-style: italic;
 }

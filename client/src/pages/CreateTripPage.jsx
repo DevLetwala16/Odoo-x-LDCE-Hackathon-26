@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { Plus, MapPin, Check } from 'lucide-react';
+import { MapPin, Check, Plus, ArrowRight } from 'lucide-react';
 import PageShell from '../components/layout/PageShell';
 import Input from '../components/common/Input';
 import Button from '../components/common/Button';
@@ -73,12 +73,11 @@ const CreateTripPage = () => {
       const res = await tripService.createTrip(payload);
       const trip = res?.trip || res?.data?.trip || res;
 
-      // If user selected a starting place, create the initial stop (Section 1)
       if (formData.selectedPlaceId && trip?._id) {
         try {
           await stopService.createStop(trip._id, {
             city: formData.selectedPlaceId,
-            title: 'Section 1',
+            title: 'Stop 1',
             description: `Exploration in ${cities.find(c => c._id === formData.selectedPlaceId)?.name || 'destination'}`,
             arrivalDate: formData.startDate,
             departureDate: formData.endDate,
@@ -86,7 +85,7 @@ const CreateTripPage = () => {
             sectionBudget: Number(formData.totalBudget) || 0,
           });
         } catch (stopErr) {
-          console.error('Error creating initial section:', stopErr);
+          console.error('Error creating initial stop:', stopErr);
         }
       }
       
@@ -100,11 +99,14 @@ const CreateTripPage = () => {
   };
 
   return (
-    <PageShell title="Create a New Trip">
+    <PageShell 
+      sectionLabel="02 — NEW JOURNEY" 
+      title="Design a trip"
+      subtitle="Set dates, total budget, and choose your starting regional destinations."
+    >
       <div className={styles.container}>
-        {/* ── Screen 4: Plan a New Trip Form ── */}
         <Card className={styles.formCard}>
-          <h2 className={styles.panelTitle}>Plan a new trip</h2>
+          <h2 className={styles.panelTitle}>Trip Details</h2>
           
           <form onSubmit={handleSubmit} className={styles.form}>
             <Input 
@@ -112,13 +114,12 @@ const CreateTripPage = () => {
               name="name" 
               value={formData.name} 
               onChange={handleChange} 
-              placeholder="e.g., Paris & Rome Adventure" 
+              placeholder="e.g., European Summer Expedition" 
               required 
             />
 
-            {/* Select a Place */}
             <div className={styles.inputGroup}>
-              <label className={styles.label}>Select a Place</label>
+              <label className={styles.label}>Select Starting Destination</label>
               <select 
                 name="selectedPlaceId" 
                 value={formData.selectedPlaceId} 
@@ -157,27 +158,27 @@ const CreateTripPage = () => {
               name="totalBudget" 
               value={formData.totalBudget} 
               onChange={handleChange} 
-              placeholder="e.g. 50000" 
+              placeholder="e.g. 75000" 
             />
 
             <div className={styles.inputGroup}>
-              <label className={styles.label}>Trip Description (Optional)</label>
+              <label className={styles.label}>Trip Notes & Description (Optional)</label>
               <textarea 
                 name="description" 
                 value={formData.description} 
                 onChange={handleChange} 
                 className={styles.textarea}
-                placeholder="Notes or goals for this trip..."
+                placeholder="Notes or goals for this journey..."
                 rows="2"
               ></textarea>
             </div>
           </form>
         </Card>
 
-        {/* ── Screen 4: Suggestions for Places to Visit / Activities to perform ── */}
+        {/* Suggestions Section */}
         <div className={styles.suggestionsSection}>
           <h3 className={styles.suggestionsTitle}>
-            Suggestions for Places to Visit / Activities to perform
+            Recommended Regional Destinations
           </h3>
 
           <div className={styles.suggestionsGrid}>
@@ -196,30 +197,28 @@ const CreateTripPage = () => {
                 >
                   {formData.selectedPlaceId === city._id && (
                     <div className={styles.selectedBadge}>
-                      <Check size={16} /> Selected
+                      <Check size={14} /> Selected
                     </div>
                   )}
                 </div>
                 <div className={styles.suggestionDetails}>
                   <h4 className={styles.suggestionName}>{city.name}</h4>
                   <p className={styles.suggestionCountry}>{city.country}</p>
-                  <p className={styles.suggestionDesc}>{city.description || 'Popular tourist destination'}</p>
                 </div>
               </Card>
             ))}
           </div>
         </div>
 
-        {/* ── Add another Section / Save CTA ── */}
         <div className={styles.actionRow}>
           <Button 
-            variant="accent" 
+            variant="primary" 
             size="lg" 
             onClick={handleSubmit} 
             disabled={loading}
             className={styles.submitBtn}
           >
-            {loading ? 'Creating...' : 'Add another Section & Build Itinerary'}
+            {loading ? 'Creating...' : 'Create Trip & Customize Stops'} <ArrowRight size={16} />
           </Button>
         </div>
       </div>

@@ -1,23 +1,22 @@
 /* ═══════════════════════════════════════════════════
-   Community Page — Airbnb-inspired Premium Design
-   Social feed layout, clean post cards, like animation
+   Community Page — ODOO-LDCE Editorial Style
+   Social feed with create-post, cards, avatars, actions
    ═══════════════════════════════════════════════════ */
 
 .container {
   display: flex;
   flex-direction: column;
   gap: var(--space-8);
-  max-width: 800px;
+  max-width: 720px;
   margin: 0 auto;
 }
 
-/* ── Create Post ── */
+/* ── Create Post Card ── */
 .createPostCard {
-  padding: var(--space-6);
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-2xl);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
+  padding: var(--space-6);
 }
 
 .createHeader {
@@ -29,33 +28,54 @@
 .userAvatar {
   width: 44px;
   height: 44px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--color-primary), #2FA36B);
-  color: white;
+  border-radius: var(--radius-full);
+  background-color: var(--color-sand);
+  border: 1px solid var(--color-border);
   display: flex;
   align-items: center;
   justify-content: center;
+  font-family: var(--font-sans);
   font-weight: var(--font-weight-bold);
   font-size: 1rem;
+  color: var(--color-ink);
   flex-shrink: 0;
 }
 
 .createInput {
   flex: 1;
-  background: var(--color-bg-sunken);
-  border: 1px solid transparent;
-  padding: 12px 20px;
+  border: none;
+  background: var(--color-sand);
   border-radius: var(--radius-full);
+  padding: 12px 20px;
   font-size: 0.9375rem;
-  color: var(--color-text-primary);
+  font-family: var(--font-family);
+  color: var(--color-ink);
+  outline: none;
   transition: all 0.2s ease;
-  cursor: text;
-  text-align: left;
 }
 
-.createInput:hover {
+.createInput::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+.createInput:focus {
   background: var(--color-bg-surface);
-  border-color: var(--color-border);
+  box-shadow: inset 0 0 0 1px var(--color-border);
+}
+
+.expandedPostForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border-light);
+  animation: fadeIn 0.3s ease;
+}
+
+.postSubmitRow {
+  display: flex;
+  justify-content: flex-end;
 }
 
 /* ── Feed ── */
@@ -63,21 +83,26 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-6);
-  max-width: 1040px;
-  margin: 0 auto;
 }
 
+/* ── Post Card ── */
 .postCard {
-  padding: var(--space-6);
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-2xl);
+  padding: var(--space-6);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.postCard:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* ── Post Header ── */
 .postHeader {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--space-4);
 }
 
 .postAuthorInfo {
@@ -89,20 +114,28 @@
 .authorAvatar {
   width: 40px;
   height: 40px;
-  border-radius: 50%;
-  background: var(--color-bg-sunken);
+  border-radius: var(--radius-full);
+  background-color: var(--color-sand);
+  border: 1px solid var(--color-border);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: var(--font-weight-bold);
-  color: var(--color-text-secondary);
+  overflow: hidden;
+  flex-shrink: 0;
 }
 
 .authorAvatar img {
   width: 100%;
   height: 100%;
-  border-radius: 50%;
   object-fit: cover;
+  border-radius: var(--radius-full);
+}
+
+.authorAvatar span {
+  font-family: var(--font-sans);
+  font-weight: var(--font-weight-bold);
+  font-size: 0.875rem;
+  color: var(--color-ink);
 }
 
 .authorDetails {
@@ -111,87 +144,82 @@
 }
 
 .authorName {
-  font-weight: var(--font-weight-bold);
-  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-ink);
   margin: 0;
-  font-size: 0.9375rem;
 }
 
 .postTime {
-  color: var(--color-text-secondary);
-  font-size: 0.8125rem;
-  margin: 0;
+  font-size: 0.75rem;
+  color: var(--color-text-tertiary);
+  margin: 2px 0 0 0;
 }
 
+/* ── Post Body ── */
 .postContent {
-  color: var(--color-text-primary);
-  font-size: 1rem;
-  line-height: 1.6;
-  margin: 0 0 var(--space-4) 0;
+  color: var(--color-ink);
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  margin: var(--space-4) 0;
 }
 
 .postImage {
   width: 100%;
-  max-height: 400px;
+  border-radius: var(--radius-xl);
+  margin-top: var(--space-3);
   object-fit: cover;
-  border-radius: var(--radius-lg);
-  margin-bottom: var(--space-4);
+  max-height: 400px;
 }
 
 /* ── Post Actions ── */
 .postActions {
   display: flex;
   align-items: center;
-  gap: var(--space-6);
+  gap: var(--space-2);
   padding-top: var(--space-4);
   border-top: 1px solid var(--color-border-light);
+  margin-top: var(--space-4);
 }
 
 .actionBtn {
   display: flex;
   align-items: center;
-  gap: 8px;
-  color: var(--color-text-secondary);
-  font-size: 0.875rem;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: var(--radius-full);
+  font-size: 0.8125rem;
   font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
   background: none;
   border: none;
-  padding: 8px 12px;
-  border-radius: var(--radius-full);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .actionBtn:hover {
-  background-color: var(--color-bg-sunken);
-  color: var(--color-text-primary);
+  background-color: var(--color-sand);
+  color: var(--color-ink);
 }
 
-.liked {
+.actionBtn.liked {
   color: var(--color-accent);
 }
 
-.liked svg {
-  fill: var(--color-accent);
-  animation: scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+.actionBtn span {
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-semibold);
 }
 
-.liked:hover {
-  color: var(--color-accent-hover);
-  background-color: var(--color-accent-light);
-}
-
-/* ── Pagination ── */
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: var(--space-4);
-  margin-top: var(--space-6);
-}
-
-.pageInfo {
-  font-size: 0.875rem;
+/* ── Empty Feed ── */
+.emptyFeed {
+  padding: var(--space-12);
+  text-align: center;
+  background-color: var(--color-sand);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-2xl);
   color: var(--color-text-secondary);
-  font-weight: var(--font-weight-medium);
+  font-size: 0.9375rem;
+  line-height: 1.5;
 }

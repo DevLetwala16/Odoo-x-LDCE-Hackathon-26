@@ -1,28 +1,36 @@
 /* ═══════════════════════════════════════════════════
-   Badge — Airbnb-inspired pill badges
+   Badge Component — ODOO-LDCE Editorial Style
+   Uppercase tracking pill badge
    ═══════════════════════════════════════════════════ */
 
 .badge {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   padding: 4px 12px;
   border-radius: var(--radius-full);
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-weight: var(--font-weight-semibold);
-  letter-spacing: 0.02em;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
   white-space: nowrap;
-  line-height: 1.4;
+}
+
+.default {
+  background-color: var(--color-sand);
+  color: var(--color-ink);
+  border: 1px solid var(--color-border);
 }
 
 .primary {
-  background-color: var(--color-primary-light);
-  color: var(--color-primary);
+  background-color: var(--color-ink);
+  color: var(--color-bg-page);
 }
 
 .accent {
   background-color: var(--color-accent-light);
   color: var(--color-accent);
+  border: 1px solid rgba(179, 107, 63, 0.2);
 }
 
 .success {
@@ -33,9 +41,4 @@
 .warning {
   background-color: var(--color-warning-light);
   color: var(--color-warning);
-}
-
-.info {
-  background-color: var(--color-info);
-  color: var(--color-primary);
 }

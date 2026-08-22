@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Users, MapPin, Activity, TrendingUp, Trash2 } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import PageShell from '../components/layout/PageShell';
 import Card from '../components/common/Card';
-import Button from '../components/common/Button';
 import Loader from '../components/common/Loader';
 import adminService from '../services/adminService';
 import toast from 'react-hot-toast';
 import styles from './AdminPanelPage.module.css';
 
-const CHART_COLORS = ['#0E7C86', '#F2703C', '#2FA36B', '#6B6E76', '#D65E2C', '#0B646D', '#E0574C', '#DCEFF0'];
+const CHART_COLORS = ['#2C2418', '#B36B3F', '#3D7C3F', '#7A7165', '#9A5A33', '#1A150E', '#B93B2B', '#E5E1DA'];
 
 const AdminPanelPage = () => {
   const [stats, setStats] = useState(null);
@@ -47,7 +46,7 @@ const AdminPanelPage = () => {
     }
   };
 
-  if (loading) return <PageShell title="Admin Dashboard"><Loader /></PageShell>;
+  if (loading) return <PageShell sectionLabel="06 — ADMIN" title="Platform administration"><Loader /></PageShell>;
 
   const cityChartData = stats?.topCities?.slice(0, 8).map((c) => ({
     name: c.name,
@@ -62,7 +61,11 @@ const AdminPanelPage = () => {
   const trendData = stats?.userTrends || [];
 
   return (
-    <PageShell title="Admin Dashboard">
+    <PageShell 
+      sectionLabel="06 — ADMIN" 
+      title="Platform administration"
+      subtitle="Overview of registered users, itinerary activity, and regional data."
+    >
       <div className={styles.container}>
         {/* Tab Navigation */}
         <div className={styles.tabs}>
@@ -82,8 +85,8 @@ const AdminPanelPage = () => {
           <>
             <div className={styles.statsGrid}>
               <Card className={styles.statCard}>
-                <div className={styles.statIcon} style={{ backgroundColor: 'rgba(14, 124, 134, 0.1)' }}>
-                  <Users size={24} color="var(--color-primary)" />
+                <div className={styles.statIcon}>
+                  <Users size={20} />
                 </div>
                 <div>
                   <p className={styles.statLabel}>Total Users</p>
@@ -91,8 +94,8 @@ const AdminPanelPage = () => {
                 </div>
               </Card>
               <Card className={styles.statCard}>
-                <div className={styles.statIcon} style={{ backgroundColor: 'rgba(242, 112, 60, 0.1)' }}>
-                  <TrendingUp size={24} color="var(--color-accent)" />
+                <div className={styles.statIcon}>
+                  <TrendingUp size={20} />
                 </div>
                 <div>
                   <p className={styles.statLabel}>Total Trips</p>
@@ -100,8 +103,8 @@ const AdminPanelPage = () => {
                 </div>
               </Card>
               <Card className={styles.statCard}>
-                <div className={styles.statIcon} style={{ backgroundColor: 'rgba(47, 163, 107, 0.1)' }}>
-                  <Activity size={24} color="var(--color-success)" />
+                <div className={styles.statIcon}>
+                  <Activity size={20} />
                 </div>
                 <div>
                   <p className={styles.statLabel}>Community Posts</p>
@@ -245,7 +248,7 @@ const AdminPanelPage = () => {
                         borderRadius: 'var(--radius-md)',
                       }}
                     />
-                    <Bar dataKey="count" fill="var(--color-primary)" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="count" fill="var(--color-ink)" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               ) : (

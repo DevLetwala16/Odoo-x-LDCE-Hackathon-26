@@ -1,211 +1,74 @@
 /* ═══════════════════════════════════════════════════
-   Itinerary Builder Page — Airbnb-inspired Premium
-   Visual timeline, clean stop cards, drag handles
+   Itinerary Builder Page — ODOO-LDCE Editorial Style
    ═══════════════════════════════════════════════════ */
 
-.headerActions {
+.container {
   display: flex;
-  justify-content: flex-end;
-  gap: var(--space-3);
-  margin-bottom: var(--space-8);
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.builderHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
   flex-wrap: wrap;
+  gap: var(--space-4);
+  padding-bottom: var(--space-6);
+  border-bottom: 1px solid var(--color-border);
 }
 
-.builderArea {
-  max-width: 800px;
-  margin: 0 auto;
+.tripTitle {
+  font-family: var(--font-display);
+  font-size: 2.25rem;
+  font-weight: 400;
+  color: var(--color-ink);
+  margin: 0;
 }
 
-/* ── Timeline ── */
-.timeline {
+.stopsTimeline {
   display: flex;
   flex-direction: column;
   gap: var(--space-6);
   position: relative;
-  padding-left: var(--space-8);
 }
 
-.timeline::before {
-  content: '';
-  position: absolute;
-  left: 14px;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  background: linear-gradient(180deg, var(--color-accent), var(--color-primary));
-  border-radius: var(--radius-full);
-}
-
-/* ── Stop Card ── */
 .stopCard {
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl);
   padding: var(--space-6);
-  border-radius: var(--radius-xl);
-  position: relative;
-}
-
-.stopCard::before {
-  content: '';
-  position: absolute;
-  left: calc(-1 * var(--space-8) + 6px);
-  top: var(--space-6);
-  width: 18px;
-  height: 18px;
-  background: var(--color-bg-surface);
-  border: 3px solid var(--color-accent);
-  border-radius: 50%;
-  z-index: 1;
+  transition: all 0.3s ease;
 }
 
 .stopHeader {
   display: flex;
-  align-items: flex-start;
-  gap: var(--space-4);
-  margin-bottom: var(--space-5);
-}
-
-.dragHandle {
-  color: var(--color-text-tertiary);
-  cursor: grab;
-  padding: var(--space-1);
-  border-radius: var(--radius-sm);
-  transition: all 0.15s ease;
-  flex-shrink: 0;
-}
-
-.dragHandle:hover {
-  color: var(--color-text-secondary);
-  background-color: var(--color-bg-sunken);
-}
-
-.stopInfo {
-  flex: 1;
-  min-width: 0;
-}
-
-.cityName {
-  display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 8px;
-  font-family: var(--font-display);
-  font-size: 1.125rem;
-  font-weight: var(--font-weight-bold);
-  margin: 0;
-  color: var(--color-text-primary);
-}
-
-.cityIcon {
-  color: var(--color-accent);
-  flex-shrink: 0;
-}
-
-.stopDates {
-  margin: 4px 0 0 0;
-  color: var(--color-text-secondary);
-  font-size: 0.8125rem;
-}
-
-.sectionControlBtns {
-  display: flex;
-  gap: var(--space-1);
-  flex-shrink: 0;
-}
-
-.actionBtn {
-  width: 34px;
-  height: 34px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  background: none;
-  border-radius: var(--radius-full);
-  cursor: pointer;
-  color: var(--color-text-secondary);
-  transition: all 0.15s ease;
-  font-size: 1rem;
-}
-
-.actionBtn:hover {
-  background-color: var(--color-bg-sunken);
-  color: var(--color-text-primary);
-}
-
-.actionBtn:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
-}
-
-.deleteBtn:hover {
-  background-color: var(--color-warning-light);
-  color: var(--color-warning);
-}
-
-/* ── Activities ── */
-.activitiesArea {
-  padding-top: var(--space-4);
-  border-top: 1px solid var(--color-border-light);
-}
-
-.activitiesTitle {
-  font-size: 0.8125rem;
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin: 0 0 var(--space-3) 0;
-}
-
-.activityList {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
   margin-bottom: var(--space-4);
 }
 
-.activityItem {
-  padding: var(--space-3) var(--space-4);
-  background-color: var(--color-bg-sunken);
-  border-radius: var(--radius-md);
-  font-size: 0.875rem;
-  color: var(--color-text-primary);
+.cityName {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: var(--color-ink);
+  margin: 0;
 }
 
-.emptyActivities {
-  color: var(--color-text-tertiary);
-  font-size: 0.875rem;
-  font-style: italic;
-  margin: 0 0 var(--space-3) 0;
-}
-
-.addActivityBtn {
-  font-size: 0.8125rem;
-}
-
-/* ── Error & Modal ── */
-.error {
-  text-align: center;
-  padding: var(--space-16);
-  color: var(--color-text-secondary);
-  font-size: 1.125rem;
-}
-
-/* ── Prominent "Add another Section" CTA (Wireframe Screen 5) ── */
-.bottomActionArea {
-  display: flex;
-  justify-content: center;
-  padding: var(--space-4) 0 var(--space-8) 0;
-}
-
-.addSectionCta {
-  padding: var(--space-4) var(--space-10);
-  font-size: var(--font-size-base);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
-}
-
-/* ── Modal Styles ── */
-.modalForm {
+.activitiesList {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.activityItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background-color: var(--color-sand);
+  border-radius: var(--radius-lg);
+  font-size: 0.875rem;
 }
