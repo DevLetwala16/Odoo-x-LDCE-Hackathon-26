@@ -1,106 +1,89 @@
-.hero {
-  background-color: var(--color-primary);
-  background-image: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);
+/* ── Screen 3: Banner Image ── */
+.bannerContainer {
+  width: 100%;
+  height: 280px;
   border-radius: var(--radius-xl);
-  padding: var(--space-3xl) var(--space-xl);
-  margin-bottom: var(--space-xl);
-  color: #FFFFFF;
-  text-align: center;
-  position: relative;
   overflow: hidden;
-}
-
-.hero::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&q=80') center/cover;
-  opacity: 0.15;
-  z-index: 0;
-}
-
-.heroContent {
   position: relative;
-  z-index: 1;
-  max-width: 800px;
-  margin: 0 auto;
+  background-image: 
+    linear-gradient(rgba(14, 124, 134, 0.75), rgba(11, 100, 109, 0.9)),
+    url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&q=80&w=1200');
+  background-size: cover;
+  background-position: center;
+  margin-bottom: var(--space-6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.heroTitle {
-  font-size: 2.5rem;
-  font-weight: 800;
-  margin: 0 0 var(--space-md) 0;
-  line-height: 1.2;
+.bannerOverlay {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--space-6);
 }
 
-@media (min-width: 768px) {
-  .heroTitle {
-    font-size: 3.5rem;
-  }
+.bannerContent {
+  max-width: 600px;
 }
 
-.heroSubtitle {
-  font-size: var(--text-lg);
-  opacity: 0.9;
-  margin: 0 0 var(--space-xl) 0;
+.bannerTitle {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: #FFFFFF;
+  margin-bottom: var(--space-2);
 }
 
-.ctaButton {
-  font-size: var(--text-lg);
-  padding: var(--space-md) var(--space-xl);
+.bannerSubtitle {
+  font-size: var(--font-size-base);
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: var(--space-6);
 }
 
-.filterSection {
-  margin-bottom: var(--space-2xl);
+.bannerCta {
+  padding: var(--space-3) var(--space-8);
+  font-size: var(--font-size-base);
+  box-shadow: var(--shadow-md);
 }
 
+.filterWrapper {
+  margin-bottom: var(--space-8);
+}
+
+/* ── Sections ── */
 .section {
-  margin-bottom: var(--space-3xl);
+  margin-bottom: var(--space-10);
 }
 
 .sectionHeader {
-  margin-bottom: var(--space-lg);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-4);
 }
 
 .sectionTitle {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  font-size: var(--text-xl);
-  font-weight: bold;
-  color: var(--color-text);
-  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
 }
 
-.sectionIcon {
-  color: var(--color-primary);
-}
-
-.grid {
+/* ── Top Regional Selections Grid ── */
+.regionalGrid {
   display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  gap: var(--space-md);
-}
-
-@media (min-width: 640px) {
-  .grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 1024px) {
-  .grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: var(--space-4);
 }
 
 .cityCard {
-  height: 200px;
+  height: 160px;
+  overflow: hidden;
   padding: 0;
-  position: relative;
+  cursor: pointer;
+  border-radius: var(--radius-lg);
 }
 
 .cityImage {
@@ -109,6 +92,11 @@
   background-size: cover;
   background-position: center;
   position: relative;
+  transition: transform var(--transition-normal);
+}
+
+.cityCard:hover .cityImage {
+  transform: scale(1.05);
 }
 
 .cityOverlay {
@@ -116,101 +104,79 @@
   bottom: 0;
   left: 0;
   right: 0;
-  padding: var(--space-md);
-  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+  padding: var(--space-3);
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
   color: #FFFFFF;
 }
 
 .cityName {
-  margin: 0;
-  font-size: var(--text-lg);
-  font-weight: bold;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: #FFFFFF;
 }
 
 .cityCountry {
-  margin: 0;
-  font-size: var(--text-sm);
-  opacity: 0.8;
+  font-size: var(--font-size-xs);
+  color: rgba(255, 255, 255, 0.8);
 }
 
-.tripsGrid {
+/* ── Previous Trips ── */
+.previousTripsGrid {
   display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  gap: var(--space-md);
-}
-
-@media (min-width: 768px) {
-  .tripsGrid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 1024px) {
-  .tripsGrid {
-    grid-template-columns: repeat(3, 1fr);
-  }
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--space-4);
 }
 
 .tripCard {
-  padding: var(--space-md);
+  overflow: hidden;
+  padding: 0;
+  cursor: pointer;
+  border-radius: var(--radius-lg);
+}
+
+.tripCover {
+  height: 120px;
+  background-size: cover;
+  background-position: center;
 }
 
 .tripInfo {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
+  padding: var(--space-4);
 }
 
 .tripName {
-  margin: 0 0 var(--space-xs) 0;
-  font-size: var(--text-lg);
-  font-weight: 600;
-  color: var(--color-text);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2);
 }
 
 .tripMeta {
   display: flex;
   align-items: center;
-  gap: var(--space-xs);
+  gap: var(--space-2);
+  font-size: var(--font-size-xs);
   color: var(--color-text-secondary);
-  font-size: var(--text-sm);
+  margin-bottom: var(--space-2);
 }
 
-.emptyStateCard {
-  padding: var(--space-2xl);
+.tripBudget {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-primary);
+}
+
+.emptyCard {
+  padding: var(--space-8);
   text-align: center;
-  background-color: var(--color-surface);
-  border: 1px dashed var(--color-border);
-}
-
-.emptyStateContent {
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-width: 400px;
-  margin: 0 auto;
+  gap: var(--space-4);
+  grid-column: 1 / -1;
 }
 
-.emptyStateIconWrapper {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background-color: var(--color-primary-light);
-  color: var(--color-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: var(--space-md);
-}
-
-.emptyStateTitle {
-  margin: 0 0 var(--space-xs) 0;
-  font-size: var(--text-xl);
-  font-weight: 600;
-  color: var(--color-text);
-}
-
-.emptyStateText {
+.emptyText {
   color: var(--color-text-secondary);
-  margin: 0 0 var(--space-lg) 0;
+  font-size: var(--font-size-sm);
 }

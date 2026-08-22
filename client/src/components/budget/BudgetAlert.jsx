@@ -1,7 +1,7 @@
 import React from 'react';
 import { AlertTriangle, CheckCircle } from 'lucide-react';
 import styles from './BudgetAlert.module.css';
-import { formatCurrency } from '../../utils/formatters';
+import { formatCurrency } from '../../utils/formatCurrency';
 
 const BudgetAlert = ({ overBudget, totalBudget, totalEstimated }) => {
   if (!totalBudget) return null;

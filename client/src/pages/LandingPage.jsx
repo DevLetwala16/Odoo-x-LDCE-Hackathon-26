@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MapPin, Calendar, Compass } from 'lucide-react';
+import { MapPin, Calendar, Plus, Compass } from 'lucide-react';
 import PageShell from '../components/layout/PageShell';
 import FilterBar from '../components/common/FilterBar';
 import Button from '../components/common/Button';
@@ -14,7 +14,7 @@ const LandingPage = () => {
   const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState('');
   const [cities, setCities] = useState([]);
-  const [recentTrips, setRecentTrips] = useState([]);
+  const [previousTrips, setPreviousTrips] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -23,10 +23,11 @@ const LandingPage = () => {
         setLoading(true);
         const [citiesData, tripsData] = await Promise.all([
           cityService.getCities({ limit: 6, sortBy: 'popularity' }),
-          tripService.getTrips({ limit: 3 })
+          tripService.getTrips({ limit: 4 })
         ]);
-        setCities(citiesData || []);
-        setRecentTrips(tripsData || []);
+        setCities(citiesData?.cities || citiesData || []);
+        const rawTrips = tripsData?.trips || tripsData || [];
+        setPreviousTrips(rawTrips);
       } catch (error) {
         console.error('Failed to fetch dashboard data:', error);
       } finally {
@@ -36,48 +37,65 @@ const LandingPage = () => {
     fetchData();
   }, []);
 
+  const filteredCities = cities.filter(c => 
+    c.name.toLowerCase().includes(searchValue.toLowerCase()) ||
+    c.country.toLowerCase().includes(searchValue.toLowerCase())
+  );
+
   return (
-    <PageShell>
-      <div className={styles.hero}>
-        <div className={styles.heroContent}>
-          <h1 className={styles.heroTitle}>Empowering Personalized Travel Planning</h1>
-          <p className={styles.heroSubtitle}>Create custom itineraries, manage budgets, and explore the world with your AI travel companion.</p>
-          <Button 
-            variant="accent" 
-            size="lg" 
-            className={styles.ctaButton}
-            onClick={() => navigate('/trips/new')}
-          >
-            Plan a Trip
-          </Button>
+    <PageShell title="Home">
+      {/* ── Screen 3: Banner Image ── */}
+      <div className={styles.bannerContainer}>
+        <div className={styles.bannerOverlay}>
+          <div className={styles.bannerContent}>
+            <h1 className={styles.bannerTitle}>GlobeTrotter</h1>
+            <p className={styles.bannerSubtitle}>Empowering Personalized Travel Planning</p>
+            <Button 
+              variant="accent" 
+              size="lg" 
+              className={styles.bannerCta}
+              onClick={() => navigate('/trips/new')}
+            >
+              Plan a Trip
+            </Button>
+          </div>
         </div>
       </div>
 
-      <div className={styles.filterSection}>
+      {/* ── Search & Filter Controls ── */}
+      <div className={styles.filterWrapper}>
         <FilterBar 
           searchValue={searchValue}
           onSearch={setSearchValue}
-          placeholder="Search destinations, activities..."
+          placeholder="Search places, regional selections..."
+          sortOptions={[
+            { label: 'Popularity', value: 'popularity' },
+            { label: 'Name (A-Z)', value: 'name' },
+            { label: 'Cost Index', value: 'costIndex' },
+          ]}
         />
       </div>
 
       {loading ? (
-        <Loader fullScreen={false} text="Loading dashboard..." />
+        <Loader text="Loading destinations..." />
       ) : (
         <>
+          {/* ── Top Regional Selections (Wireframe Screen 3) ── */}
           <section className={styles.section}>
             <div className={styles.sectionHeader}>
-              <h2 className={styles.sectionTitle}>
-                <Compass className={styles.sectionIcon} /> 
-                Popular Destinations
-              </h2>
+              <h2 className={styles.sectionTitle}>Top Regional Selections</h2>
             </div>
             
-            <div className={styles.grid}>
-              {cities.length > 0 ? (
-                cities.map(city => (
+            <div className={styles.regionalGrid}>
+              {filteredCities.length > 0 ? (
+                filteredCities.map(city => (
                   <Card key={city._id} hoverable className={styles.cityCard} onClick={() => navigate(`/search?city=${city._id}`)}>
-                    <div className={styles.cityImage} style={{ backgroundImage: `url(${city.image || 'https://images.unsplash.com/photo-1449844908441-8829872d2607?auto=format&fit=crop&q=80&w=400'})` }}>
+                    <div 
+                      className={styles.cityImage} 
+                      style={{ 
+                        backgroundImage: `url(${city.imageUrl || 'https://images.unsplash.com/photo-1449844908441-8829872d2607?auto=format&fit=crop&q=80&w=400'})` 
+                      }}
+                    >
                       <div className={styles.cityOverlay}>
                         <h3 className={styles.cityName}>{city.name}</h3>
                         <p className={styles.cityCountry}>{city.country}</p>
@@ -86,51 +104,51 @@ const LandingPage = () => {
                   </Card>
                 ))
               ) : (
-                <p className={styles.emptyText}>No destinations found.</p>
+                <p className={styles.emptyText}>No regional selections matching your search.</p>
               )}
             </div>
           </section>
 
+          {/* ── Previous Trips (Wireframe Screen 3) ── */}
           <section className={styles.section}>
             <div className={styles.sectionHeader}>
-              <h2 className={styles.sectionTitle}>
-                <Calendar className={styles.sectionIcon} /> 
-                Recent Trips
-              </h2>
+              <h2 className={styles.sectionTitle}>Previous Trips</h2>
+              <Button variant="outline" size="sm" onClick={() => navigate('/trips/new')}>
+                <Plus size={16} /> Plan a Trip
+              </Button>
             </div>
             
-            {recentTrips.length > 0 ? (
-              <div className={styles.tripsGrid}>
-                {recentTrips.map(trip => (
+            <div className={styles.previousTripsGrid}>
+              {previousTrips.length > 0 ? (
+                previousTrips.map(trip => (
                   <Card key={trip._id} hoverable className={styles.tripCard} onClick={() => navigate(`/trips/${trip._id}`)}>
+                    <div 
+                      className={styles.tripCover} 
+                      style={{ 
+                        backgroundImage: `url(${trip.coverImage || 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&q=80&w=500'})` 
+                      }}
+                    />
                     <div className={styles.tripInfo}>
                       <h3 className={styles.tripName}>{trip.name}</h3>
                       <div className={styles.tripMeta}>
                         <Calendar size={14} /> 
-                        <span>{new Date(trip.startDate).toLocaleDateString()} - {new Date(trip.endDate).toLocaleDateString()}</span>
+                        <span>
+                          {new Date(trip.startDate).toLocaleDateString()} – {new Date(trip.endDate).toLocaleDateString()}
+                        </span>
                       </div>
-                      <div className={styles.tripMeta}>
-                        <MapPin size={14} /> 
-                        <span>{trip.destinations?.length || 0} Destinations</span>
-                      </div>
+                      <p className={styles.tripBudget}>Budget: ₹{trip.totalBudget || 0}</p>
                     </div>
                   </Card>
-                ))}
-              </div>
-            ) : (
-              <Card className={styles.emptyStateCard}>
-                <div className={styles.emptyStateContent}>
-                  <div className={styles.emptyStateIconWrapper}>
-                    <MapPin size={32} />
-                  </div>
-                  <h3 className={styles.emptyStateTitle}>Start your first journey</h3>
-                  <p className={styles.emptyStateText}>You haven't planned any trips yet. Create your first itinerary now!</p>
-                  <Button variant="outline" onClick={() => navigate('/trips/new')}>
-                    Create a Trip
+                ))
+              ) : (
+                <Card className={styles.emptyCard}>
+                  <p>No previous trips found. Start creating your first personalized itinerary!</p>
+                  <Button variant="accent" size="sm" onClick={() => navigate('/trips/new')}>
+                    + Plan a Trip
                   </Button>
-                </div>
-              </Card>
-            )}
+                </Card>
+              )}
+            </div>
           </section>
         </>
       )}

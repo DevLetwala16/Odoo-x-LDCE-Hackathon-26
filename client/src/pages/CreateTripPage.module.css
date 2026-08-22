@@ -1,152 +1,176 @@
 .container {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xl);
+  gap: var(--space-8);
+  max-width: 960px;
+  margin: 0 auto;
 }
 
-@media (min-width: 992px) {
-  .container {
-    flex-direction: row;
-    align-items: flex-start;
-  }
+.formCard {
+  padding: var(--space-8);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  background-color: var(--color-bg-surface);
 }
 
-.mainContent {
-  flex: 1;
-}
-
-.sidebar {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
-}
-
-@media (min-width: 992px) {
-  .sidebar {
-    width: 350px;
-    position: sticky;
-    top: calc(64px + var(--space-lg));
-  }
-}
-
-.formCard, .suggestionsCard {
-  padding: var(--space-xl);
-}
-
-.sectionTitle {
-  font-size: var(--text-xl);
-  font-weight: 600;
-  margin: 0 0 var(--space-lg) 0;
-  color: var(--color-text);
+.panelTitle {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+  margin-bottom: var(--space-6);
   border-bottom: 1px solid var(--color-border);
-  padding-bottom: var(--space-sm);
+  padding-bottom: var(--space-3);
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
+  gap: var(--space-4);
 }
 
 .row {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
 }
 
 @media (min-width: 600px) {
   .row {
-    flex-direction: row;
-  }
-  .row > * {
-    flex: 1;
+    grid-template-columns: 1fr 1fr;
   }
 }
 
 .inputGroup {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
+  gap: var(--space-1);
 }
 
 .label {
-  font-size: var(--text-sm);
-  font-weight: 500;
-  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+}
+
+.select {
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  outline: none;
+  transition: border-color var(--transition-fast);
+}
+
+.select:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-info);
 }
 
 .textarea {
-  padding: var(--space-sm);
+  padding: var(--space-3);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
-  background-color: var(--color-surface);
-  color: var(--color-text);
-  font-size: var(--text-sm);
+  background-color: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
   resize: vertical;
   outline: none;
   font-family: inherit;
-  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .textarea:focus {
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px var(--color-primary-light);
+  box-shadow: 0 0 0 3px var(--color-info);
 }
 
-.hint {
-  color: var(--color-text-secondary);
-  font-size: var(--text-sm);
-  margin-bottom: var(--space-md);
-}
-
-.cityList {
+/* ── Suggestions Section ── */
+.suggestionsSection {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-md);
+  gap: var(--space-4);
 }
 
-.cityItem {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--space-sm);
+.suggestionsTitle {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
+
+.suggestionsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--space-4);
+}
+
+.suggestionCard {
+  overflow: hidden;
+  padding: 0;
+  cursor: pointer;
+  border-radius: var(--radius-lg);
+  transition: border-color var(--transition-fast), transform var(--transition-fast);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  background-color: var(--color-background);
-  transition: border-color 0.2s;
 }
 
-.selectedCity {
-  border-color: var(--color-primary);
-  background-color: var(--color-primary-light);
+.selectedCard {
+  border: 2px solid var(--color-primary);
+  box-shadow: 0 0 0 2px var(--color-info);
 }
 
-.cityInfo {
-  display: flex;
-  flex-direction: column;
+.suggestionImage {
+  height: 140px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
 }
 
-.cityName {
-  margin: 0;
-  font-weight: 600;
-  color: var(--color-text);
-}
-
-.cityCountry {
-  margin: 0;
-  font-size: var(--text-xs);
-  color: var(--color-text-secondary);
-}
-
-.addAnotherBtn {
+.selectedBadge {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  background-color: var(--color-primary);
+  color: #FFFFFF;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
   display: flex;
   align-items: center;
+  gap: 4px;
+  font-weight: var(--font-weight-semibold);
+}
+
+.suggestionDetails {
+  padding: var(--space-4);
+}
+
+.suggestionName {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: 2px;
+}
+
+.suggestionCountry {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-2);
+}
+
+.suggestionDesc {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+}
+
+.actionRow {
+  display: flex;
   justify-content: center;
-  gap: var(--space-xs);
+  margin-top: var(--space-4);
 }
 
 .submitBtn {
-  margin-top: var(--space-md);
+  padding: var(--space-4) var(--space-8);
+  font-size: var(--font-size-base);
+  border-radius: var(--radius-md);
 }

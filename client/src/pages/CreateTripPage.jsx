@@ -1,54 +1,61 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { Plus } from 'lucide-react';
+import { Plus, MapPin, Check } from 'lucide-react';
 import PageShell from '../components/layout/PageShell';
 import Input from '../components/common/Input';
 import Button from '../components/common/Button';
 import Card from '../components/common/Card';
 import cityService from '../services/cityService';
 import tripService from '../services/tripService';
+import stopService from '../services/stopService';
 import styles from './CreateTripPage.module.css';
 
 const CreateTripPage = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [popularCities, setPopularCities] = useState([]);
+  const [cities, setCities] = useState([]);
   const [formData, setFormData] = useState({
     name: '',
+    selectedPlaceId: '',
     startDate: '',
     endDate: '',
     totalBudget: '',
     description: '',
     coverImage: '',
-    initialStop: null
   });
 
   useEffect(() => {
     const fetchCities = async () => {
       try {
-        const cities = await cityService.getCities({ limit: 4, sortBy: 'popularity' });
-        setPopularCities(cities || []);
+        const data = await cityService.getCities({ limit: 6, sortBy: 'popularity' });
+        setCities(data?.cities || data || []);
       } catch (error) {
-        console.error('Error fetching popular cities:', error);
+        console.error('Error fetching suggested places:', error);
       }
     };
     fetchCities();
   }, []);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleCitySelect = (cityId) => {
-    setFormData({ ...formData, initialStop: cityId });
-    toast.success('Selected as first stop');
+  const handleSelectPlace = (cityId) => {
+    setFormData((prev) => ({ ...prev, selectedPlaceId: cityId }));
+    const selectedCity = cities.find(c => c._id === cityId);
+    toast.success(`Selected ${selectedCity?.name || 'City'} as primary destination`);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.name || !formData.startDate || !formData.endDate) {
-      toast.error('Please fill in all required fields');
+      toast.error('Please fill in Trip Name, Start Date, and End Date');
+      return;
+    }
+
+    if (new Date(formData.endDate) < new Date(formData.startDate)) {
+      toast.error('End Date cannot be before Start Date');
       return;
     }
     
@@ -60,20 +67,34 @@ const CreateTripPage = () => {
         endDate: formData.endDate,
         totalBudget: Number(formData.totalBudget) || 0,
         description: formData.description,
-        coverImage: formData.coverImage
+        coverImage: formData.coverImage || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&q=80&w=800'
       };
       
-      const newTrip = await tripService.createTrip(payload);
-      
-      if (formData.initialStop) {
-        // Mocking creating initial stop
-        // await stopService.createStop(newTrip._id, { cityId: formData.initialStop });
+      const res = await tripService.createTrip(payload);
+      const trip = res?.trip || res?.data?.trip || res;
+
+      // If user selected a starting place, create the initial stop (Section 1)
+      if (formData.selectedPlaceId && trip?._id) {
+        try {
+          await stopService.createStop(trip._id, {
+            city: formData.selectedPlaceId,
+            title: 'Section 1',
+            description: `Exploration in ${cities.find(c => c._id === formData.selectedPlaceId)?.name || 'destination'}`,
+            arrivalDate: formData.startDate,
+            departureDate: formData.endDate,
+            order: 0,
+            sectionBudget: Number(formData.totalBudget) || 0,
+          });
+        } catch (stopErr) {
+          console.error('Error creating initial section:', stopErr);
+        }
       }
       
-      toast.success('Trip created successfully!');
-      navigate(`/trips/${newTrip._id}/edit`);
+      toast.success('Trip created! Building your itinerary...');
+      navigate(`/trips/${trip._id}/edit`);
     } catch (error) {
       toast.error(error.message || 'Failed to create trip');
+    } finally {
       setLoading(false);
     }
   };
@@ -81,73 +102,124 @@ const CreateTripPage = () => {
   return (
     <PageShell title="Create a New Trip">
       <div className={styles.container}>
-        <div className={styles.mainContent}>
-          <Card className={styles.formCard}>
-            <h2 className={styles.sectionTitle}>Step 1: Trip Details</h2>
-            <form onSubmit={handleSubmit} className={styles.form}>
-              <Input label="Trip Name *" name="name" value={formData.name} onChange={handleChange} required placeholder="e.g. Summer in Europe" />
-              
-              <div className={styles.row}>
-                <Input type="date" label="Start Date *" name="startDate" value={formData.startDate} onChange={handleChange} required />
-                <Input type="date" label="End Date *" name="endDate" value={formData.endDate} onChange={handleChange} required />
-              </div>
-              
-              <Input type="number" label="Total Budget ($)" name="totalBudget" value={formData.totalBudget} onChange={handleChange} placeholder="e.g. 2000" />
-              
-              <div className={styles.inputGroup}>
-                <label className={styles.label}>Description</label>
-                <textarea 
-                  name="description" 
-                  value={formData.description} 
-                  onChange={handleChange}
-                  className={styles.textarea}
-                  rows="3"
-                  placeholder="What is the purpose of this trip?"
-                ></textarea>
-              </div>
-              
-              <Input label="Cover Image URL" name="coverImage" value={formData.coverImage} onChange={handleChange} placeholder="https://..." />
-            </form>
-          </Card>
-        </div>
-        
-        <div className={styles.sidebar}>
-          <Card className={styles.suggestionsCard}>
-            <h2 className={styles.sectionTitle}>Step 2: Starting Point</h2>
-            <p className={styles.hint}>Where does your journey begin? Select a popular destination to add as your first stop.</p>
-            
-            <div className={styles.cityList}>
-              {popularCities.map(city => (
-                <div key={city._id} className={`${styles.cityItem} ${formData.initialStop === city._id ? styles.selectedCity : ''}`}>
-                  <div className={styles.cityInfo}>
-                    <p className={styles.cityName}>{city.name}</p>
-                    <p className={styles.cityCountry}>{city.country}</p>
-                  </div>
-                  <Button 
-                    variant={formData.initialStop === city._id ? "primary" : "outline"}
-                    size="sm"
-                    onClick={() => handleCitySelect(city._id)}
-                  >
-                    {formData.initialStop === city._id ? 'Selected' : 'Select'}
-                  </Button>
-                </div>
-              ))}
+        {/* ── Screen 4: Plan a New Trip Form ── */}
+        <Card className={styles.formCard}>
+          <h2 className={styles.panelTitle}>Plan a new trip</h2>
+          
+          <form onSubmit={handleSubmit} className={styles.form}>
+            <Input 
+              label="Trip Name *" 
+              name="name" 
+              value={formData.name} 
+              onChange={handleChange} 
+              placeholder="e.g., Paris & Rome Adventure" 
+              required 
+            />
+
+            {/* Select a Place */}
+            <div className={styles.inputGroup}>
+              <label className={styles.label}>Select a Place</label>
+              <select 
+                name="selectedPlaceId" 
+                value={formData.selectedPlaceId} 
+                onChange={handleChange}
+                className={styles.select}
+              >
+                <option value="">-- Choose a Destination --</option>
+                {cities.map(c => (
+                  <option key={c._id} value={c._id}>{c.name}, {c.country}</option>
+                ))}
+              </select>
             </div>
             
-            <Button variant="outline" fullWidth className={styles.addAnotherBtn}>
-              <Plus size={16} /> Search more cities
-            </Button>
-          </Card>
-          
+            <div className={styles.row}>
+              <Input 
+                type="date" 
+                label="Start Date *" 
+                name="startDate" 
+                value={formData.startDate} 
+                onChange={handleChange} 
+                required 
+              />
+              <Input 
+                type="date" 
+                label="End Date *" 
+                name="endDate" 
+                value={formData.endDate} 
+                onChange={handleChange} 
+                required 
+              />
+            </div>
+            
+            <Input 
+              type="number" 
+              label="Total Budget (₹)" 
+              name="totalBudget" 
+              value={formData.totalBudget} 
+              onChange={handleChange} 
+              placeholder="e.g. 50000" 
+            />
+
+            <div className={styles.inputGroup}>
+              <label className={styles.label}>Trip Description (Optional)</label>
+              <textarea 
+                name="description" 
+                value={formData.description} 
+                onChange={handleChange} 
+                className={styles.textarea}
+                placeholder="Notes or goals for this trip..."
+                rows="2"
+              ></textarea>
+            </div>
+          </form>
+        </Card>
+
+        {/* ── Screen 4: Suggestions for Places to Visit / Activities to perform ── */}
+        <div className={styles.suggestionsSection}>
+          <h3 className={styles.suggestionsTitle}>
+            Suggestions for Places to Visit / Activities to perform
+          </h3>
+
+          <div className={styles.suggestionsGrid}>
+            {cities.map(city => (
+              <Card 
+                key={city._id} 
+                hoverable 
+                className={`${styles.suggestionCard} ${formData.selectedPlaceId === city._id ? styles.selectedCard : ''}`}
+                onClick={() => handleSelectPlace(city._id)}
+              >
+                <div 
+                  className={styles.suggestionImage}
+                  style={{ 
+                    backgroundImage: `url(${city.imageUrl || 'https://images.unsplash.com/photo-1449844908441-8829872d2607?auto=format&fit=crop&q=80&w=400'})` 
+                  }}
+                >
+                  {formData.selectedPlaceId === city._id && (
+                    <div className={styles.selectedBadge}>
+                      <Check size={16} /> Selected
+                    </div>
+                  )}
+                </div>
+                <div className={styles.suggestionDetails}>
+                  <h4 className={styles.suggestionName}>{city.name}</h4>
+                  <p className={styles.suggestionCountry}>{city.country}</p>
+                  <p className={styles.suggestionDesc}>{city.description || 'Popular tourist destination'}</p>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </div>
+
+        {/* ── Add another Section / Save CTA ── */}
+        <div className={styles.actionRow}>
           <Button 
             variant="accent" 
             size="lg" 
-            fullWidth 
             onClick={handleSubmit} 
-            isLoading={loading}
+            disabled={loading}
             className={styles.submitBtn}
           >
-            Create Trip & Build Itinerary
+            {loading ? 'Creating...' : 'Add another Section & Build Itinerary'}
           </Button>
         </div>
       </div>

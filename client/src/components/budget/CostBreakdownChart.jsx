@@ -1,7 +1,7 @@
 import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import styles from './CostBreakdownChart.module.css';
-import { formatCurrency } from '../../utils/formatters';
+import { formatCurrency } from '../../utils/formatCurrency';
 
 const COLORS = {
   transport: '#0088FE',

@@ -1,177 +1,332 @@
-.headerActions {
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.topBar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--space-xl);
   flex-wrap: wrap;
-  gap: var(--space-md);
-}
-
-.builderArea {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.timeline {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-lg);
-  position: relative;
-}
-
-.timeline::before {
-  content: '';
-  position: absolute;
-  left: 20px;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background-color: var(--color-border);
-  z-index: 0;
-}
-
-.stopCard {
-  position: relative;
-  z-index: 1;
-  margin-left: var(--space-2xl);
-}
-
-.stopCard::before {
-  content: '';
-  position: absolute;
-  left: calc(-1 * var(--space-2xl) + 14px);
-  top: var(--space-lg);
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background-color: var(--color-primary);
-  border: 2px solid var(--color-surface);
-}
-
-.stopHeader {
-  display: flex;
-  align-items: center;
-  padding: var(--space-md);
+  gap: var(--space-4);
+  padding-bottom: var(--space-4);
   border-bottom: 1px solid var(--color-border);
-  background-color: var(--color-surface);
 }
 
-.dragHandle {
-  cursor: grab;
-  color: var(--color-text-secondary);
-  padding: var(--space-xs);
-  margin-right: var(--space-sm);
+.tripTitle {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-1);
 }
 
-.stopInfo {
-  flex: 1;
-}
-
-.cityName {
-  margin: 0 0 var(--space-xs) 0;
-  font-size: var(--text-lg);
-  font-weight: 600;
+.tripDates {
   display: flex;
   align-items: center;
-  gap: var(--space-xs);
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
 }
 
-.cityIcon {
+.dot {
+  color: var(--color-border);
+}
+
+/* ── Stacked Sections List (Wireframe Screen 5) ── */
+.sectionsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.sectionCard {
+  padding: var(--space-6);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  background-color: var(--color-bg-surface);
+  position: relative;
+}
+
+.sectionCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: var(--space-3);
+}
+
+.sectionTitleBlock {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.gripIcon {
+  color: var(--color-text-secondary);
+  cursor: grab;
+}
+
+.sectionNumberTitle {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
   color: var(--color-primary);
 }
 
-.stopDates {
-  margin: 0;
-  font-size: var(--text-sm);
+.cityName {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
   color: var(--color-text-secondary);
+  margin-left: var(--space-2);
 }
 
-.stopActions {
+.sectionControlBtns {
   display: flex;
-  gap: var(--space-xs);
+  align-items: center;
+  gap: var(--space-1);
 }
 
-.actionBtn {
+.orderBtn,
+.deleteBtn {
   background: none;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
-  width: 32px;
-  height: 32px;
+  padding: var(--space-1) var(--space-2);
+  color: var(--color-text-secondary);
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  color: var(--color-text-secondary);
-  transition: all 0.2s;
+  transition: all var(--transition-fast);
 }
 
-.actionBtn:hover:not(:disabled) {
-  background-color: var(--color-background);
-  color: var(--color-text);
+.orderBtn:hover:not(:disabled) {
+  background-color: var(--color-bg-sunken);
+  color: var(--color-text-primary);
 }
 
-.actionBtn:disabled {
-  opacity: 0.5;
+.orderBtn:disabled {
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
 .deleteBtn:hover {
-  color: var(--color-error, #dc2626);
-  border-color: var(--color-error, #dc2626);
-  background-color: #fee2e2;
+  background-color: rgba(224, 87, 76, 0.1);
+  color: var(--color-warning);
+  border-color: var(--color-warning);
 }
 
-.activitiesArea {
-  padding: var(--space-md);
-  background-color: var(--color-background);
-}
-
-.activitiesTitle {
-  margin: 0 0 var(--space-sm) 0;
-  font-size: var(--text-sm);
-  font-weight: 600;
+/* ── Section Description Text (Wireframe Screen 5) ── */
+.sectionDescription {
+  font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
-  text-transform: uppercase;
+  margin-bottom: var(--space-4);
+  line-height: 1.5;
 }
 
-.activityList {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 var(--space-md) 0;
+/* ── Section Meta Bar (Date Range & Budget) ── */
+.sectionMetaBar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-bg-sunken);
+  border-radius: var(--radius-md);
 }
 
-.activityItem {
-  padding: var(--space-sm);
-  background-color: var(--color-surface);
+.metaBadge {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+}
+
+.metaLabel {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.metaValue {
+  color: var(--color-primary);
+  font-weight: var(--font-weight-bold);
+}
+
+/* ── Activities Inside Section ── */
+.activitiesSection {
+  border-top: 1px dashed var(--color-border);
+  padding-top: var(--space-4);
+}
+
+.activitiesHeader {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-3);
+}
+
+.activitiesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.activityChip {
+  padding: var(--space-2) var(--space-3);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  margin-bottom: var(--space-xs);
-  font-size: var(--text-sm);
+  border-radius: var(--radius-md);
+  background-color: var(--color-bg-surface);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.emptyActivities {
-  font-size: var(--text-sm);
+.activityName {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.activityMeta {
+  font-size: 11px;
   color: var(--color-text-secondary);
-  margin-bottom: var(--space-md);
-  font-style: italic;
+}
+
+.removeActBtn {
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  line-height: 1;
+}
+
+.removeActBtn:hover {
+  color: var(--color-warning);
+}
+
+.noActivitiesText {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-3);
 }
 
 .addActivityBtn {
-  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
 }
 
-.modalContent {
+/* ── Prominent "Add another Section" CTA (Wireframe Screen 5) ── */
+.bottomActionArea {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-4) 0 var(--space-8) 0;
+}
+
+.addSectionCta {
+  padding: var(--space-4) var(--space-10);
+  font-size: var(--font-size-base);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ── Modal Styles ── */
+.modalForm {
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
+  gap: var(--space-4);
 }
 
-.error {
+.modalRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+}
+
+.select,
+.textarea {
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  outline: none;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.activityModalBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.presetTitle,
+.customTitle {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
+
+.presetList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.presetItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-bg-sunken);
+}
+
+.presetName {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.presetMeta {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.customActForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.emptyState {
+  padding: var(--space-8);
   text-align: center;
-  padding: var(--space-2xl);
-  color: var(--color-error, #dc2626);
-  font-weight: 500;
+  color: var(--color-text-secondary);
 }
