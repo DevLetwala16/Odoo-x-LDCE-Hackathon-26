@@ -1,26 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Calendar as CalendarIcon, Map, DollarSign, Edit, CalendarDays } from 'lucide-react';
+import { Calendar as CalendarIcon, MapPin, DollarSign, Edit, CalendarDays, Plus, Activity, Tag } from 'lucide-react';
 import PageShell from '../components/layout/PageShell';
 import Card from '../components/common/Card';
 import Button from '../components/common/Button';
+import Badge from '../components/common/Badge';
 import Loader from '../components/common/Loader';
+import BudgetSummary from '../components/budget/BudgetSummary';
+import CostBreakdownChart from '../components/budget/CostBreakdownChart';
+import BudgetAlert from '../components/budget/BudgetAlert';
 import tripService from '../services/tripService';
+import api from '../services/api';
 import styles from './ItineraryViewPage.module.css';
 
 const ItineraryViewPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [trip, setTrip] = useState(null);
+  const [budgetData, setBudgetData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('itinerary');
+  const [activeView, setActiveView] = useState('itinerary');
 
   useEffect(() => {
     const fetchTrip = async () => {
       try {
         setLoading(true);
-        const data = await tripService.getTripById(id);
-        setTrip(data);
+        const [tripRes, budgetRes] = await Promise.all([
+          tripService.getTripById(id),
+          api.get(`/budget/trips/${id}/budget`).catch(() => null)
+        ]);
+        const fetchedTrip = tripRes?.trip || tripRes?.data?.trip || tripRes;
+        setTrip(fetchedTrip);
+        setBudgetData(budgetRes?.data || budgetRes || null);
       } catch (error) {
         console.error('Failed to load trip', error);
       } finally {
@@ -30,101 +41,136 @@ const ItineraryViewPage = () => {
     if (id) fetchTrip();
   }, [id]);
 
-  if (loading) return <PageShell><Loader text="Loading trip details..." /></PageShell>;
+  if (loading) return <PageShell><Loader text="Loading Itinerary..." /></PageShell>;
   if (!trip) return <PageShell><div className={styles.error}>Trip not found</div></PageShell>;
 
+  const stops = trip.stops || [];
+
   return (
-    <PageShell>
-      <div className={styles.hero} style={{ backgroundImage: `url(${trip.coverImage || 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&q=80'})` }}>
-        <div className={styles.heroOverlay}>
+    <PageShell title="Itinerary View with Budget Section">
+      <div className={styles.container}>
+        {/* ── Screen 9: Title & Destination Banner ── */}
+        <div className={styles.heroBanner}>
           <div className={styles.heroContent}>
-            <h1 className={styles.tripName}>{trip.name}</h1>
-            <div className={styles.tripMeta}>
-              <span className={styles.metaItem}><CalendarIcon size={16} /> {new Date(trip.startDate).toLocaleDateString()} - {new Date(trip.endDate).toLocaleDateString()}</span>
-              <span className={styles.metaItem}><DollarSign size={16} /> Budget: ${trip.totalBudget}</span>
+            <h1 className={styles.pageTitle}>Itinerary for a selected place: {trip.name}</h1>
+            <div className={styles.tripMetaRow}>
+              <span><CalendarIcon size={14} /> {new Date(trip.startDate).toLocaleDateString()} – {new Date(trip.endDate).toLocaleDateString()}</span>
+              <span><DollarSign size={14} /> Allocated Budget: ₹{trip.totalBudget || 0}</span>
+              <span><MapPin size={14} /> {stops.length} Stops</span>
             </div>
           </div>
           <div className={styles.heroActions}>
-            <Button variant="outline" onClick={() => navigate(`/trips/${trip._id}/calendar`)} className={styles.actionBtn}>
+            <Button variant="outline" size="sm" onClick={() => navigate(`/trips/${trip._id}/calendar`)}>
               <CalendarDays size={16} /> Calendar View
             </Button>
-            <Button variant="accent" onClick={() => navigate(`/trips/${trip._id}/edit`)}>
+            <Button variant="accent" size="sm" onClick={() => navigate(`/trips/${trip._id}/edit`)}>
               <Edit size={16} /> Edit Itinerary
             </Button>
           </div>
         </div>
-      </div>
 
-      <div className={styles.tabs}>
-        <button 
-          className={`${styles.tab} ${activeTab === 'itinerary' ? styles.activeTab : ''}`}
-          onClick={() => setActiveTab('itinerary')}
-        >
-          Day-wise Itinerary
-        </button>
-        <button 
-          className={`${styles.tab} ${activeTab === 'budget' ? styles.activeTab : ''}`}
-          onClick={() => setActiveTab('budget')}
-        >
-          Budget Breakdown
-        </button>
-      </div>
+        {/* View Switcher: Itinerary Table vs Budget Breakdown */}
+        <div className={styles.viewTabs}>
+          <button 
+            className={`${styles.viewTab} ${activeView === 'itinerary' ? styles.activeTab : ''}`}
+            onClick={() => setActiveView('itinerary')}
+          >
+            Physical Activities & Expenses
+          </button>
+          <button 
+            className={`${styles.viewTab} ${activeView === 'budget' ? styles.activeTab : ''}`}
+            onClick={() => setActiveView('budget')}
+          >
+            Budget Breakdown & Charts
+          </button>
+        </div>
 
-      <div className={styles.content}>
-        {activeTab === 'itinerary' ? (
-          <div className={styles.itinerarySection}>
-            {trip.stops && trip.stops.length > 0 ? (
-              trip.stops.map((stop, index) => (
-                <Card key={stop._id || index} className={styles.dayCard}>
-                  <div className={styles.dayHeader}>
-                    <h3 className={styles.dayTitle}>
-                      <Map size={20} className={styles.dayIcon} />
-                      {stop.city?.name || 'Stop'}
-                    </h3>
+        {activeView === 'itinerary' ? (
+          <div className={styles.itineraryTableContainer}>
+            {/* ── Screen 9: Two-column Physical Activity vs Expense Table ── */}
+            <div className={styles.tableHeader}>
+              <div className={styles.headerCol}>Physical Activity</div>
+              <div className={styles.headerCol}>Expense</div>
+            </div>
+
+            {stops.length > 0 ? (
+              stops.map((stop, stopIndex) => (
+                <div key={stop._id || stopIndex} className={styles.dayBlock}>
+                  {/* Day Header */}
+                  <div className={styles.dayTitleBar}>
+                    <span className={styles.dayTag}>Day {stopIndex + 1} ({stop.city?.name || stop.title || 'Stop'})</span>
                     <span className={styles.dayDates}>
-                      {stop.startDate && new Date(stop.startDate).toLocaleDateString()}
+                      {new Date(stop.arrivalDate).toLocaleDateString()} – {new Date(stop.departureDate).toLocaleDateString()}
                     </span>
+                    <span className={styles.sectionBudgetTag}>Section Budget: ₹{stop.sectionBudget || 0}</span>
                   </div>
-                  <div className={styles.activitiesList}>
+
+                  {/* Activity and Expense Rows (Wireframe Screen 9) */}
+                  <div className={styles.activityExpenseRows}>
                     {stop.activities && stop.activities.length > 0 ? (
-                      stop.activities.map(act => (
-                        <div key={act._id} className={styles.activityItem}>
-                          <div className={styles.activityTime}>TBD</div>
-                          <div className={styles.activityDetails}>
-                            <h4 className={styles.activityName}>{act.name}</h4>
-                            {act.price && <span className={styles.activityPrice}>${act.price}</span>}
+                      stop.activities.map((activity, actIndex) => (
+                        <div key={activity._id || actIndex} className={styles.activityExpensePair}>
+                          {/* Physical Activity Box */}
+                          <div className={styles.activityBox}>
+                            <div className={styles.actTitleLine}>
+                              <Activity size={16} className={styles.actIcon} />
+                              <span className={styles.actName}>{activity.name}</span>
+                            </div>
+                            <p className={styles.actDesc}>
+                              {activity.description || `${activity.category?.toUpperCase()} • Duration: ${activity.duration || 60} mins`}
+                            </p>
+                          </div>
+
+                          {/* Expense Box */}
+                          <div className={styles.expenseBox}>
+                            <div className={styles.expenseAmount}>
+                              ₹{activity.estimatedCost || 0}
+                            </div>
+                            <span className={styles.expenseCategoryBadge}>
+                              <Tag size={12} /> {activity.category || 'activity'}
+                            </span>
                           </div>
                         </div>
                       ))
                     ) : (
-                      <p className={styles.emptyText}>No activities scheduled for this stop.</p>
+                      <div className={styles.noActivitiesRow}>
+                        <div className={styles.emptyActivityBox}>
+                          Hotel stay & Exploration in {stop.city?.name || 'Destination'}
+                        </div>
+                        <div className={styles.emptyExpenseBox}>
+                          ₹{stop.sectionBudget || 0} (allocated)
+                        </div>
+                      </div>
                     )}
                   </div>
-                </Card>
+                </div>
               ))
             ) : (
               <Card className={styles.emptyCard}>
-                <p>No stops added to this itinerary yet.</p>
-                <Button variant="primary" onClick={() => navigate(`/trips/${trip._id}/edit`)}>Add Stops</Button>
+                <p>No itinerary sections or activities added yet.</p>
+                <Button variant="accent" onClick={() => navigate(`/trips/${trip._id}/edit`)}>
+                  + Add Itinerary Sections
+                </Button>
               </Card>
             )}
           </div>
         ) : (
-          <div className={styles.budgetSection}>
-            <Card className={styles.budgetSummaryCard}>
-              <h3 className={styles.cardTitle}>Budget Summary</h3>
-              <div className={styles.budgetStats}>
-                <div className={styles.statBox}>
-                  <span className={styles.statLabel}>Total Budget</span>
-                  <span className={styles.statValue}>${trip.totalBudget || 0}</span>
-                </div>
-                <div className={styles.statBox}>
-                  <span className={styles.statLabel}>Estimated Cost</span>
-                  <span className={`${styles.statValue} ${styles.warning}`}>$0 (TBD)</span>
-                </div>
-              </div>
-              <p className={styles.emptyText}>Detailed budget breakdown will be available as you add expenses.</p>
-            </Card>
+          /* ── Budget & Visual Analytics Section ── */
+          <div className={styles.budgetView}>
+            <BudgetAlert 
+              overBudget={budgetData?.overBudget} 
+              totalBudget={trip.totalBudget} 
+              totalEstimated={budgetData?.totalEstimated || 0} 
+            />
+            <BudgetSummary 
+              totalBudget={trip.totalBudget} 
+              totalEstimated={budgetData?.totalEstimated || 0} 
+              breakdown={budgetData?.breakdown} 
+            />
+            <CostBreakdownChart 
+              breakdown={budgetData?.breakdown} 
+              perDay={budgetData?.perDay} 
+            />
           </div>
         )}
       </div>

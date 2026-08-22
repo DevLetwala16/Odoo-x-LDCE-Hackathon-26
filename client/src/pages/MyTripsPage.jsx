@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, MapPin, DollarSign, Plus } from 'lucide-react';
+import { Calendar, MapPin, Plus, ArrowRight, DollarSign } from 'lucide-react';
 import PageShell from '../components/layout/PageShell';
 import FilterBar from '../components/common/FilterBar';
 import Card from '../components/common/Card';
@@ -8,21 +8,23 @@ import Badge from '../components/common/Badge';
 import Button from '../components/common/Button';
 import Loader from '../components/common/Loader';
 import tripService from '../services/tripService';
+import { getTripStatus } from '../utils/tripStatus';
 import styles from './MyTripsPage.module.css';
 
 const MyTripsPage = () => {
   const navigate = useNavigate();
   const [trips, setTrips] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('upcoming');
   const [searchValue, setSearchValue] = useState('');
+  const [sortBy, setSortBy] = useState('startDate');
 
   useEffect(() => {
     const fetchTrips = async () => {
       try {
         setLoading(true);
-        const data = await tripService.getTrips({});
-        setTrips(data || []);
+        const res = await tripService.getTrips({});
+        const tripList = res?.trips || res?.data?.trips || res || [];
+        setTrips(tripList);
       } catch (error) {
         console.error('Failed to fetch trips:', error);
       } finally {
@@ -32,109 +34,141 @@ const MyTripsPage = () => {
     fetchTrips();
   }, []);
 
-  const getStatus = (trip) => {
-    const today = new Date();
-    const start = new Date(trip.startDate);
-    const end = new Date(trip.endDate);
-    
-    if (today < start) return 'upcoming';
-    if (today >= start && today <= end) return 'ongoing';
-    return 'completed';
-  };
+  const filteredTrips = trips.filter(trip => 
+    trip.name.toLowerCase().includes(searchValue.toLowerCase()) ||
+    (trip.description && trip.description.toLowerCase().includes(searchValue.toLowerCase()))
+  );
 
-  const filteredTrips = trips.filter(trip => {
-    const matchesTab = getStatus(trip) === activeTab;
-    const matchesSearch = trip.name.toLowerCase().includes(searchValue.toLowerCase());
-    return matchesTab && matchesSearch;
-  });
+  // Group trips into 3 categories matching Wireframe Screen 6:
+  const ongoingTrips = filteredTrips.filter(t => getTripStatus(t.startDate, t.endDate) === 'ongoing');
+  const upcomingTrips = filteredTrips.filter(t => getTripStatus(t.startDate, t.endDate) === 'upcoming');
+  const completedTrips = filteredTrips.filter(t => getTripStatus(t.startDate, t.endDate) === 'completed');
 
-  return (
-    <PageShell title="My Trips">
-      <div className={styles.header}>
-        <div className={styles.tabs}>
-          <button 
-            className={`${styles.tab} ${activeTab === 'ongoing' ? styles.activeTab : ''}`}
-            onClick={() => setActiveTab('ongoing')}
-          >
-            Ongoing
-          </button>
-          <button 
-            className={`${styles.tab} ${activeTab === 'upcoming' ? styles.activeTab : ''}`}
-            onClick={() => setActiveTab('upcoming')}
-          >
-            Upcoming
-          </button>
-          <button 
-            className={`${styles.tab} ${activeTab === 'completed' ? styles.activeTab : ''}`}
-            onClick={() => setActiveTab('completed')}
-          >
-            Completed
-          </button>
+  const renderTripCard = (trip, statusVariant) => (
+    <Card 
+      key={trip._id} 
+      hoverable 
+      className={styles.horizontalTripCard} 
+      onClick={() => navigate(`/trips/${trip._id}`)}
+    >
+      <div 
+        className={styles.tripImage} 
+        style={{ 
+          backgroundImage: `url(${trip.coverImage || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&q=80&w=400'})` 
+        }}
+      />
+      <div className={styles.tripOverview}>
+        <div className={styles.tripHeaderRow}>
+          <h3 className={styles.tripTitle}>{trip.name}</h3>
+          <Badge variant={statusVariant}>
+            {getTripStatus(trip.startDate, trip.endDate).toUpperCase()}
+          </Badge>
         </div>
-        
-        <Button variant="accent" onClick={() => navigate('/trips/new')}>
-          <Plus size={16} /> New Trip
+
+        <p className={styles.tripShortOverview}>
+          {trip.description || 'Short Overview of the Trip — Personalized itinerary with stops and activities.'}
+        </p>
+
+        <div className={styles.tripMetaRow}>
+          <span className={styles.metaItem}>
+            <Calendar size={14} /> 
+            {new Date(trip.startDate).toLocaleDateString()} – {new Date(trip.endDate).toLocaleDateString()}
+          </span>
+          <span className={styles.metaItem}>
+            <DollarSign size={14} /> Budget: ₹{trip.totalBudget || 0}
+          </span>
+          <span className={styles.metaItem}>
+            <MapPin size={14} /> {trip.stops?.length || 0} Sections
+          </span>
+        </div>
+      </div>
+      <div className={styles.viewAction}>
+        <Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); navigate(`/trips/${trip._id}`); }}>
+          View Itinerary <ArrowRight size={14} />
         </Button>
       </div>
+    </Card>
+  );
 
-      <FilterBar 
-        searchValue={searchValue}
-        onSearch={setSearchValue}
-        placeholder="Search your trips..."
-        sortOptions={[
-          { label: 'Date (Nearest First)', value: 'date_asc' },
-          { label: 'Date (Furthest First)', value: 'date_desc' },
-          { label: 'Name (A-Z)', value: 'name_asc' }
-        ]}
-      />
-
-      {loading ? (
-        <Loader text="Loading your trips..." />
-      ) : filteredTrips.length > 0 ? (
-        <div className={styles.grid}>
-          {filteredTrips.map(trip => (
-            <Card key={trip._id} hoverable className={styles.tripCard} onClick={() => navigate(`/trips/${trip._id}`)}>
-              <div 
-                className={styles.tripCover} 
-                style={{ backgroundImage: `url(${trip.coverImage || 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&q=80'})` }}
-              >
-                <Badge variant={activeTab === 'completed' ? 'success' : activeTab === 'ongoing' ? 'accent' : 'primary'} className={styles.statusBadge}>
-                  {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
-                </Badge>
-              </div>
-              <div className={styles.tripContent}>
-                <h3 className={styles.tripName}>{trip.name}</h3>
-                
-                <div className={styles.tripDetails}>
-                  <div className={styles.detailItem}>
-                    <Calendar size={14} />
-                    <span>{new Date(trip.startDate).toLocaleDateString()}</span>
-                  </div>
-                  <div className={styles.detailItem}>
-                    <DollarSign size={14} />
-                    <span>${trip.totalBudget || 0} budget</span>
-                  </div>
-                </div>
-                
-                <p className={styles.tripDescription}>
-                  {trip.description ? (trip.description.length > 60 ? trip.description.substring(0, 60) + '...' : trip.description) : 'No description provided.'}
-                </p>
-              </div>
-            </Card>
-          ))}
-        </div>
-      ) : (
-        <div className={styles.emptyState}>
-          <div className={styles.emptyIcon}>
-            <MapPin size={48} />
+  return (
+    <PageShell title="User Trip Listing">
+      <div className={styles.container}>
+        {/* Top Header & CTA */}
+        <div className={styles.topHeader}>
+          <div>
+            <h1 className={styles.pageHeading}>User Trip Listing</h1>
+            <p className={styles.pageSubheading}>Track your ongoing, upcoming, and completed travel plans</p>
           </div>
-          <h3>No {activeTab} trips found</h3>
-          <p>You don't have any {activeTab} trips matching your criteria.</p>
-          <Button variant="primary" onClick={() => navigate('/trips/new')} className={styles.emptyBtn}>
-            Plan a New Trip
+          <Button variant="accent" onClick={() => navigate('/trips/new')}>
+            <Plus size={16} /> Plan a New Trip
           </Button>
         </div>
-      )}
+
+        {/* FilterBar (Wireframe Screen 6) */}
+        <FilterBar 
+          searchValue={searchValue}
+          onSearch={setSearchValue}
+          placeholder="Search your trips by name or destination..."
+          sortOptions={[
+            { label: 'Start Date (Upcoming)', value: 'startDate' },
+            { label: 'Trip Name (A-Z)', value: 'name' },
+            { label: 'Budget', value: 'totalBudget' },
+          ]}
+          sortValue={sortBy}
+          onSort={setSortBy}
+        />
+
+        {loading ? (
+          <Loader text="Loading your trips..." />
+        ) : (
+          <div className={styles.categoriesContainer}>
+            {/* ── Category 1: Ongoing (Wireframe Screen 6) ── */}
+            <section className={styles.categorySection}>
+              <div className={styles.categoryHeader}>
+                <h2 className={styles.categoryTitle}>Ongoing</h2>
+                <span className={styles.countBadge}>{ongoingTrips.length}</span>
+              </div>
+              <div className={styles.tripsList}>
+                {ongoingTrips.length > 0 ? (
+                  ongoingTrips.map(trip => renderTripCard(trip, 'accent'))
+                ) : (
+                  <div className={styles.emptyCategory}>No ongoing trips at the moment.</div>
+                )}
+              </div>
+            </section>
+
+            {/* ── Category 2: Upcoming (Wireframe Screen 6) ── */}
+            <section className={styles.categorySection}>
+              <div className={styles.categoryHeader}>
+                <h2 className={styles.categoryTitle}>Upcoming</h2>
+                <span className={styles.countBadge}>{upcomingTrips.length}</span>
+              </div>
+              <div className={styles.tripsList}>
+                {upcomingTrips.length > 0 ? (
+                  upcomingTrips.map(trip => renderTripCard(trip, 'primary'))
+                ) : (
+                  <div className={styles.emptyCategory}>No upcoming trips planned yet.</div>
+                )}
+              </div>
+            </section>
+
+            {/* ── Category 3: Completed (Wireframe Screen 6) ── */}
+            <section className={styles.categorySection}>
+              <div className={styles.categoryHeader}>
+                <h2 className={styles.categoryTitle}>Completed</h2>
+                <span className={styles.countBadge}>{completedTrips.length}</span>
+              </div>
+              <div className={styles.tripsList}>
+                {completedTrips.length > 0 ? (
+                  completedTrips.map(trip => renderTripCard(trip, 'success'))
+                ) : (
+                  <div className={styles.emptyCategory}>No completed past trips found.</div>
+                )}
+              </div>
+            </section>
+          </div>
+        )}
+      </div>
     </PageShell>
   );
 };

@@ -1,31 +1,52 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { User, Mail, MapPin, Phone, Edit2, Save, X } from 'lucide-react';
+import { User, Mail, MapPin, Phone, Edit2, Save, X, Calendar, Plus } from 'lucide-react';
 import PageShell from '../components/layout/PageShell';
 import Card from '../components/common/Card';
 import Button from '../components/common/Button';
 import Input from '../components/common/Input';
+import Loader from '../components/common/Loader';
 import { useAuth } from '../hooks/useAuth';
+import tripService from '../services/tripService';
+import { getTripStatus } from '../utils/tripStatus';
 import styles from './ProfilePage.module.css';
 
 const ProfilePage = () => {
+  const navigate = useNavigate();
   const { user, updateProfile } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
+  const [trips, setTrips] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     firstName: user?.firstName || '',
     lastName: user?.lastName || '',
     phone: user?.phone || '',
     city: user?.city || '',
     country: user?.country || '',
+    avatar: user?.avatar || '',
     additionalInfo: user?.additionalInfo || ''
   });
-  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchUserTrips = async () => {
+      try {
+        const res = await tripService.getTrips({});
+        const tripList = res?.trips || res?.data?.trips || res || [];
+        setTrips(tripList);
+      } catch (err) {
+        console.error('Failed to load user trips:', err);
+      }
+    };
+    fetchUserTrips();
+  }, []);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleSave = async () => {
+  const handleSave = async (e) => {
+    e.preventDefault();
     setLoading(true);
     try {
       if (updateProfile) {
@@ -42,95 +63,154 @@ const ProfilePage = () => {
 
   if (!user) return null;
 
+  // Preplanned (Upcoming/Ongoing) vs Previous (Completed) Trips (Wireframe Screen 7)
+  const preplannedTrips = trips.filter(t => getTripStatus(t.startDate, t.endDate) !== 'completed');
+  const previousTrips = trips.filter(t => getTripStatus(t.startDate, t.endDate) === 'completed');
+
+  const renderTripCard = (trip) => (
+    <Card key={trip._id} className={styles.tripCard}>
+      <div 
+        className={styles.tripImage} 
+        style={{ 
+          backgroundImage: `url(${trip.coverImage || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&q=80&w=300'})` 
+        }}
+      />
+      <div className={styles.tripCardContent}>
+        <h4 className={styles.tripTitle}>{trip.name}</h4>
+        <p className={styles.tripDates}>
+          <Calendar size={12} />
+          {new Date(trip.startDate).toLocaleDateString()} – {new Date(trip.endDate).toLocaleDateString()}
+        </p>
+        <p className={styles.tripBudget}>Budget: ₹{trip.totalBudget || 0}</p>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          fullWidth 
+          onClick={() => navigate(`/trips/${trip._id}`)}
+          className={styles.viewBtn}
+        >
+          View
+        </Button>
+      </div>
+    </Card>
+  );
+
   return (
-    <PageShell title="My Profile">
+    <PageShell title="User Profile Page">
       <div className={styles.container}>
-        <div className={styles.sidebar}>
-          <Card className={styles.avatarCard}>
-            <div className={styles.avatarWrapper}>
-              {user.avatar ? (
-                <img src={user.avatar} alt={user.username} className={styles.avatarImage} />
-              ) : (
-                <div className={styles.avatarPlaceholder}>
-                  {user.firstName ? user.firstName.charAt(0) : <User size={48} />}
-                </div>
-              )}
-            </div>
-            <h2 className={styles.userName}>{user.firstName} {user.lastName}</h2>
-            <p className={styles.userUsername}>@{user.username}</p>
-            
-            <div className={styles.contactInfo}>
-              <div className={styles.infoItem}>
-                <Mail size={16} /> <span>{user.email}</span>
+        {/* ── Screen 7 Top Card: User Details with appropriate option to edit ── */}
+        <Card className={styles.profileHeaderCard}>
+          <div className={styles.userPhotoCircleWrapper}>
+            {user.avatar ? (
+              <img src={user.avatar} alt="User Photo" className={styles.userPhoto} />
+            ) : (
+              <div className={styles.userPhotoCircle}>
+                <User size={48} />
+                <span className={styles.photoTag}>Photo</span>
               </div>
-              {user.phone && (
-                <div className={styles.infoItem}>
-                  <Phone size={16} /> <span>{user.phone}</span>
-                </div>
-              )}
-              {(user.city || user.country) && (
-                <div className={styles.infoItem}>
-                  <MapPin size={16} /> <span>{user.city}{user.city && user.country ? ', ' : ''}{user.country}</span>
-                </div>
-              )}
-            </div>
-          </Card>
-        </div>
+            )}
+          </div>
 
-        <div className={styles.mainContent}>
-          <Card className={styles.detailsCard}>
-            <div className={styles.cardHeader}>
-              <h3 className={styles.cardTitle}>Personal Information</h3>
-              {!isEditing ? (
-                <Button variant="outline" size="sm" onClick={() => setIsEditing(true)}>
-                  <Edit2 size={14} /> Edit Profile
-                </Button>
-              ) : (
-                <div className={styles.editActions}>
-                  <Button variant="outline" size="sm" onClick={() => setIsEditing(false)}>
-                    <X size={14} /> Cancel
-                  </Button>
-                  <Button variant="primary" size="sm" onClick={handleSave} isLoading={loading}>
-                    <Save size={14} /> Save
+          <div className={styles.userDetailsContent}>
+            {!isEditing ? (
+              <>
+                <div className={styles.nameRow}>
+                  <div>
+                    <h2 className={styles.userName}>{user.firstName} {user.lastName}</h2>
+                    <p className={styles.userHandle}>@{user.username}</p>
+                  </div>
+                  <Button variant="outline" size="sm" onClick={() => setIsEditing(true)}>
+                    <Edit2 size={14} /> Edit Profile
                   </Button>
                 </div>
-              )}
-            </div>
 
-            {isEditing ? (
-              <div className={styles.editForm}>
-                <div className={styles.row}>
-                  <Input label="First Name" name="firstName" value={formData.firstName} onChange={handleChange} />
-                  <Input label="Last Name" name="lastName" value={formData.lastName} onChange={handleChange} />
+                <div className={styles.metaInfoGrid}>
+                  <div className={styles.metaInfoItem}>
+                    <Mail size={16} /> <span>{user.email}</span>
+                  </div>
+                  {user.phone && (
+                    <div className={styles.metaInfoItem}>
+                      <Phone size={16} /> <span>{user.phone}</span>
+                    </div>
+                  )}
+                  {(user.city || user.country) && (
+                    <div className={styles.metaInfoItem}>
+                      <MapPin size={16} /> <span>{user.city}{user.city && user.country ? ', ' : ''}{user.country}</span>
+                    </div>
+                  )}
                 </div>
-                <div className={styles.row}>
+
+                <p className={styles.additionalInfoText}>
+                  {user.additionalInfo || 'User Details with appropriate option to edit these information...'}
+                </p>
+              </>
+            ) : (
+              <form onSubmit={handleSave} className={styles.editForm}>
+                <div className={styles.formRow}>
+                  <Input label="First Name" name="firstName" value={formData.firstName} onChange={handleChange} required />
+                  <Input label="Last Name" name="lastName" value={formData.lastName} onChange={handleChange} required />
+                </div>
+                <div className={styles.formRow}>
                   <Input label="Phone" name="phone" value={formData.phone} onChange={handleChange} />
+                  <Input label="Avatar URL" name="avatar" value={formData.avatar} onChange={handleChange} />
                 </div>
-                <div className={styles.row}>
+                <div className={styles.formRow}>
                   <Input label="City" name="city" value={formData.city} onChange={handleChange} />
                   <Input label="Country" name="country" value={formData.country} onChange={handleChange} />
                 </div>
                 <div className={styles.inputGroup}>
-                  <label className={styles.label}>About Me</label>
+                  <label className={styles.label}>Additional Information ...</label>
                   <textarea 
                     name="additionalInfo" 
                     value={formData.additionalInfo} 
-                    onChange={handleChange}
+                    onChange={handleChange} 
                     className={styles.textarea}
-                    rows="4"
+                    rows="3"
                   ></textarea>
                 </div>
-              </div>
-            ) : (
-              <div className={styles.viewInfo}>
-                <div className={styles.infoGroup}>
-                  <p className={styles.infoLabel}>About Me</p>
-                  <p className={styles.infoValue}>{user.additionalInfo || 'No information provided.'}</p>
+                <div className={styles.formActions}>
+                  <Button variant="outline" size="sm" onClick={() => setIsEditing(false)}>
+                    <X size={14} /> Cancel
+                  </Button>
+                  <Button type="submit" variant="accent" size="sm" disabled={loading}>
+                    <Save size={14} /> {loading ? 'Saving...' : 'Save Details'}
+                  </Button>
                 </div>
-              </div>
+              </form>
             )}
-          </Card>
-        </div>
+          </div>
+        </Card>
+
+        {/* ── Screen 7 Section 1: Preplanned Trips ── */}
+        <section className={styles.tripsSection}>
+          <div className={styles.sectionHeader}>
+            <h3 className={styles.sectionTitle}>Preplanned Trips</h3>
+            <Button variant="outline" size="sm" onClick={() => navigate('/trips/new')}>
+              <Plus size={14} /> Plan New Trip
+            </Button>
+          </div>
+          <div className={styles.tripsGrid}>
+            {preplannedTrips.length > 0 ? (
+              preplannedTrips.map(trip => renderTripCard(trip))
+            ) : (
+              <p className={styles.emptyText}>No preplanned trips found.</p>
+            )}
+          </div>
+        </section>
+
+        {/* ── Screen 7 Section 2: Previous Trips ── */}
+        <section className={styles.tripsSection}>
+          <div className={styles.sectionHeader}>
+            <h3 className={styles.sectionTitle}>Previous Trips</h3>
+          </div>
+          <div className={styles.tripsGrid}>
+            {previousTrips.length > 0 ? (
+              previousTrips.map(trip => renderTripCard(trip))
+            ) : (
+              <p className={styles.emptyText}>No previous completed trips found.</p>
+            )}
+          </div>
+        </section>
       </div>
     </PageShell>
   );
