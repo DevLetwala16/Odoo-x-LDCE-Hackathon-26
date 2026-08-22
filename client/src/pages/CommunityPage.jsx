@@ -139,7 +139,7 @@ const CommunityPage = () => {
   };
 
   const handleShare = (post) => {
-    const shareText = `Check out this travel note by ${post.user?.firstName || 'an explorer'} on GlobeTrotter: "${post.title || post.content.slice(0, 40)}"`;
+    const shareText = `Check out this travel note by ${post.user?.firstName || 'an explorer'} on Musafir: "${post.title || post.content.slice(0, 40)}"`;
     if (navigator.clipboard) {
       navigator.clipboard.writeText(`${shareText}\n${window.location.href}`);
       toast.success('Community note copied to clipboard!');
