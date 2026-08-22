@@ -179,25 +179,25 @@ const SearchPage = () => {
     >
       <div className={styles.container}>
         {/* Search & Sort Controls Header */}
-        <section className={styles.searchSection}>
-          <div className={styles.searchBoxWrapper}>
-            <Search className={styles.searchIcon} size={20} />
-            <input
-              type="text"
-              placeholder="Search by city name, country, or region (e.g. Paris, Japan)..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className={styles.searchInput}
-            />
-            {searchQuery && (
-              <button onClick={() => setSearchQuery('')} className={styles.clearBtn}>
-                <X size={16} />
-              </button>
-            )}
-          </div>
+        <section className={styles.heroSection}>
+          <div className={styles.heroContent}>
+            <div className={styles.searchBarWrapper}>
+              <Search className={styles.searchIcon} size={20} />
+              <input
+                type="text"
+                placeholder="Search by city name, country, or region (e.g. Paris, Japan)..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className={styles.searchInput}
+              />
+              {searchQuery && (
+                <button onClick={() => setSearchQuery('')} className={styles.clearSearchBtn}>
+                  <X size={16} />
+                </button>
+              )}
+            </div>
 
-          <div className={styles.filterToolbar}>
-            <div className={styles.sortDropdownWrap}>
+            <div className={styles.sortWrapper}>
               <span className={styles.sortLabel}>Sort:</span>
               <select
                 value={sortBy}
