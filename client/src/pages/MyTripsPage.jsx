@@ -9,6 +9,7 @@ import Button from '../components/common/Button';
 import Loader from '../components/common/Loader';
 import tripService from '../services/tripService';
 import { getTripStatus } from '../utils/tripStatus';
+import { getTripCoverImage } from '../utils/tripCover';
 import styles from './MyTripsPage.module.css';
 
 const MyTripsPage = () => {
@@ -55,7 +56,7 @@ const MyTripsPage = () => {
       <div 
         className={styles.tripImage} 
         style={{ 
-          backgroundImage: `url(${trip.coverImage || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&q=80&w=400'})` 
+          backgroundImage: `url(${getTripCoverImage(trip)})` 
         }}
       />
       <div className={styles.tripOverview}>

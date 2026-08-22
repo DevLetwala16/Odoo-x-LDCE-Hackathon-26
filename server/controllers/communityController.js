@@ -30,8 +30,8 @@ export const getPosts = async (req, res, next) => {
         .sort(sortOptions)
         .skip(skip)
         .limit(parsedLimit)
-        .populate('user', 'firstName lastName avatar')
-        .populate('comments.user', 'firstName lastName avatar')
+        .populate('user', 'firstName lastName avatar city country')
+        .populate('comments.user', 'firstName lastName avatar city country')
         .populate('trip', 'name')
         .populate('activity', 'name'),
       CommunityPost.countDocuments(filter),
@@ -49,7 +49,7 @@ export const getPosts = async (req, res, next) => {
 export const getPostById = async (req, res, next) => {
   try {
     const post = await CommunityPost.findById(req.params.id)
-      .populate('user', 'firstName lastName avatar')
+      .populate('user', 'firstName lastName avatar city country')
       .populate('trip', 'name startDate endDate')
       .populate('activity', 'name category');
 
@@ -77,7 +77,7 @@ export const createPost = async (req, res, next) => {
       user: req.user._id,
     });
 
-    const populated = await post.populate('user', 'firstName lastName avatar');
+    const populated = await post.populate('user', 'firstName lastName avatar city country');
     res.status(201).json({ success: true, data: { post: populated } });
   } catch (err) {
     next(err);

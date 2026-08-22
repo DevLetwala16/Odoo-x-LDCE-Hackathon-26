@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { Globe, Camera } from 'lucide-react';
+import { Compass, Camera } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import Button from '../components/common/Button';
 import Input from '../components/common/Input';
@@ -64,7 +64,7 @@ const RegisterPage = () => {
     <div className={styles.container}>
       <div className={styles.registerCard}>
         <div className={styles.header}>
-          <Globe className={styles.brandIcon} onClick={() => navigate('/')} style={{ cursor: 'pointer' }} />
+          <Compass className={styles.brandIcon} onClick={() => navigate('/')} style={{ cursor: 'pointer' }} />
           <h1 className={styles.title}>Registration</h1>
           <p className={styles.subtitle}>Sign up to start designing your dream multi-city itineraries.</p>
         </div>

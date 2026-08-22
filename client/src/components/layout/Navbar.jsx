@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Globe, Menu, X, User, LogOut, ShieldAlert, ArrowRight, ChevronDown } from 'lucide-react';
+import { Globe, Compass, Menu, X, User, LogOut, ShieldAlert, ArrowRight, ChevronDown } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import styles from './Navbar.module.css';
 
@@ -30,10 +30,15 @@ const Navbar = () => {
   return (
     <header className={`${styles.navbar} ${isHeroTransparent ? styles.transparentNavbar : ''}`}>
       <div className={styles.container}>
-        {/* Brand */}
+        {/* Brand: Musafir */}
         <Link to="/" className={`${styles.brand} ${isHeroTransparent ? styles.transparentBrand : ''}`}>
-          <Globe className={styles.brandIcon} size={20} />
-          <span className={styles.brandText}>Musafir</span>
+          <div className={styles.brandLogoBox}>
+            <Compass className={styles.brandIcon} size={18} />
+          </div>
+          <div className={styles.brandTextGroup}>
+            <span className={styles.brandText}>Musafir</span>
+            <span className={styles.brandTagline}>VOYAGE & ROUTES</span>
+          </div>
         </Link>
 
         {/* Desktop Navigation */}
@@ -83,8 +88,8 @@ const Navbar = () => {
                 {dropdownOpen && (
                   <div className={styles.dropdownMenu}>
                     <div className={styles.dropdownHeader}>
-                      <span className={styles.dropdownName}>{user.firstName} {user.lastName}</span>
-                      <span className={styles.dropdownRole}>{user.role || 'Member'}</span>
+                      <span className={styles.dropdownName}>{user.firstName} {user.lastName || ''}</span>
+                      <span className={styles.dropdownRoleBadge}>{user.role || 'Member'}</span>
                     </div>
                     <div className={styles.dropdownDivider} />
                     <Link to="/profile" className={styles.dropdownItem} onClick={() => setDropdownOpen(false)}>
@@ -95,7 +100,7 @@ const Navbar = () => {
                         <ShieldAlert size={16} /> Admin Portal
                       </Link>
                     )}
-                    <button className={styles.dropdownItem} onClick={handleLogout}>
+                    <button className={`${styles.dropdownItem} ${styles.dropdownLogoutBtn}`} onClick={handleLogout}>
                       <LogOut size={16} /> Logout
                     </button>
                   </div>

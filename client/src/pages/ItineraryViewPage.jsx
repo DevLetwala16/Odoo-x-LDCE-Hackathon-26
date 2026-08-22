@@ -99,6 +99,28 @@ const ItineraryViewPage = () => {
   if (!trip) return <PageShell sectionLabel="03 — ITINERARY" title="Trip Not Found"><p>This journey could not be located.</p></PageShell>;
 
   const stops = trip.stops || [];
+  const destinationCity = stops[0]?.city?.name || stops[0]?.title || trip.destination || trip.name?.replace('Trip to ', '') || 'Global Explorer';
+
+  const getCityCover = (city, existingCover) => {
+    if (existingCover && !existingCover.includes('camera') && !existingCover.includes('85cb44e25828')) {
+      return existingCover;
+    }
+    const name = (city || '').toLowerCase();
+    if (name.includes('paris')) return 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&q=80&w=1600';
+    if (name.includes('tokyo')) return 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&q=80&w=1600';
+    if (name.includes('rome')) return 'https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&q=80&w=1600';
+    if (name.includes('london')) return 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&q=80&w=1600';
+    if (name.includes('bali') || name.includes('ubud')) return 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&q=80&w=1600';
+    if (name.includes('new york')) return 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?auto=format&fit=crop&q=80&w=1600';
+    if (name.includes('dubai')) return 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&q=80&w=1600';
+    if (name.includes('singapore')) return 'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?auto=format&fit=crop&q=80&w=1600';
+    if (name.includes('kyoto')) return 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&q=80&w=1600';
+    if (name.includes('barcelona')) return 'https://images.unsplash.com/photo-1583422409516-2895a77efded?auto=format&fit=crop&q=80&w=1600';
+    if (name.includes('delhi') || name.includes('agra') || name.includes('jaipur')) return 'https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&q=80&w=1600';
+    if (name.includes('zurich') || name.includes('swiss') || name.includes('zermatt')) return 'https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?auto=format&fit=crop&q=80&w=1600';
+    if (name.includes('santorini')) return 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&q=80&w=1600';
+    return 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&q=80&w=1600';
+  };
 
   return (
     <PageShell 
@@ -112,16 +134,19 @@ const ItineraryViewPage = () => {
           <div 
             className={styles.heroBg} 
             style={{ 
-              backgroundImage: `url(${trip.coverImage || 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=1200'})` 
+              backgroundImage: `url(${getCityCover(destinationCity, trip.coverImage)})` 
             }} 
           />
           <div className={styles.heroOverlay} />
           <div className={styles.heroContent}>
+            <div className={styles.destinationCityBadge}>
+              <MapPin size={12} /> {destinationCity.toUpperCase()}
+            </div>
             <h1 className={styles.title}>{trip.name}</h1>
             <div className={styles.meta}>
               <span><CalendarIcon size={14} /> {new Date(trip.startDate).toLocaleDateString()} – {new Date(trip.endDate).toLocaleDateString()}</span>
               <span><DollarSign size={14} /> Budget: ₹{trip.totalBudget || 0}</span>
-              <span><MapPin size={14} /> {stops.length} Stops</span>
+              <span><MapPin size={14} /> {stops.length} Stops ({stops.map(s => s.city?.name || s.title).filter(Boolean).join(', ') || destinationCity})</span>
             </div>
           </div>
 
@@ -135,7 +160,7 @@ const ItineraryViewPage = () => {
             <Button variant="outline" size="sm" className={styles.heroActionBtn} onClick={() => navigate(`/trips/${trip._id}/calendar`)}>
               <CalendarDays size={14} /> Calendar
             </Button>
-            <Button variant="accent" size="sm" onClick={() => navigate(`/trips/${trip._id}/edit`)}>
+            <Button variant="accent" size="sm" className={styles.heroEditBtn} onClick={() => navigate(`/trips/${trip._id}/edit`)}>
               <Edit size={14} /> Edit Stops
             </Button>
           </div>

@@ -50,6 +50,7 @@ import { useAuth } from '../hooks/useAuth';
 import tripService from '../services/tripService';
 import adminService from '../services/adminService';
 import { getTripStatus } from '../utils/tripStatus';
+import { getTripCoverImage } from '../utils/tripCover';
 import styles from './ProfilePage.module.css';
 
 const CHART_COLORS = ['#0E7C86', '#F2703C', '#2FA36B', '#F39C12', '#8E44AD', '#3498DB', '#E74C3C', '#1ABC9C'];
@@ -198,7 +199,7 @@ const ProfilePage = () => {
       <div 
         className={styles.tripImage} 
         style={{ 
-          backgroundImage: `url(${trip.coverImage || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&q=80&w=300'})` 
+          backgroundImage: `url(${getTripCoverImage(trip)})` 
         }}
       />
       <div className={styles.tripCardContent}>
