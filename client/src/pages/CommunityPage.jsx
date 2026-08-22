@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
-import { Heart, MessageCircle, Share2, Send, User, Info } from 'lucide-react';
+import { Heart, MessageCircle, Share2, Send, User, Info, CornerDownRight } from 'lucide-react';
 import PageShell from '../components/layout/PageShell';
 import FilterBar from '../components/common/FilterBar';
 import Card from '../components/common/Card';
@@ -21,6 +21,11 @@ const CommunityPage = () => {
   const [postImage, setPostImage] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
+  // Replies & comments state
+  const [openReplies, setOpenReplies] = useState({});
+  const [replyTexts, setReplyTexts] = useState({});
+  const [submittingReply, setSubmittingReply] = useState({});
+
   useEffect(() => {
     fetchPosts();
   }, []);
@@ -28,8 +33,9 @@ const CommunityPage = () => {
   const fetchPosts = async () => {
     try {
       setLoading(true);
-      const res = await communityService.getPosts({ limit: 15 });
-      setPosts(res?.posts || res?.data?.posts || res || []);
+      const res = await communityService.getPosts({ limit: 30 });
+      const fetchedPosts = res?.posts || res?.data?.posts || res || [];
+      setPosts(fetchedPosts);
     } catch (err) {
       console.error('Fetch community posts error:', err);
     } finally {
@@ -66,14 +72,85 @@ const CommunityPage = () => {
   const handleLike = async (postId) => {
     try {
       const res = await communityService.likePost(postId);
-      setPosts(prev => prev.map(p => p._id === postId ? { ...p, likesCount: res.likesCount || p.likesCount + 1 } : p));
+      const updatedPost = res?.post || res?.data?.post || res;
+
+      setPosts(prev => prev.map(p => {
+        if (p._id === postId) {
+          const currentUserId = user?._id?.toString();
+          const likedBy = updatedPost?.likedBy || p.likedBy || [];
+          const isNowLiked = likedBy.some(id => (id._id || id).toString() === currentUserId);
+          const likesCount = updatedPost?.likes !== undefined ? updatedPost.likes : (p.likes || 0) + 1;
+          return {
+            ...p,
+            likes: likesCount,
+            likedBy,
+            isLiked: isNowLiked
+          };
+        }
+        return p;
+      }));
     } catch (err) {
       console.error('Like error:', err);
+      toast.error('Failed to update like');
+    }
+  };
+
+  const handleToggleReplies = (postId) => {
+    setOpenReplies(prev => ({ ...prev, [postId]: !prev[postId] }));
+  };
+
+  const handleSendReply = async (postId) => {
+    const text = replyTexts[postId];
+    if (!text || !text.trim()) {
+      toast.error('Please write a reply first');
+      return;
+    }
+
+    setSubmittingReply(prev => ({ ...prev, [postId]: true }));
+    try {
+      const res = await communityService.addComment(postId, { text: text.trim() });
+      const updatedPost = res?.post || res?.data?.post || res;
+
+      setPosts(prev => prev.map(p => {
+        if (p._id === postId) {
+          return {
+            ...p,
+            comments: updatedPost?.comments || [
+              ...(p.comments || []),
+              {
+                _id: Date.now(),
+                user: { firstName: user?.firstName || 'You', lastName: user?.lastName || '' },
+                text: text.trim(),
+                createdAt: new Date().toISOString()
+              }
+            ]
+          };
+        }
+        return p;
+      }));
+
+      setReplyTexts(prev => ({ ...prev, [postId]: '' }));
+      toast.success('Reply added!');
+    } catch (err) {
+      toast.error(err.message || 'Failed to add reply');
+    } finally {
+      setSubmittingReply(prev => ({ ...prev, [postId]: false }));
+    }
+  };
+
+  const handleShare = (post) => {
+    const shareText = `Check out this travel note by ${post.user?.firstName || 'an explorer'} on GlobeTrotter: "${post.title || post.content.slice(0, 40)}"`;
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(`${shareText}\n${window.location.href}`);
+      toast.success('Community note copied to clipboard!');
+    } else {
+      toast.success('Note ready to share!');
     }
   };
 
   const filteredPosts = posts.filter(p => 
-    p.content.toLowerCase().includes(searchValue.toLowerCase()) ||
+    (p.content && p.content.toLowerCase().includes(searchValue.toLowerCase())) ||
+    (p.title && p.title.toLowerCase().includes(searchValue.toLowerCase())) ||
     (p.user?.firstName && p.user.firstName.toLowerCase().includes(searchValue.toLowerCase()))
   );
 
@@ -148,53 +225,125 @@ const CommunityPage = () => {
             ) : (
               <div className={styles.feed}>
                 {filteredPosts.length > 0 ? (
-                  filteredPosts.map((post) => (
-                    <Card key={post._id} className={styles.postCard}>
-                      <div className={styles.postLayout}>
-                        {/* Round Avatar on Left (Screen 10 Schema) */}
-                        <div className={styles.authorAvatarCircle}>
-                          {post.user?.avatar ? (
-                            <img src={post.user.avatar} alt={post.user.firstName} />
-                          ) : (
-                            <span>{post.user?.firstName ? post.user.firstName.charAt(0) : 'U'}</span>
-                          )}
-                        </div>
+                  filteredPosts.map((post) => {
+                    const currentUserId = user?._id?.toString();
+                    const isLiked = post.isLiked || (post.likedBy && post.likedBy.some(id => (id._id || id).toString() === currentUserId));
+                    const likesCount = post.likes !== undefined ? post.likes : (post.likedBy?.length || 0);
+                    const commentsCount = post.comments?.length || 0;
+                    const isRepliesOpen = openReplies[post._id];
 
-                        {/* Post Content Box on Right */}
-                        <div className={styles.postMainContent}>
-                          <div className={styles.postAuthorInfo}>
-                            <h4 className={styles.authorName}>
-                              {post.user?.firstName ? `${post.user.firstName} ${post.user.lastName || ''}` : 'Explorer'}
-                            </h4>
-                            <span className={styles.postTime}>
-                              {new Date(post.createdAt).toLocaleDateString()}
-                            </span>
+                    return (
+                      <Card key={post._id} className={styles.postCard}>
+                        <div className={styles.postLayout}>
+                          {/* Round Avatar on Left (Screen 10 Schema) */}
+                          <div className={styles.authorAvatarCircle}>
+                            {post.user?.avatar ? (
+                              <img src={post.user.avatar} alt="" />
+                            ) : (
+                              <span>{post.user?.firstName ? post.user.firstName.charAt(0) : 'U'}</span>
+                            )}
                           </div>
 
-                          <p className={styles.postContent}>{post.content}</p>
+                          {/* Post Content Box on Right */}
+                          <div className={styles.postMainContent}>
+                            <div className={styles.postAuthorInfo}>
+                              <h4 className={styles.authorName}>
+                                {post.user?.firstName ? `${post.user.firstName} ${post.user.lastName || ''}` : 'Explorer'}
+                              </h4>
+                              <span className={styles.postTime}>
+                                {new Date(post.createdAt).toLocaleDateString()}
+                              </span>
+                            </div>
 
-                          {post.imageUrl && (
-                            <img src={post.imageUrl} alt="Post attachment" className={styles.postImage} />
-                          )}
+                            {post.title && <h3 className={styles.postTitleHeading} style={{ fontSize: '1rem', fontWeight: 600, margin: '2px 0 4px 0', color: 'var(--color-ink)' }}>{post.title}</h3>}
+                            <p className={styles.postContent}>{post.content}</p>
 
-                          <div className={styles.postActions}>
-                            <button 
-                              className={`${styles.actionBtn} ${post.isLiked ? styles.liked : ''}`}
-                              onClick={() => handleLike(post._id)}
-                            >
-                              <Heart size={16} /> <span>{post.likesCount || 0} Likes</span>
-                            </button>
-                            <button className={styles.actionBtn}>
-                              <MessageCircle size={16} /> <span>Reply</span>
-                            </button>
-                            <button className={styles.actionBtn}>
-                              <Share2 size={16} /> <span>Share</span>
-                            </button>
+                            {post.imageUrl && (
+                              <img src={post.imageUrl} alt="Post attachment" className={styles.postImage} />
+                            )}
+
+                            {/* Action Buttons: Like, Reply, Share */}
+                            <div className={styles.postActions}>
+                              <button 
+                                className={`${styles.actionBtn} ${isLiked ? styles.liked : ''}`}
+                                onClick={() => handleLike(post._id)}
+                                title={isLiked ? "Unlike post" : "Like post"}
+                              >
+                                <Heart size={16} fill={isLiked ? "#E11D48" : "none"} color={isLiked ? "#E11D48" : "currentColor"} /> 
+                                <span>{likesCount} {likesCount === 1 ? 'Like' : 'Likes'}</span>
+                              </button>
+                              
+                              <button 
+                                className={`${styles.actionBtn} ${isRepliesOpen ? styles.activeActionBtn : ''}`}
+                                onClick={() => handleToggleReplies(post._id)}
+                                title="View & Add replies"
+                              >
+                                <MessageCircle size={16} /> 
+                                <span>{commentsCount > 0 ? `${commentsCount} ${commentsCount === 1 ? 'Reply' : 'Replies'}` : 'Reply'}</span>
+                              </button>
+                              
+                              <button 
+                                className={styles.actionBtn}
+                                onClick={() => handleShare(post)}
+                                title="Share note"
+                              >
+                                <Share2 size={16} /> 
+                                <span>Share</span>
+                              </button>
+                            </div>
+
+                            {/* Expandable Replies / Comments Section */}
+                            {isRepliesOpen && (
+                              <div className={styles.repliesSection}>
+                                {post.comments && post.comments.length > 0 && (
+                                  <div className={styles.repliesList}>
+                                    {post.comments.map((comment, cIdx) => (
+                                      <div key={comment._id || cIdx} className={styles.replyItem}>
+                                        <div className={styles.replyAvatar}>
+                                          {comment.user?.firstName?.charAt(0) || 'U'}
+                                        </div>
+                                        <div className={styles.replyBody}>
+                                          <div className={styles.replyHeader}>
+                                            <span className={styles.replyAuthor}>{comment.user?.firstName || 'Traveler'} {comment.user?.lastName || ''}</span>
+                                            <span className={styles.replyTime}>{new Date(comment.createdAt).toLocaleDateString()}</span>
+                                          </div>
+                                          <p className={styles.replyText}>{comment.text}</p>
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+
+                                {/* Reply Input */}
+                                <div className={styles.replyInputWrapper}>
+                                  <input 
+                                    type="text" 
+                                    placeholder="Write a reply..."
+                                    value={replyTexts[post._id] || ''}
+                                    onChange={(e) => setReplyTexts({ ...replyTexts, [post._id]: e.target.value })}
+                                    onKeyDown={(e) => {
+                                      if (e.key === 'Enter') {
+                                        e.preventDefault();
+                                        handleSendReply(post._id);
+                                      }
+                                    }}
+                                    className={styles.replyInput}
+                                  />
+                                  <button 
+                                    className={styles.replySendBtn}
+                                    onClick={() => handleSendReply(post._id)}
+                                    disabled={submittingReply[post._id]}
+                                  >
+                                    <Send size={12} /> {submittingReply[post._id] ? 'Posting...' : 'Reply'}
+                                  </button>
+                                </div>
+                              </div>
+                            )}
                           </div>
                         </div>
-                      </div>
-                    </Card>
-                  ))
+                      </Card>
+                    );
+                  })
                 ) : (
                   <Card className={styles.emptyFeed}>
                     <p>No community posts found. Be the first to share a travel tip!</p>

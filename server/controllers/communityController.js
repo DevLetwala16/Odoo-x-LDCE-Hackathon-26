@@ -31,6 +31,7 @@ export const getPosts = async (req, res, next) => {
         .skip(skip)
         .limit(parsedLimit)
         .populate('user', 'firstName lastName avatar')
+        .populate('comments.user', 'firstName lastName avatar')
         .populate('trip', 'name')
         .populate('activity', 'name'),
       CommunityPost.countDocuments(filter),
@@ -154,15 +155,61 @@ export const toggleLike = async (req, res, next) => {
 
     if (alreadyLiked) {
       post.likedBy = post.likedBy.filter((id) => id.toString() !== userId.toString());
-      post.likes = Math.max(0, post.likes - 1);
+      post.likes = Math.max(0, (post.likes || 1) - 1);
     } else {
       post.likedBy.push(userId);
-      post.likes += 1;
+      post.likes = (post.likes || 0) + 1;
     }
 
     await post.save();
 
-    res.json({ success: true, data: { post } });
+    const populated = await CommunityPost.findById(post._id)
+      .populate('user', 'firstName lastName avatar')
+      .populate('comments.user', 'firstName lastName avatar');
+
+    res.json({ 
+      success: true, 
+      data: { 
+        post: populated,
+        likes: populated.likes,
+        isLiked: !alreadyLiked
+      } 
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// @desc    Add comment / reply to post
+// @route   POST /api/community/:id/comment
+// @access  Private
+export const addComment = async (req, res, next) => {
+  try {
+    const { text } = req.body;
+    if (!text || !text.trim()) {
+      return res.status(400).json({ success: false, message: 'Comment text is required' });
+    }
+
+    const post = await CommunityPost.findById(req.params.id);
+    if (!post) {
+      const err = new Error('Post not found');
+      err.statusCode = 404;
+      return next(err);
+    }
+
+    post.comments.push({
+      user: req.user._id,
+      text: text.trim(),
+      createdAt: new Date(),
+    });
+
+    await post.save();
+
+    const populated = await CommunityPost.findById(post._id)
+      .populate('user', 'firstName lastName avatar')
+      .populate('comments.user', 'firstName lastName avatar');
+
+    res.status(201).json({ success: true, data: { post: populated } });
   } catch (err) {
     next(err);
   }

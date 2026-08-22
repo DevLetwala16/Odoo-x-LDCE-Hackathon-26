@@ -5,8 +5,8 @@ export const communityService = {
   getPostById: (id) => api.get(`/community/${id}`).then(res => res.data.post || null),
   createPost: (data) => api.post('/community', data).then(res => res.data.post || null),
   updatePost: (id, data) => api.put(`/community/${id}`, data).then(res => res.data.post || null),
-  deletePost: (id) => api.delete(`/community/${id}`).then(res => res.data || null),
-  likePost: (id) => api.post(`/community/${id}/like`).then(res => res.data.post || null),
+  likePost: (id) => api.post(`/community/${id}/like`).then(res => res.data || null),
+  addComment: (id, data) => api.post(`/community/${id}/comment`, data).then(res => res.data.post || null),
 };
 
 export default communityService;

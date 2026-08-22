@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getPosts, getPostById, createPost, updatePost, deletePost, toggleLike } from '../controllers/communityController.js';
+import { getPosts, getPostById, createPost, updatePost, deletePost, toggleLike, addComment } from '../controllers/communityController.js';
 import { protect } from '../middleware/authMiddleware.js';
 
 const router = Router();
@@ -14,5 +14,6 @@ router.route('/:id')
   .delete(protect, deletePost);
 
 router.post('/:id/like', protect, toggleLike);
+router.post('/:id/comment', protect, addComment);
 
 export default router;

@@ -214,7 +214,132 @@
 }
 
 .actionBtn.liked {
-  color: var(--color-accent);
+  color: #E11D48 !important;
+  font-weight: 600;
+}
+
+.actionBtn.liked svg {
+  fill: #E11D48;
+}
+
+/* ── Replies / Comments Section ── */
+.repliesSection {
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px dashed var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  animation: fadeIn 0.2s ease;
+}
+
+.repliesList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.replyItem {
+  display: flex;
+  gap: 8px;
+  background-color: var(--color-bg-sunken);
+  padding: 8px 12px;
+  border-radius: var(--radius-lg);
+}
+
+.replyAvatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: var(--color-accent);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.replyBody {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.replyHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.replyAuthor {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.replyTime {
+  font-size: 0.6875rem;
+  color: var(--color-text-secondary);
+}
+
+.replyText {
+  font-size: 0.8125rem;
+  color: var(--color-text-primary);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.replyInputWrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: var(--space-1);
+}
+
+.replyInput {
+  flex: 1;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-sunken);
+  border-radius: var(--radius-full);
+  padding: 8px 14px;
+  font-size: 0.8125rem;
+  color: var(--color-text-primary);
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.replyInput:focus {
+  background: #FFFFFF;
+  border-color: var(--color-primary);
+}
+
+.replySendBtn {
+  background-color: var(--color-accent);
+  color: #FFFFFF;
+  border: none;
+  border-radius: var(--radius-full);
+  padding: 8px 14px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.replySendBtn:hover:not(:disabled) {
+  background-color: var(--color-accent-hover, #B04C27);
+}
+
+.replySendBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* ── Empty Feed ── */
