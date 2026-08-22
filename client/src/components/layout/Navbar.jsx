@@ -2,16 +2,15 @@ import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Globe, Menu, X, User, LogOut, ShieldAlert, ArrowRight, ChevronDown } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
-import { useCurrency } from '../../context/CurrencyContext';
 import styles from './Navbar.module.css';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
-  const { currency, setCurrency, availableCurrencies = ['INR', 'USD', 'EUR'] } = useCurrency ? useCurrency() : { currency: 'INR', setCurrency: () => {}, availableCurrencies: ['INR', 'USD', 'EUR'] };
   const navigate = useNavigate();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [imgError, setImgError] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -57,35 +56,27 @@ const Navbar = () => {
         <div className={styles.actions}>
           {user ? (
             <div className={styles.authLinks}>
-              {/* Currency Switcher — pill button */}
-              {availableCurrencies && availableCurrencies.length > 0 && (
-                <button
-                  className={`${styles.currencyPill} ${isHeroTransparent ? styles.currencyPillTransparent : ''}`}
-                  onClick={() => {
-                    const idx = availableCurrencies.indexOf(currency);
-                    setCurrency(availableCurrencies[(idx + 1) % availableCurrencies.length]);
-                  }}
-                  title="Click to switch currency"
-                >
-                  <span className={styles.currencySymbol}>
-                    {currency === 'INR' ? '₹' : currency === 'USD' ? '$' : '€'}
-                  </span>
-                  <span className={styles.currencyCode}>{currency}</span>
-                </button>
-              )}
-
               <div className={styles.userMenu}>
                 <div 
-                  className={styles.avatarContainer} 
+                  className={`${styles.avatarContainer} ${isHeroTransparent ? styles.avatarContainerTransparent : ''}`} 
                   onClick={() => setDropdownOpen(!dropdownOpen)}
+                  title="Profile Menu"
                 >
-                  {user.avatar ? (
-                    <img src={user.avatar} alt="Avatar" className={styles.avatar} />
+                  {user.avatar && !imgError ? (
+                    <img 
+                      src={user.avatar} 
+                      alt="" 
+                      className={styles.avatar} 
+                      onError={() => setImgError(true)}
+                    />
                   ) : (
                     <div className={styles.avatarPlaceholder}>
-                      {user.firstName?.charAt(0) || user.username?.charAt(0) || 'U'}
+                      {user.firstName?.charAt(0) || user.username?.charAt(0) || user.name?.charAt(0) || 'U'}
                     </div>
                   )}
+                  <span className={`${styles.userNameText} ${isHeroTransparent ? styles.userNameTextTransparent : ''}`}>
+                    {user.firstName || user.username || user.name || 'Account'}
+                  </span>
                   <ChevronDown size={14} className={styles.dropdownIcon} />
                 </div>
                 
@@ -93,7 +84,7 @@ const Navbar = () => {
                   <div className={styles.dropdownMenu}>
                     <div className={styles.dropdownHeader}>
                       <span className={styles.dropdownName}>{user.firstName} {user.lastName}</span>
-                      <span className={styles.dropdownRole}>{user.role}</span>
+                      <span className={styles.dropdownRole}>{user.role || 'Member'}</span>
                     </div>
                     <div className={styles.dropdownDivider} />
                     <Link to="/profile" className={styles.dropdownItem} onClick={() => setDropdownOpen(false)}>

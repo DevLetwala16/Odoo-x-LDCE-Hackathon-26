@@ -349,20 +349,32 @@
 .avatarContainer {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: 8px;
   cursor: pointer;
-  padding: var(--space-1);
+  padding: 4px 10px 4px 4px;
   border-radius: var(--radius-full);
-  transition: background-color 0.2s ease;
+  background-color: rgba(244, 242, 238, 0.7);
+  border: 1px solid var(--color-border);
+  transition: all 0.2s ease;
 }
 
 .avatarContainer:hover {
-  background-color: var(--color-bg-subtle);
+  background-color: var(--border);
+}
+
+.avatarContainerTransparent {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(8px);
+}
+
+.avatarContainerTransparent:hover {
+  background-color: rgba(255, 255, 255, 0.3);
 }
 
 .avatar, .avatarPlaceholder {
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   object-fit: cover;
 }
@@ -373,11 +385,23 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.userNameText {
+  font-size: 0.8125rem;
   font-weight: 600;
+  color: var(--foreground);
+}
+
+.userNameTextTransparent {
+  color: #FFFFFF;
 }
 
 .dropdownIcon {
-  color: var(--color-text-secondary);
+  color: var(--muted-foreground);
 }
 
 .dropdownMenu {

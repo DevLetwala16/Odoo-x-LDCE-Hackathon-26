@@ -58,6 +58,7 @@ const ProfilePage = () => {
   const navigate = useNavigate();
   const { user, updateProfile } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
+  const [avatarError, setAvatarError] = useState(false);
   const [trips, setTrips] = useState([]);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -230,8 +231,13 @@ const ProfilePage = () => {
         {/* ── Screen 7: User Profile Header Card ── */}
         <Card className={styles.profileHeaderCard}>
           <div className={styles.userPhotoCircleWrapper}>
-            {user.avatar ? (
-              <img src={user.avatar} alt="User Photo" className={styles.userPhoto} />
+            {user.avatar && !avatarError ? (
+              <img 
+                src={user.avatar} 
+                alt="" 
+                className={styles.userPhoto} 
+                onError={() => setAvatarError(true)}
+              />
             ) : (
               <div className={styles.userPhotoCircle}>
                 <User size={36} />
