@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, MapPin } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Loader2 } from 'lucide-react';
 import PageShell from '../components/layout/PageShell';
 import FilterBar from '../components/common/FilterBar';
 import Card from '../components/common/Card';
-import Button from '../components/common/Button';
 import tripService from '../services/tripService';
+import calendarService from '../services/calendarService';
 import styles from './CalendarPage.module.css';
 
 const MONTH_NAMES = [
@@ -15,26 +15,36 @@ const MONTH_NAMES = [
 
 const CalendarPage = () => {
   const navigate = useNavigate();
-  const { id } = useParams();
-  const [currentDate, setCurrentDate] = useState(new Date(2024, 0, 1)); // Default Jan 2024 matching wireframe
+  const [currentDate, setCurrentDate] = useState(new Date());
   const [trips, setTrips] = useState([]);
   const [searchValue, setSearchValue] = useState('');
-
-  useEffect(() => {
-    const fetchTrips = async () => {
-      try {
-        const res = await tripService.getTrips({});
-        const tripList = res?.trips || res?.data?.trips || res || [];
-        setTrips(tripList);
-      } catch (err) {
-        console.error('Failed to load trips for calendar:', err);
-      }
-    };
-    fetchTrips();
-  }, []);
+  const [loading, setLoading] = useState(false);
 
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth();
+
+  useEffect(() => {
+    const fetchCalendarData = async () => {
+      setLoading(true);
+      try {
+        if (calendarService && calendarService.getCalendarTrips) {
+          const monthStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}`;
+          const res = await calendarService.getCalendarTrips(monthStr);
+          if (res.success && res.data?.tripBlocks) {
+            setTrips(res.data.tripBlocks);
+            return;
+          }
+        }
+        const tripsRes = await tripService.getTrips({});
+        setTrips(tripsRes?.trips || tripsRes?.data?.trips || tripsRes || []);
+      } catch (err) {
+        console.error('Failed to load calendar trips:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCalendarData();
+  }, [currentYear, currentMonth]);
 
   const handlePrevMonth = () => {
     setCurrentDate(new Date(currentYear, currentMonth - 1, 1));
@@ -48,13 +58,6 @@ const CalendarPage = () => {
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
   const firstDayIndex = new Date(currentYear, currentMonth, 1).getDay();
 
-  // Mock / real highlighted trips matching Screen 11 wireframe
-  const tripHighlights = [
-    { title: 'PARIS TRIP', startDay: 10, endDay: 14, color: 'var(--color-primary)' },
-    { title: 'ROME EXPLORATION', startDay: 16, endDay: 22, color: 'var(--color-accent)' },
-    { title: 'TOKYO GETAWAY', startDay: 24, endDay: 28, color: 'var(--color-success)' },
-  ];
-
   return (
     <PageShell 
       sectionLabel="Screen 11" 
@@ -62,7 +65,7 @@ const CalendarPage = () => {
       subtitle="Visualized day-by-day scheduling for your trips and activities."
     >
       <div className={styles.container}>
-        {/* Screen 11 Controls: Search bar | Group by | Filter | Sort by */}
+        {/* Screen 11 Controls: Search bar | Filter */}
         <FilterBar 
           searchValue={searchValue}
           onSearch={setSearchValue}
@@ -105,9 +108,16 @@ const CalendarPage = () => {
             {/* Month Day Cells */}
             {Array.from({ length: daysInMonth }).map((_, i) => {
               const dayNumber = i + 1;
-              const matchingTrips = tripHighlights.filter(
-                t => dayNumber >= t.startDay && dayNumber <= t.endDay
-              );
+              const cellDate = new Date(currentYear, currentMonth, dayNumber);
+              cellDate.setHours(0, 0, 0, 0);
+
+              const matchingTrips = trips.filter(t => {
+                const start = new Date(t.startDate);
+                const end = new Date(t.endDate);
+                start.setHours(0, 0, 0, 0);
+                end.setHours(23, 59, 59, 999);
+                return cellDate >= start && cellDate <= end;
+              });
 
               return (
                 <div key={dayNumber} className={styles.dayCell}>
@@ -117,9 +127,10 @@ const CalendarPage = () => {
                       <div 
                         key={idx} 
                         className={styles.tripBadge}
-                        style={{ backgroundColor: t.color }}
+                        onClick={() => navigate(`/trips/${t._id}`)}
+                        title={`${t.name || t.title} (₹${t.totalBudget || 0})`}
                       >
-                        {dayNumber === t.startDay ? `${t.title} ${t.startDay}-${t.endDay}` : '•'}
+                        {t.name || t.title}
                       </div>
                     ))}
                   </div>

@@ -454,3 +454,78 @@
   color: #E74C3C;
   font-size: 1rem;
 }
+
+/* City Selector Grid Styles */
+.smallSearchInput {
+  height: 2.25rem;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-bg-base);
+  border: 1px solid var(--color-border);
+  padding: 0 0.75rem;
+  font-size: 0.75rem;
+  color: var(--color-text-primary);
+  outline: none;
+  width: 150px;
+}
+
+.smallSearchInput:focus {
+  border-color: var(--color-primary);
+}
+
+.cityGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.cityCard {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0.75rem;
+  cursor: pointer;
+  background-color: var(--color-bg-base);
+  transition: all 0.2s ease;
+}
+
+.cityCard:hover {
+  border-color: var(--color-text-secondary);
+  background-color: var(--color-bg-subtle);
+}
+
+.cityCardActive {
+  border-color: var(--color-primary);
+  background-color: var(--color-primary-subtle);
+  box-shadow: 0 0 0 1px var(--color-primary);
+}
+
+.cityCardName {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: 0.125rem;
+}
+
+.cityCardCountry {
+  font-size: 0.7rem;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.noCities {
+  grid-column: span 2;
+  text-align: center;
+  padding: 1rem;
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  background-color: var(--color-bg-subtle);
+  border-radius: var(--radius-md);
+}
+
+.moreCities {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  text-align: center;
+  margin-top: 0.5rem;
+}

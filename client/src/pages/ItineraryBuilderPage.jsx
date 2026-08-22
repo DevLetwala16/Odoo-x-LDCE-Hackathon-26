@@ -101,9 +101,9 @@ const ItineraryBuilderPage = () => {
   };
 
   const handleDeleteSection = async (stopId) => {
-    if (!window.confirm('Are you sure you want to remove this section?')) return;
+    if (!window.confirm('Delete this section and its activities?')) return;
     try {
-      await stopService.deleteStop(stopId);
+      await stopService.deleteStop(id, stopId);
       toast.success('Section deleted');
       fetchTripData();
     } catch (error) {
@@ -112,41 +112,41 @@ const ItineraryBuilderPage = () => {
   };
 
   const handleMoveSection = async (index, direction) => {
+    const stops = [...(trip.stops || [])];
     const targetIndex = index + direction;
-    if (targetIndex < 0 || targetIndex >= (trip.stops?.length || 0)) return;
+    if (targetIndex < 0 || targetIndex >= stops.length) return;
 
-    const reordered = [...trip.stops];
-    const [moved] = reordered.splice(index, 1);
-    reordered.splice(targetIndex, 0, moved);
+    // Swap in local array
+    const temp = stops[index];
+    stops[index] = stops[targetIndex];
+    stops[targetIndex] = temp;
+
+    setTrip({ ...trip, stops });
 
     try {
-      await stopService.reorderStops(id, reordered.map(s => s._id));
-      setTrip({ ...trip, stops: reordered });
+      await stopService.reorderStops(id, stops.map(s => s._id));
       toast.success('Sections reordered');
-    } catch (error) {
-      toast.error('Failed to reorder sections');
+    } catch (err) {
+      toast.error('Failed to save section order');
       fetchTripData();
     }
   };
 
-  const openActivityModal = async (stop) => {
-    const cityId = stop.city?._id || stop.city;
+  const handleOpenAddActivity = async (stop) => {
     setActiveStopId(stop._id);
+    setIsAddActivityModalOpen(true);
     setNewActivity({
       name: '',
       category: 'sightseeing',
       estimatedCost: '',
       duration: 60,
-      city: cityId || '',
+      city: stop.city?._id || stop.city,
     });
-    setIsAddActivityModalOpen(true);
+
     try {
-      if (cityId) {
-        const cityDetails = await cityService.getCityById(cityId);
-        setAvailableActivities(cityDetails?.activities || []);
-      } else {
-        setAvailableActivities([]);
-      }
+      const cityId = stop.city?._id || stop.city;
+      const res = await activityService.getActivities({ city: cityId, limit: 10 });
+      setAvailableActivities(res?.activities || res?.data?.activities || res || []);
     } catch (err) {
       console.error('Error fetching activities:', err);
     }
@@ -248,53 +248,54 @@ const ItineraryBuilderPage = () => {
 
                 {/* Section Description Text (Wireframe Screen 5) */}
                 <p className={styles.sectionDescription}>
-                  {stop.description || 'All the necessary information about this section. This includes anything like hotel booking, visit or any other activity'}
+                  {stop.description || 'All the necessary information about this section. This includes accommodation details, transit, and local events.'}
                 </p>
 
-                {/* Section Date Range & Budget Bar (Wireframe Screen 5) */}
-                <div className={styles.sectionMetaBar}>
-                  <div className={styles.metaBadge}>
-                    <span className={styles.metaLabel}>Date Range:</span>
-                    <span className={styles.metaValue}>
-                      {new Date(stop.arrivalDate).toLocaleDateString()} to {new Date(stop.departureDate).toLocaleDateString()}
-                    </span>
-                  </div>
-                  <div className={styles.metaBadge}>
-                    <span className={styles.metaLabel}>Budget of this section:</span>
-                    <span className={styles.metaValue}>₹{stop.sectionBudget || 0}</span>
-                  </div>
+                {/* Date and Budget bar for Section */}
+                <div className={styles.sectionDateBudgetBar}>
+                  <span className={styles.dateBadge}>
+                    <Calendar size={14} /> 
+                    {new Date(stop.arrivalDate).toLocaleDateString()} – {new Date(stop.departureDate).toLocaleDateString()}
+                  </span>
+                  <span className={styles.budgetBadge}>
+                    <DollarSign size={14} /> 
+                    Section Budget: ₹{stop.sectionBudget || 0}
+                  </span>
+                  <span className={styles.activityCountBadge}>
+                    {stop.activities?.length || 0} Activities
+                  </span>
                 </div>
 
-                {/* Activities inside this Section */}
-                <div className={styles.activitiesSection}>
-                  <h4 className={styles.activitiesHeader}>Planned Activities in this Section:</h4>
+                {/* Scheduled Activities within Section */}
+                <div className={styles.activitiesContainer}>
+                  <h4 className={styles.activitiesTitle}>Scheduled Activities:</h4>
                   {stop.activities && stop.activities.length > 0 ? (
                     <div className={styles.activitiesGrid}>
-                      {stop.activities.map(act => (
-                        <div key={act._id} className={styles.activityChip}>
-                          <div>
-                            <p className={styles.activityName}>{act.name}</p>
-                            <span className={styles.activityMeta}>{act.category} • ₹{act.estimatedCost || 0}</span>
+                      {stop.activities.map((act) => (
+                        <div key={act._id} className={styles.activityCard}>
+                          <div className={styles.actMain}>
+                            <h5 className={styles.actName}>{act.name}</h5>
+                            <span className={styles.actMeta}>{act.category} • ₹{act.estimatedCost || 0}</span>
                           </div>
                           <button 
-                            onClick={() => handleRemoveActivity(stop._id, act._id)} 
+                            onClick={() => handleRemoveActivity(stop._id, act._id)}
                             className={styles.removeActBtn}
-                            title="Remove"
+                            title="Remove Activity"
                           >
-                            ×
+                            <Trash2 size={14} />
                           </button>
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <p className={styles.noActivitiesText}>No physical activities added to this section yet.</p>
+                    <p className={styles.noActivitiesText}>No activities added to this section yet.</p>
                   )}
-                  
+
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    onClick={() => openActivityModal(stop)}
-                    className={styles.addActivityBtn}
+                    className={styles.addActBtn}
+                    onClick={() => handleOpenAddActivity(stop)}
                   >
                     <Plus size={14} /> Add Activity to Section
                   </Button>

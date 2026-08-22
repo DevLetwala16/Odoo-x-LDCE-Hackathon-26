@@ -6,6 +6,7 @@ import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
 import { useAuth } from './hooks/useAuth';
 import { TripProvider } from './context/TripContext';
+import { CurrencyProvider } from './context/CurrencyContext';
 
 // Pages
 import LoginPage from './pages/LoginPage';
@@ -20,6 +21,7 @@ import ItineraryViewPage from './pages/ItineraryViewPage';
 import CalendarPage from './pages/CalendarPage';
 import CommunityPage from './pages/CommunityPage';
 import AdminPanelPage from './pages/AdminPanelPage';
+import SharedTripPage from './pages/SharedTripPage';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -32,48 +34,52 @@ const ProtectedRoute = ({ children }) => {
 
 function App() {
   return (
-    <AuthProvider>
-      <TripProvider>
-        <Router>
-          <Toaster 
-            position="top-right" 
-            toastOptions={{
-              style: {
-                background: 'var(--color-bg-surface)',
-                color: 'var(--color-text-primary)',
-                border: '1px solid var(--color-border)',
-                borderRadius: 'var(--radius-md)',
-                boxShadow: 'var(--shadow-md)',
-              },
-            }}
-          />
-          <Routes>
-            {/* Public */}
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            
-            {/* Protected */}
-            <Route path="/" element={<ProtectedRoute><LandingPage /></ProtectedRoute>} />
-            <Route path="/trips/new" element={<ProtectedRoute><CreateTripPage /></ProtectedRoute>} />
-            <Route path="/trips/:id/edit" element={<ProtectedRoute><ItineraryBuilderPage /></ProtectedRoute>} />
-            <Route path="/trips" element={<ProtectedRoute><MyTripsPage /></ProtectedRoute>} />
-            <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
-            <Route path="/search" element={<ProtectedRoute><SearchPage /></ProtectedRoute>} />
-            <Route path="/trips/:id" element={<ProtectedRoute><ItineraryViewPage /></ProtectedRoute>} />
-            <Route path="/trips/:id/calendar" element={<ProtectedRoute><CalendarPage /></ProtectedRoute>} />
-            <Route path="/community" element={<ProtectedRoute><CommunityPage /></ProtectedRoute>} />
-            
-            {/* Admin / Personal Analytics Dashboard (Accessible to ALL authenticated users) */}
-            <Route path="/admin" element={<ProtectedRoute><AdminPanelPage /></ProtectedRoute>} />
-            <Route path="/analytics" element={<ProtectedRoute><AdminPanelPage /></ProtectedRoute>} />
-            <Route path="/dashboard" element={<ProtectedRoute><AdminPanelPage /></ProtectedRoute>} />
-            
-            {/* Fallback */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </Router>
-      </TripProvider>
-    </AuthProvider>
+    <CurrencyProvider>
+      <AuthProvider>
+        <TripProvider>
+          <Router>
+            <Toaster 
+              position="top-right" 
+              toastOptions={{
+                style: {
+                  background: 'var(--color-bg-surface)',
+                  color: 'var(--color-text-primary)',
+                  border: '1px solid var(--color-border)',
+                  borderRadius: 'var(--radius-md)',
+                  boxShadow: 'var(--shadow-md)',
+                },
+              }}
+            />
+            <Routes>
+              {/* Public */}
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/shared/:slug" element={<SharedTripPage />} />
+              
+              {/* Protected */}
+              <Route path="/" element={<ProtectedRoute><LandingPage /></ProtectedRoute>} />
+              <Route path="/trips/new" element={<ProtectedRoute><CreateTripPage /></ProtectedRoute>} />
+              <Route path="/trips/:id/edit" element={<ProtectedRoute><ItineraryBuilderPage /></ProtectedRoute>} />
+              <Route path="/trips" element={<ProtectedRoute><MyTripsPage /></ProtectedRoute>} />
+              <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+              <Route path="/search" element={<ProtectedRoute><SearchPage /></ProtectedRoute>} />
+              <Route path="/trips/:id" element={<ProtectedRoute><ItineraryViewPage /></ProtectedRoute>} />
+              <Route path="/trips/:id/calendar" element={<ProtectedRoute><CalendarPage /></ProtectedRoute>} />
+              <Route path="/calendar" element={<ProtectedRoute><CalendarPage /></ProtectedRoute>} />
+              <Route path="/community" element={<ProtectedRoute><CommunityPage /></ProtectedRoute>} />
+              
+              {/* Admin / Personal Analytics Dashboard (Accessible to ALL authenticated users) */}
+              <Route path="/admin" element={<ProtectedRoute><AdminPanelPage /></ProtectedRoute>} />
+              <Route path="/analytics" element={<ProtectedRoute><AdminPanelPage /></ProtectedRoute>} />
+              <Route path="/dashboard" element={<ProtectedRoute><AdminPanelPage /></ProtectedRoute>} />
+              
+              {/* Fallback */}
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </Router>
+        </TripProvider>
+      </AuthProvider>
+    </CurrencyProvider>
   );
 }
 

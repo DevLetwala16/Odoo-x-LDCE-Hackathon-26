@@ -132,3 +132,38 @@
   text-overflow: ellipsis;
   text-align: center;
 }
+
+.monthControls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.monthTitle {
+  font-family: var(--font-heading);
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  margin: 0;
+  min-width: 200px;
+  text-align: center;
+}
+
+.activeCell {
+  background-color: var(--color-surface);
+}
+
+.hasTrip {
+  background-color: var(--color-bg-subtle);
+  border-color: var(--color-accent) !important;
+  font-weight: 600;
+}
+
+.tripIndicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--color-accent);
+  margin: auto;
+  margin-top: 4px;
+}
