@@ -40,7 +40,7 @@
   }
 }
 
-/* ── Brand Logo ── */
+/* ── Brand Logo: Musafir ── */
 .brand {
   display: flex;
   align-items: center;
@@ -48,27 +48,66 @@
   text-decoration: none;
 }
 
+.brandLogoBox {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(200, 90, 50, 0.12);
+  border: 1px solid rgba(200, 90, 50, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.transparentBrand .brandLogoBox {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(8px);
+}
+
 .brandIcon {
-  color: var(--accent);
-  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  color: var(--color-accent, #C85A32);
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.transparentBrand .brandIcon {
+  color: #FDE047;
 }
 
 .brand:hover .brandIcon {
-  transform: rotate(180deg);
+  transform: rotate(180deg) scale(1.1);
+}
+
+.brandTextGroup {
+  display: flex;
+  flex-direction: column;
 }
 
 .brandText {
-  font-size: 0.875rem;
-  letter-spacing: 0.34em;
-  text-transform: uppercase;
+  font-family: var(--font-display, "Instrument Serif", Georgia, serif);
+  font-size: 1.5rem;
   font-weight: 700;
-  color: var(--foreground);
-  font-family: var(--font-sans);
+  color: var(--foreground, #111827);
+  letter-spacing: -0.01em;
+  line-height: 1;
   transition: color 0.3s ease;
 }
 
 .transparentBrand .brandText {
   color: #FFFFFF;
+}
+
+.brandTagline {
+  font-size: 0.5rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  font-weight: 800;
+  color: var(--color-accent, #C85A32);
+}
+
+.transparentBrand .brandTagline {
+  color: rgba(255, 255, 255, 0.85);
 }
 
 /* ── Nav Links ── */
@@ -351,116 +390,177 @@
   align-items: center;
   gap: 8px;
   cursor: pointer;
-  padding: 4px 10px 4px 4px;
+  padding: 4px 12px 4px 4px;
   border-radius: var(--radius-full);
-  background-color: rgba(244, 242, 238, 0.7);
-  border: 1px solid var(--color-border);
-  transition: all 0.2s ease;
+  background-color: var(--color-surface, #FFFFFF);
+  border: 1px solid var(--color-border, #E5E7EB);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .avatarContainer:hover {
-  background-color: var(--border);
+  background-color: var(--color-bg-subtle, #F9FAFB);
+  border-color: var(--color-border-hover, #D1D5DB);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .avatarContainerTransparent {
-  background-color: rgba(255, 255, 255, 0.2);
-  border-color: rgba(255, 255, 255, 0.35);
-  backdrop-filter: blur(8px);
+  background: rgba(255, 255, 255, 0.16) !important;
+  border: 1px solid rgba(255, 255, 255, 0.35) !important;
+  backdrop-filter: blur(14px) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15) !important;
 }
 
 .avatarContainerTransparent:hover {
-  background-color: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.28) !important;
+  border-color: rgba(255, 255, 255, 0.55) !important;
+  transform: translateY(-1px);
 }
 
 .avatar, .avatarPlaceholder {
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   object-fit: cover;
 }
 
 .avatarPlaceholder {
-  background-color: var(--color-accent);
-  color: white;
+  background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+  color: #FFFFFF;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
+  letter-spacing: 0.02em;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.avatarContainerTransparent .avatarPlaceholder {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0.18) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  color: #FFFFFF;
+  backdrop-filter: blur(8px);
 }
 
 .userNameText {
   font-size: 0.8125rem;
   font-weight: 600;
-  color: var(--foreground);
+  color: var(--foreground, #111827);
+  letter-spacing: 0.01em;
 }
 
 .userNameTextTransparent {
-  color: #FFFFFF;
+  color: #FFFFFF !important;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
 }
 
 .dropdownIcon {
-  color: var(--muted-foreground);
+  color: var(--muted-foreground, #6B7280);
+  transition: transform 0.25s ease, color 0.25s ease;
+}
+
+.avatarContainerTransparent .dropdownIcon {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.avatarContainer:hover .dropdownIcon {
+  transform: translateY(1px);
 }
 
 .dropdownMenu {
   position: absolute;
   top: 100%;
   right: 0;
-  margin-top: var(--space-2);
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-lg);
-  width: 200px;
+  margin-top: 10px;
+  background-color: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: var(--radius-xl, 16px);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.14), 0 4px 10px rgba(0, 0, 0, 0.04);
+  width: 220px;
   display: flex;
   flex-direction: column;
   z-index: 100;
-  overflow: hidden;
+  padding: 8px 0;
+  animation: dropdownFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .dropdownHeader {
-  padding: var(--space-3) var(--space-4);
+  padding: 12px 18px 10px 18px;
   display: flex;
   flex-direction: column;
+  gap: 4px;
 }
 
 .dropdownName {
-  font-weight: 600;
-  color: var(--color-text-primary);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.2;
 }
 
-.dropdownRole {
-  font-size: var(--text-xs);
-  color: var(--color-text-secondary);
-  text-transform: capitalize;
+.dropdownRoleBadge {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--color-accent, #C85A32);
+  background-color: rgba(200, 90, 50, 0.12);
+  padding: 2px 8px;
+  border-radius: var(--radius-full, 9999px);
+  width: fit-content;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 .dropdownDivider {
   height: 1px;
-  background-color: var(--color-border);
+  background-color: #F3F4F6;
+  margin: 6px 0;
 }
 
 .dropdownItem {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-3) var(--space-4);
-  color: var(--color-text-secondary);
+  gap: 10px;
+  padding: 9px 14px;
+  margin: 2px 8px;
+  border-radius: var(--radius-md, 8px);
+  color: #374151;
   text-decoration: none;
   background: none;
   border: none;
-  font-size: var(--text-sm);
+  font-size: 0.875rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
-  width: 100%;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   text-align: left;
 }
 
 .dropdownItem:hover {
-  background-color: var(--color-bg-subtle);
-  color: var(--color-text-primary);
+  background-color: #F3F4F6;
+  color: #111827;
+  transform: translateX(3px);
+}
+
+.dropdownLogoutBtn {
+  color: #DC2626 !important;
+}
+
+.dropdownLogoutBtn:hover {
+  background-color: #FEF2F2 !important;
+  color: #991B1B !important;
 }
 
 .authLinks {

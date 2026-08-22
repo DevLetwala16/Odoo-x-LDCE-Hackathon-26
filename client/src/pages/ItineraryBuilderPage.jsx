@@ -195,6 +195,7 @@ const ItineraryBuilderPage = () => {
   if (!trip) return <PageShell title="Build Itinerary Screen"><div className={styles.error}>Trip not found</div></PageShell>;
 
   const stops = trip.stops || [];
+  const destinationCity = stops[0]?.city?.name || stops[0]?.title || trip.destination || trip.name?.replace('Trip to ', '') || 'Destination';
 
   return (
     <PageShell title="Build Itinerary Screen (Screen 5)">
@@ -202,6 +203,9 @@ const ItineraryBuilderPage = () => {
         {/* Header summary & Save CTA */}
         <div className={styles.topBar}>
           <div>
+            <div className={styles.destinationCityBadge}>
+              <MapPin size={12} /> {destinationCity.toUpperCase()}
+            </div>
             <h1 className={styles.tripTitle}>{trip.name}</h1>
             <p className={styles.tripDates}>
               <Calendar size={15} /> 

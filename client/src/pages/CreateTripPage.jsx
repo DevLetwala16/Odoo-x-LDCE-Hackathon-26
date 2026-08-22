@@ -8,6 +8,7 @@ import Card from '../components/common/Card';
 import cityService from '../services/cityService';
 import tripService from '../services/tripService';
 import stopService from '../services/stopService';
+import FlightTransition from '../components/common/FlightTransition';
 import styles from './CreateTripPage.module.css';
 
 const PRESET_COVERS = [
@@ -34,7 +35,15 @@ const CreateTripPage = () => {
   const [searchParams] = useSearchParams();
   const initialSearchCity = searchParams.get('city') || searchParams.get('q') || searchParams.get('search') || '';
 
+  const getTodayStr = () => {
+    const d = new Date();
+    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+    return d.toISOString().split("T")[0];
+  };
+  const todayStr = getTodayStr();
+
   const [loading, setLoading] = useState(false);
+  const [isFlying, setIsFlying] = useState(false);
   const [cities, setCities] = useState([]);
   const [placeSearchQuery, setPlaceSearchQuery] = useState(initialSearchCity);
   const [selectedCover, setSelectedCover] = useState(PRESET_COVERS[0].url);
@@ -44,18 +53,11 @@ const CreateTripPage = () => {
   const [formData, setFormData] = useState({
     name: initialSearchCity ? `Trip to ${initialSearchCity}` : '',
     selectedPlaceId: '',
-    startDate: '',
+    startDate: todayStr,
     endDate: '',
     totalBudget: '',
     description: '',
   });
-
-  const getTodayStr = () => {
-    const d = new Date();
-    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
-    return d.toISOString().split("T")[0];
-  };
-  const todayStr = getTodayStr();
 
   useEffect(() => {
     const fetchCities = async () => {
@@ -64,7 +66,6 @@ const CreateTripPage = () => {
         const fetchedCities = data?.cities || data || [];
         setCities(fetchedCities);
 
-        // If a city was searched on Home/Search page, auto-select it!
         if (initialSearchCity && fetchedCities.length > 0) {
           const match = fetchedCities.find(c => 
             c.name.toLowerCase() === initialSearchCity.toLowerCase() ||
@@ -153,11 +154,13 @@ const CreateTripPage = () => {
         }
       }
       
-      toast.success('Trip created! Building your itinerary...');
-      navigate(`/trips/${trip._id}/edit`);
+      toast.success('Trip created! Preparing itinerary...');
+      setIsFlying(true);
+      setTimeout(() => {
+        navigate(`/trips/${trip._id}/edit`);
+      }, 1300);
     } catch (error) {
       toast.error(error.message || 'Failed to create trip');
-    } finally {
       setLoading(false);
     }
   };
@@ -171,10 +174,17 @@ const CreateTripPage = () => {
 
   return (
     <PageShell 
-      sectionLabel="Screen 4" 
-      title="Create a New Trip"
-      subtitle="Plan a new trip and select recommended places to visit"
+      sectionLabel="Trip Planning" 
+      title="Plan a new trip"
+      subtitle="Create a new adventure by selecting your starting place, dates, and budget."
     >
+      <FlightTransition
+        isOpen={isFlying}
+        title={`Charting Flight to ${cities.find(c => c._id === formData.selectedPlaceId)?.name || 'Destination'}...`}
+        subtitle="Securing departure and organizing your itinerary timeline."
+        destination={cities.find(c => c._id === formData.selectedPlaceId)?.name || formData.name}
+      />
+
       <div className={styles.container}>
         <Link to="/trips" className={styles.backBtn}>
           <ArrowLeft size={12} /> Back to all trips

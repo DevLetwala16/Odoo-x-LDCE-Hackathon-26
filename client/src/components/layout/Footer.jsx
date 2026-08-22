@@ -1,5 +1,5 @@
 import React from 'react';
-import { Globe } from 'lucide-react';
+import { Compass } from 'lucide-react';
 import styles from './Footer.module.css';
 
 const Footer = () => {
@@ -7,10 +7,10 @@ const Footer = () => {
     <footer className={styles.footer}>
       <div className={styles.container}>
         <div className={styles.brandWrapper}>
-          <Globe size={16} className={styles.brandIcon} />
-          <span className={styles.brandName}>GlobeTrotter</span>
+          <Compass size={16} className={styles.brandIcon} />
+          <span className={styles.brandName}>Musafir</span>
         </div>
-        <p className={styles.copyright}>© 2026 GlobeTrotter. All rights reserved. Built for Odoo x LDCE Hackathon.</p>
+        <p className={styles.copyright}>© 2026 Musafir — Soulful Travel Itineraries & Multi-City Journeys. All rights reserved.</p>
       </div>
     </footer>
   );

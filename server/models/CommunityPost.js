@@ -29,11 +29,33 @@ const communityPostSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Post content is required'],
     },
+    imageUrl: {
+      type: String,
+      default: '',
+    },
     images: [
       {
         type: String,
       },
     ],
+    cities: [
+      {
+        type: String,
+        trim: true,
+      },
+    ],
+    cost: {
+      type: String,
+      default: '',
+    },
+    stopsCount: {
+      type: Number,
+      default: 1,
+    },
+    region: {
+      type: String,
+      default: 'global',
+    },
     tags: [
       {
         type: String,
