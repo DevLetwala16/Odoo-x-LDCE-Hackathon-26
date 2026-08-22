@@ -7,12 +7,17 @@ import Activity from '../models/Activity.js';
 import CommunityPost from '../models/CommunityPost.js';
 import LoginData from '../models/LoginData.js';
 
-// @desc    Get comprehensive platform stats OR user-specific analytics
+// @desc    Get comprehensive platform stats OR user-specific personal analytics
 // @route   GET /api/admin/stats?userId=...
-// @access  Admin
+// @access  Private (all logged in users get personal stats; admins can view any or platform stats)
 export const getStats = async (req, res, next) => {
   try {
-    const { userId } = req.query;
+    let { userId } = req.query;
+
+    // If requester is not an admin, restrict strictly to their own data
+    if (req.user.role !== 'admin') {
+      userId = req.user._id.toString();
+    }
 
     // ══════════════════════════════════════════════════════════════
     // IF USER_ID IS SPECIFIED: GENERATE USER-SPECIFIC ANALYTICS
@@ -37,52 +42,55 @@ export const getStats = async (req, res, next) => {
         CommunityPost.find({ user: userId }),
         LoginData.find({ 
           $or: [{ user: userId }, { username: targetUser.username }] 
-        }).sort({ loginTime: -1 }).limit(10),
+        }).sort({ loginTime: -1 }).limit(15),
       ]);
 
       const totalUserBudget = userTrips.reduce((acc, t) => acc + (t.totalBudget || 0), 0);
       const totalUserExpenses = userExpenses.reduce((acc, e) => acc + (e.amount || 0), 0);
-      const avgUserTripCost = userTrips.length > 0 ? Math.round(totalUserBudget / userTrips.length) : 0;
+      const avgUserTripCost = userTrips.length > 0 ? Math.round(totalUserBudget / userTrips.length) : (totalUserBudget || 15000);
 
-      // 1. User-specific Cost Trends
+      // 1. User-specific Cost Trends across intervals
+      const baseCost = totalUserBudget > 0 ? totalUserBudget : 25000;
+      
       const dayData = [
-        { label: '00:00', cost: Math.round(avgUserTripCost * 0.05), trips: 0 },
-        { label: '06:00', cost: Math.round(avgUserTripCost * 0.15), trips: 1 },
-        { label: '12:00', cost: Math.round(avgUserTripCost * 0.40), trips: 1 },
-        { label: '18:00', cost: Math.round(avgUserTripCost * 0.30), trips: 1 },
-        { label: '23:59', cost: Math.round(avgUserTripCost * 0.10), trips: 0 },
+        { label: '00:00 - 04:00', cost: Math.round(baseCost * 0.05), trips: 0 },
+        { label: '04:00 - 08:00', cost: Math.round(baseCost * 0.15), trips: 1 },
+        { label: '08:00 - 12:00', cost: Math.round(baseCost * 0.35), trips: userTrips.length > 0 ? 1 : 0 },
+        { label: '12:00 - 16:00', cost: Math.round(baseCost * 0.25), trips: 1 },
+        { label: '16:00 - 20:00', cost: Math.round(baseCost * 0.15), trips: 0 },
+        { label: '20:00 - 23:59', cost: Math.round(baseCost * 0.05), trips: 0 },
       ];
 
       const weekData = [
-        { label: 'Mon', cost: Math.round(avgUserTripCost * 0.12), trips: 1 },
-        { label: 'Tue', cost: Math.round(avgUserTripCost * 0.08), trips: 0 },
-        { label: 'Wed', cost: Math.round(avgUserTripCost * 0.20), trips: 1 },
-        { label: 'Thu', cost: Math.round(avgUserTripCost * 0.15), trips: 1 },
-        { label: 'Fri', cost: Math.round(avgUserTripCost * 0.25), trips: 2 },
-        { label: 'Sat', cost: Math.round(avgUserTripCost * 0.35), trips: 2 },
-        { label: 'Sun', cost: Math.round(avgUserTripCost * 0.28), trips: 1 },
+        { label: 'Mon', cost: Math.round(baseCost * 0.10), trips: 1 },
+        { label: 'Tue', cost: Math.round(baseCost * 0.08), trips: 0 },
+        { label: 'Wed', cost: Math.round(baseCost * 0.18), trips: 1 },
+        { label: 'Thu', cost: Math.round(baseCost * 0.14), trips: 1 },
+        { label: 'Fri', cost: Math.round(baseCost * 0.22), trips: userTrips.length },
+        { label: 'Sat', cost: Math.round(baseCost * 0.32), trips: userTrips.length },
+        { label: 'Sun', cost: Math.round(baseCost * 0.26), trips: 1 },
       ];
 
       const monthData = [
-        { label: 'Week 1', cost: Math.round(totalUserBudget * 0.20), trips: 1 },
-        { label: 'Week 2', cost: Math.round(totalUserBudget * 0.25), trips: 1 },
-        { label: 'Week 3', cost: Math.round(totalUserBudget * 0.30), trips: 2 },
-        { label: 'Week 4', cost: Math.round(totalUserBudget * 0.25), trips: 1 },
+        { label: 'Week 1', cost: Math.round(baseCost * 0.20), trips: 1 },
+        { label: 'Week 2', cost: Math.round(baseCost * 0.25), trips: 1 },
+        { label: 'Week 3', cost: Math.round(baseCost * 0.30), trips: userTrips.length },
+        { label: 'Week 4', cost: Math.round(baseCost * 0.25), trips: 1 },
       ];
 
       const yearData = [
-        { label: 'Jan', cost: Math.round(totalUserBudget * 0.08), trips: 1 },
-        { label: 'Feb', cost: Math.round(totalUserBudget * 0.05), trips: 0 },
-        { label: 'Mar', cost: Math.round(totalUserBudget * 0.10), trips: 1 },
-        { label: 'Apr', cost: Math.round(totalUserBudget * 0.12), trips: 1 },
-        { label: 'May', cost: Math.round(totalUserBudget * 0.15), trips: 2 },
-        { label: 'Jun', cost: Math.round(totalUserBudget * 0.18), trips: 2 },
-        { label: 'Jul', cost: Math.round(totalUserBudget * 0.14), trips: 1 },
-        { label: 'Aug', cost: Math.round(totalUserBudget * 0.20), trips: 2 },
-        { label: 'Sep', cost: Math.round(totalUserBudget * 0.10), trips: 1 },
-        { label: 'Oct', cost: Math.round(totalUserBudget * 0.12), trips: 1 },
-        { label: 'Nov', cost: Math.round(totalUserBudget * 0.16), trips: 1 },
-        { label: 'Dec', cost: Math.round(totalUserBudget * 0.22), trips: 2 },
+        { label: 'Jan', cost: Math.round(baseCost * 0.08), trips: 1 },
+        { label: 'Feb', cost: Math.round(baseCost * 0.06), trips: 0 },
+        { label: 'Mar', cost: Math.round(baseCost * 0.10), trips: 1 },
+        { label: 'Apr', cost: Math.round(baseCost * 0.12), trips: 1 },
+        { label: 'May', cost: Math.round(baseCost * 0.15), trips: userTrips.length },
+        { label: 'Jun', cost: Math.round(baseCost * 0.18), trips: userTrips.length },
+        { label: 'Jul', cost: Math.round(baseCost * 0.14), trips: 1 },
+        { label: 'Aug', cost: Math.round(baseCost * 0.20), trips: 1 },
+        { label: 'Sep', cost: Math.round(baseCost * 0.10), trips: 0 },
+        { label: 'Oct', cost: Math.round(baseCost * 0.12), trips: 1 },
+        { label: 'Nov', cost: Math.round(baseCost * 0.16), trips: 1 },
+        { label: 'Dec', cost: Math.round(baseCost * 0.22), trips: userTrips.length },
       ];
 
       // 2. User-specific Category Breakdown
@@ -99,10 +107,10 @@ export const getStats = async (req, res, next) => {
             color: ['#0E7C86', '#F2703C', '#2FA36B', '#F39C12', '#8E44AD', '#3498DB'][idx % 6],
           }))
         : [
-            { name: 'Accommodation', value: Math.round(totalUserBudget * 0.40) || 12000, color: '#0E7C86' },
-            { name: 'Transport & Flights', value: Math.round(totalUserBudget * 0.28) || 9000, color: '#F2703C' },
-            { name: 'Food & Dining', value: Math.round(totalUserBudget * 0.18) || 6000, color: '#2FA36B' },
-            { name: 'Activities & Sightseeing', value: Math.round(totalUserBudget * 0.14) || 4500, color: '#F39C12' },
+            { name: 'Accommodation', value: Math.round(baseCost * 0.38), color: '#0E7C86' },
+            { name: 'Transport & Flights', value: Math.round(baseCost * 0.28), color: '#F2703C' },
+            { name: 'Food & Dining', value: Math.round(baseCost * 0.20), color: '#2FA36B' },
+            { name: 'Activities & Sightseeing', value: Math.round(baseCost * 0.14), color: '#F39C12' },
           ];
 
       // 3. User Visited / Planned Cities on Map
@@ -128,7 +136,10 @@ export const getStats = async (req, res, next) => {
       });
 
       const userMapCities = Object.values(visitedCitiesMap);
-      const allCitiesFallback = await City.find().limit(16);
+      const allCitiesFallback = await City.find().sort({ popularity: -1 }).limit(16);
+
+      const topCities = userMapCities.length > 0 ? userMapCities : allCitiesFallback.slice(0, 8);
+      const topActivities = await Activity.find().limit(8).populate('city', 'name country');
 
       return res.json({
         success: true,
@@ -138,7 +149,7 @@ export const getStats = async (req, res, next) => {
           totalUsers: 1,
           totalTrips: userTrips.length,
           totalPosts: userPosts.length,
-          totalPlatformBudget: totalUserBudget,
+          totalPlatformBudget: totalUserBudget || baseCost,
           avgTripBudget: avgUserTripCost,
           trends: {
             day: dayData,
@@ -160,13 +171,15 @@ export const getStats = async (req, res, next) => {
             imageUrl: c.imageUrl,
             description: c.description,
           })),
+          topCities,
+          topActivities,
           recentLogins: userLogins,
         },
       });
     }
 
     // ══════════════════════════════════════════════════════════════
-    // GLOBAL PLATFORM-WIDE STATS
+    // GLOBAL PLATFORM-WIDE STATS (FOR ADMIN VIEW)
     // ══════════════════════════════════════════════════════════════
     const [totalUsers, totalTrips, totalPosts, totalExpensesCount, totalActivitiesCount] = await Promise.all([
       User.countDocuments(),
@@ -396,7 +409,7 @@ export const deleteUser = async (req, res, next) => {
 
 // @desc    Get popular cities
 // @route   GET /api/admin/popular-cities
-// @access  Admin
+// @access  Private
 export const getPopularCities = async (req, res, next) => {
   try {
     const cities = await City.find().sort({ popularity: -1 }).limit(50);
@@ -408,7 +421,7 @@ export const getPopularCities = async (req, res, next) => {
 
 // @desc    Get popular activities
 // @route   GET /api/admin/popular-activities
-// @access  Admin
+// @access  Private
 export const getPopularActivities = async (req, res, next) => {
   try {
     const activities = await Activity.find()
@@ -423,10 +436,14 @@ export const getPopularActivities = async (req, res, next) => {
 
 // @desc    Get login history logs
 // @route   GET /api/admin/login-logs
-// @access  Admin
+// @access  Private
 export const getLoginLogs = async (req, res, next) => {
   try {
-    const logs = await LoginData.find()
+    const filter = req.user.role === 'admin' 
+      ? {} 
+      : { $or: [{ user: req.user._id }, { username: req.user.username }] };
+
+    const logs = await LoginData.find(filter)
       .sort({ loginTime: -1 })
       .limit(50)
       .populate('user', 'firstName lastName email');

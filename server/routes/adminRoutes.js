@@ -13,14 +13,15 @@ import { isAdmin } from '../middleware/adminMiddleware.js';
 
 const router = Router();
 
-router.use(protect, isAdmin); // All admin routes require auth + admin role
+// /stats is accessible to all logged-in users (returns personal data for normal users, platform-wide for admin)
+router.get('/stats', protect, getStats);
+router.get('/popular-cities', protect, getPopularCities);
+router.get('/popular-activities', protect, getPopularActivities);
 
-router.get('/stats', getStats);
-router.get('/users', getUsers);
-router.patch('/users/:id/role', updateUserRole);
-router.delete('/users/:id', deleteUser);
-router.get('/popular-cities', getPopularCities);
-router.get('/popular-activities', getPopularActivities);
-router.get('/login-logs', getLoginLogs);
+// Admin-only management endpoints
+router.get('/users', protect, isAdmin, getUsers);
+router.patch('/users/:id/role', protect, isAdmin, updateUserRole);
+router.delete('/users/:id', protect, isAdmin, deleteUser);
+router.get('/login-logs', protect, getLoginLogs); // Returns personal logs for user, all logs for admin
 
 export default router;

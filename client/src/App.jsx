@@ -30,15 +30,6 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
-const AdminRoute = ({ children }) => {
-  const { user, loading } = useAuth();
-  
-  if (loading) return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'var(--color-primary)' }}>Loading...</div>;
-  if (!user || user.role !== 'admin') return <Navigate to="/" replace />;
-  
-  return children;
-};
-
 function App() {
   return (
     <AuthProvider>
@@ -72,8 +63,10 @@ function App() {
             <Route path="/trips/:id/calendar" element={<ProtectedRoute><CalendarPage /></ProtectedRoute>} />
             <Route path="/community" element={<ProtectedRoute><CommunityPage /></ProtectedRoute>} />
             
-            {/* Admin */}
-            <Route path="/admin" element={<AdminRoute><AdminPanelPage /></AdminRoute>} />
+            {/* Admin / Personal Analytics Dashboard (Accessible to ALL authenticated users) */}
+            <Route path="/admin" element={<ProtectedRoute><AdminPanelPage /></ProtectedRoute>} />
+            <Route path="/analytics" element={<ProtectedRoute><AdminPanelPage /></ProtectedRoute>} />
+            <Route path="/dashboard" element={<ProtectedRoute><AdminPanelPage /></ProtectedRoute>} />
             
             {/* Fallback */}
             <Route path="*" element={<Navigate to="/" replace />} />

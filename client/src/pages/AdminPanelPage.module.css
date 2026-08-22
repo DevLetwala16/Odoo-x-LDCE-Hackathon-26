@@ -29,6 +29,24 @@
   color: var(--color-text-secondary);
 }
 
+/* ── User Status Badge ── */
+.userStatusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, rgba(14, 124, 134, 0.12) 0%, rgba(242, 112, 60, 0.12) 100%);
+  color: var(--color-primary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--color-primary);
+}
+
+.sparkleIcon {
+  color: var(--color-accent);
+}
+
 /* ── User Specific Graph Selector in Header ── */
 .userSelectorBox {
   display: flex;

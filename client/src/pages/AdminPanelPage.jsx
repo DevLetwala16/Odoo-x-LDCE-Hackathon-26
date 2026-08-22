@@ -20,7 +20,8 @@ import {
   Compass,
   UserCheck,
   RotateCcw,
-  ArrowRight
+  ArrowRight,
+  Sparkles
 } from 'lucide-react';
 import { 
   AreaChart, 
@@ -49,10 +50,12 @@ import styles from './AdminPanelPage.module.css';
 const CHART_COLORS = ['#0E7C86', '#F2703C', '#2FA36B', '#F39C12', '#8E44AD', '#3498DB', '#E74C3C', '#1ABC9C'];
 
 const AdminPanelPage = () => {
-  const { user: currentAdminUser } = useAuth();
+  const { user: currentAuthUser } = useAuth();
+  const isAdmin = currentAuthUser?.role === 'admin';
+
   const [stats, setStats] = useState(null);
   const [users, setUsers] = useState([]);
-  const [selectedUserId, setSelectedUserId] = useState('all');
+  const [selectedUserId, setSelectedUserId] = useState(isAdmin ? 'all' : (currentAuthUser?._id || 'all'));
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('analytics'); // Default to rich analytics
   const [costInterval, setCostInterval] = useState('week'); // 'day' | 'week' | 'month' | 'year'
@@ -63,16 +66,22 @@ const AdminPanelPage = () => {
   const fetchStatsForUser = async (targetUserId) => {
     try {
       setLoading(true);
-      const [statsData, usersData, logsData] = await Promise.all([
-        adminService.getStats(targetUserId),
-        users.length === 0 ? adminService.getUsers() : Promise.resolve(users),
+      const promises = [
+        adminService.getStats(isAdmin ? targetUserId : (currentAuthUser?._id || 'all')),
         adminService.getLoginLogs(),
-      ]);
+      ];
+      if (isAdmin) {
+        promises.push(users.length === 0 ? adminService.getUsers() : Promise.resolve(users));
+      }
+
+      const [statsData, logsData, usersData] = await Promise.all(promises);
       setStats(statsData);
-      if (users.length === 0) setUsers(usersData || []);
       setLoginLogs(logsData || []);
+      if (isAdmin && usersData) {
+        setUsers(usersData || []);
+      }
     } catch (err) {
-      toast.error('Failed to load admin analytics');
+      toast.error('Failed to load personalized analytics');
     } finally {
       setLoading(false);
     }
@@ -87,9 +96,9 @@ const AdminPanelPage = () => {
     setActiveTab('analytics');
     const target = users.find(u => u._id === id);
     if (target) {
-      toast.success(`Loaded personalized analytics for ${target.firstName || target.username}`);
+      toast.success(`Loaded personalized graph for ${target.firstName || target.username}`);
     } else {
-      toast.success('Loaded platform-wide analytics');
+      toast.success('Loaded platform analytics');
     }
   };
 
@@ -118,7 +127,7 @@ const AdminPanelPage = () => {
     }
   };
 
-  if (loading && !stats) return <PageShell title="Admin Panel"><Loader text="Loading Admin Analytics Hub..." /></PageShell>;
+  if (loading && !stats) return <PageShell title="Personal Admin & Analytics"><Loader text="Loading Your Intelligence Dashboard..." /></PageShell>;
 
   // Current Cost Trend Data based on interval (1 Day, Week Wise, Month Wise, Year Wise)
   const currentCostData = stats?.trends?.[costInterval] || [];
@@ -134,43 +143,68 @@ const AdminPanelPage = () => {
     `${u.firstName} ${u.lastName} ${u.email} ${u.username}`.toLowerCase().includes(searchUser.toLowerCase())
   );
 
-  const selectedUserObj = users.find(u => u._id === selectedUserId);
+  const selectedUserObj = users.find(u => u._id === selectedUserId) || (!isAdmin ? currentAuthUser : null);
+
+  // Tabs configured for Admin vs Regular User
+  const navTabs = isAdmin ? [
+    { key: 'users', label: 'Manage Users', icon: <Users size={16} /> },
+    { key: 'popular-cities', label: 'Popular Cities', icon: <MapPin size={16} /> },
+    { key: 'popular-activities', label: 'Popular Activities', icon: <Activity size={16} /> },
+    { key: 'analytics', label: 'User Trends and Analytics', icon: <BarChart3 size={16} /> },
+  ] : [
+    { key: 'analytics', label: 'My Personal Trends & Graphs', icon: <BarChart3 size={16} /> },
+    { key: 'popular-cities', label: 'Top Destinations & Cost Map', icon: <MapPin size={16} /> },
+    { key: 'popular-activities', label: 'Recommended Activities', icon: <Activity size={16} /> },
+  ];
 
   return (
-    <PageShell title="Admin Panel">
+    <PageShell title={isAdmin ? "GlobeTrotter Admin Portal" : "Personal Travel Intelligence Portal"}>
       <div className={styles.container}>
         {/* ── Top Header & FilterBar (Wireframe Screen 12) ── */}
         <div className={styles.header}>
           <div>
-            <h1 className={styles.title}>GlobeTrotter Admin Portal</h1>
-            <p className={styles.subtitle}>Real-time graphical analytics, user-specific insights & system management</p>
+            <h1 className={styles.title}>
+              {isAdmin ? "GlobeTrotter Admin Portal" : `Welcome, ${currentAuthUser?.firstName || currentAuthUser?.username}!`}
+            </h1>
+            <p className={styles.subtitle}>
+              {isAdmin 
+                ? "Real-time platform analytics, user management & travel intelligence"
+                : "Your personal trip cost graphs, category spending breakdown, destination map & security audit"}
+            </p>
           </div>
           
-          {/* User Specific Switcher Dropdown */}
-          <div className={styles.userSelectorBox}>
-            <label className={styles.userSelectorLabel}><UserCheck size={16} /> Filter Graph by Person:</label>
-            <select 
-              value={selectedUserId} 
-              onChange={(e) => handleSelectUser(e.target.value)}
-              className={styles.userDropdown}
-            >
-              <option value="all">📊 All Users (Platform-Wide)</option>
-              {currentAdminUser && (
-                <option value={currentAdminUser._id}>
-                  👤 Logged-in Admin ({currentAdminUser.firstName || currentAdminUser.username})
-                </option>
-              )}
-              {users.map(u => (
-                <option key={u._id} value={u._id}>
-                  👤 {u.firstName} {u.lastName} (@{u.username})
-                </option>
-              ))}
-            </select>
-          </div>
+          {/* Admin User-Specific Switcher Dropdown */}
+          {isAdmin ? (
+            <div className={styles.userSelectorBox}>
+              <label className={styles.userSelectorLabel}><UserCheck size={16} /> Filter Graph by Person:</label>
+              <select 
+                value={selectedUserId} 
+                onChange={(e) => handleSelectUser(e.target.value)}
+                className={styles.userDropdown}
+              >
+                <option value="all">📊 All Users (Platform-Wide)</option>
+                {currentAuthUser && (
+                  <option value={currentAuthUser._id}>
+                    👤 Your Account ({currentAuthUser.firstName || currentAuthUser.username})
+                  </option>
+                )}
+                {users.map(u => (
+                  <option key={u._id} value={u._id}>
+                    👤 {u.firstName} {u.lastName} (@{u.username})
+                  </option>
+                ))}
+              </select>
+            </div>
+          ) : (
+            <div className={styles.userStatusBadge}>
+              <Sparkles size={16} className={styles.sparkleIcon} />
+              <span>Personal Intelligence Dashboard</span>
+            </div>
+          )}
         </div>
 
-        {/* User-Specific Active Banner */}
-        {selectedUserId !== 'all' && selectedUserObj && (
+        {/* User-Specific Active Banner (When filtering as Admin) */}
+        {isAdmin && selectedUserId !== 'all' && selectedUserObj && (
           <div className={styles.userActiveBanner}>
             <div className={styles.userBannerInfo}>
               <div className={styles.userBannerAvatar}>
@@ -191,12 +225,7 @@ const AdminPanelPage = () => {
 
         {/* ── 4 Top Navigation Tabs (Wireframe Screen 12) ── */}
         <div className={styles.tabsRow}>
-          {[
-            { key: 'users', label: 'Manage Users', icon: <Users size={16} /> },
-            { key: 'popular-cities', label: 'Popular Cities', icon: <MapPin size={16} /> },
-            { key: 'popular-activities', label: 'Popular Activities', icon: <Activity size={16} /> },
-            { key: 'analytics', label: 'User Trends and Analytics', icon: <BarChart3 size={16} /> },
-          ].map((tab) => (
+          {navTabs.map((tab) => (
             <button
               key={tab.key}
               className={`${styles.tabBtn} ${activeTab === tab.key ? styles.activeTabBtn : ''}`}
@@ -222,8 +251,8 @@ const AdminPanelPage = () => {
                       <Users size={22} color="var(--color-primary)" />
                     </div>
                     <div>
-                      <p className={styles.kpiLabel}>{selectedUserId !== 'all' ? 'User Profile' : 'Total Registered Users'}</p>
-                      <h3 className={styles.kpiValue}>{selectedUserId !== 'all' ? selectedUserObj?.username : (stats?.totalUsers || 0)}</h3>
+                      <p className={styles.kpiLabel}>{!isAdmin || selectedUserId !== 'all' ? 'Account Profile' : 'Total Registered Users'}</p>
+                      <h3 className={styles.kpiValue}>{!isAdmin || selectedUserId !== 'all' ? (selectedUserObj?.username || currentAuthUser?.username) : (stats?.totalUsers || 0)}</h3>
                     </div>
                   </Card>
 
@@ -232,7 +261,7 @@ const AdminPanelPage = () => {
                       <Compass size={22} color="var(--color-accent)" />
                     </div>
                     <div>
-                      <p className={styles.kpiLabel}>{selectedUserId !== 'all' ? 'Person\'s Total Trips' : 'Total Trips Planned'}</p>
+                      <p className={styles.kpiLabel}>{!isAdmin || selectedUserId !== 'all' ? 'Your Total Trips' : 'Total Trips Planned'}</p>
                       <h3 className={styles.kpiValue}>{stats?.totalTrips || 0}</h3>
                     </div>
                   </Card>
@@ -242,7 +271,7 @@ const AdminPanelPage = () => {
                       <DollarSign size={22} color="var(--color-success)" />
                     </div>
                     <div>
-                      <p className={styles.kpiLabel}>{selectedUserId !== 'all' ? 'Person\'s Total Budget' : 'Total Platform Budget'}</p>
+                      <p className={styles.kpiLabel}>{!isAdmin || selectedUserId !== 'all' ? 'Your Total Budget' : 'Total Platform Budget'}</p>
                       <h3 className={styles.kpiValue}>₹{(stats?.totalPlatformBudget || 0).toLocaleString()}</h3>
                     </div>
                   </Card>
@@ -263,12 +292,12 @@ const AdminPanelPage = () => {
                   <div className={styles.chartHeaderRow}>
                     <div>
                       <h3 className={styles.chartTitle}>
-                        <TrendingUp size={18} /> {selectedUserId !== 'all' ? `${selectedUserObj?.firstName}'s Trip Cost Curve` : 'Trip Cost Trends & Spending Volume'}
+                        <TrendingUp size={18} /> {!isAdmin ? "Your Trip Cost Trajectory & Spending Curve" : (selectedUserId !== 'all' ? `${selectedUserObj?.firstName}'s Trip Cost Curve` : 'Trip Cost Trends & Spending Volume')}
                       </h3>
                       <p className={styles.chartSubtitle}>
-                        {selectedUserId !== 'all' 
-                          ? `Visual spending pattern across intervals for ${selectedUserObj?.firstName} ${selectedUserObj?.lastName}` 
-                          : 'Real-time analysis of travel expenditures across time intervals'}
+                        {!isAdmin 
+                          ? "Real-time graphic representation of your trip costs across day, week, month, and year"
+                          : (selectedUserId !== 'all' ? `Visual spending pattern across intervals for ${selectedUserObj?.firstName} ${selectedUserObj?.lastName}` : 'Real-time analysis of travel expenditures across time intervals')}
                       </p>
                     </div>
 
@@ -330,9 +359,9 @@ const AdminPanelPage = () => {
                 <div className={styles.twoColumnGrid}>
                   <Card className={styles.chartCard}>
                     <h3 className={styles.chartTitle}>
-                      <PieIcon size={18} /> {selectedUserId !== 'all' ? `${selectedUserObj?.firstName}'s Category Spending` : 'Category-Wise Spending During Trips'}
+                      <PieIcon size={18} /> {!isAdmin ? "Your Category-Wise Spending Breakdown" : (selectedUserId !== 'all' ? `${selectedUserObj?.firstName}'s Category Spending` : 'Category-Wise Spending During Trips')}
                     </h3>
-                    <p className={styles.chartSubtitle}>Distribution across accommodation, flights, dining, and activities</p>
+                    <p className={styles.chartSubtitle}>Distribution across accommodation, transport, dining, and activities</p>
 
                     <div className={styles.pieContainer}>
                       <ResponsiveContainer width="100%" height={260}>
@@ -379,7 +408,7 @@ const AdminPanelPage = () => {
                     <div className={styles.mapHeaderRow}>
                       <div>
                         <h3 className={styles.chartTitle}>
-                          <Globe size={18} /> {selectedUserId !== 'all' ? `${selectedUserObj?.firstName}'s Destinations` : 'Destination Map with Cost on Hover'}
+                          <Globe size={18} /> {!isAdmin ? "Your Destinations & Cost Map" : (selectedUserId !== 'all' ? `${selectedUserObj?.firstName}'s Destinations` : 'Destination Map with Cost on Hover')}
                         </h3>
                         <p className={styles.chartSubtitle}>Hover or tap on destinations to view average trip cost</p>
                       </div>
@@ -434,7 +463,7 @@ const AdminPanelPage = () => {
                 {/* ── 4. Recent Real-Time Login Logs from Login_data Collection ── */}
                 <Card className={styles.chartCard}>
                   <h3 className={styles.chartTitle}>
-                    <Clock size={18} /> {selectedUserId !== 'all' ? `${selectedUserObj?.firstName}'s Login Records` : 'Real-Time Login Audit Logs (`Login_data` Collection)'}
+                    <Clock size={18} /> {!isAdmin ? "Your Recent Login History (`Login_data` Collection)" : (selectedUserId !== 'all' ? `${selectedUserObj?.firstName}'s Login Records` : 'Real-Time Login Audit Logs (`Login_data` Collection)')}
                   </h3>
                   <p className={styles.chartSubtitle}>Auditing user authentication activity, IP addresses, and timestamps</p>
 
@@ -472,8 +501,8 @@ const AdminPanelPage = () => {
               </div>
             )}
 
-            {/* ════════════════ TAB: MANAGE USERS ════════════════ */}
-            {activeTab === 'users' && (
+            {/* ════════════════ TAB: MANAGE USERS (ADMIN ONLY) ════════════════ */}
+            {isAdmin && activeTab === 'users' && (
               <Card className={styles.tableCard}>
                 <div className={styles.tableHeaderControls}>
                   <div>
@@ -652,35 +681,35 @@ const AdminPanelPage = () => {
             <Card className={styles.infoBoxCard}>
               <div className={styles.infoBoxHeader}>
                 <Info size={20} className={styles.infoIcon} />
-                <h3>Admin Control Guide</h3>
+                <h3>{isAdmin ? "Admin Control Guide" : "Personal Travel Guide"}</h3>
               </div>
 
               <div className={styles.guideSections}>
                 <div className={styles.guideItem}>
-                  <h4 className={styles.guideTitle}>Manage User Section:</h4>
+                  <h4 className={styles.guideTitle}>Trip Cost Trajectory:</h4>
                   <p className={styles.guideText}>
-                    This Section is responsible for managing users and their actions. Allows admins to inspect individual user graphs, promote roles, and view created trips.
+                    Track your daily, weekly, monthly, and yearly travel costs and compare budget distributions in real time.
                   </p>
                 </div>
 
                 <div className={styles.guideItem}>
-                  <h4 className={styles.guideTitle}>Popular Cities:</h4>
+                  <h4 className={styles.guideTitle}>Category Spending:</h4>
                   <p className={styles.guideText}>
-                    Lists all the popular cities where users are visiting based on current travel trends and search patterns.
+                    Instant breakdown of how much you spend across hotels, flights, dining, and sightseeing excursions.
                   </p>
                 </div>
 
                 <div className={styles.guideItem}>
-                  <h4 className={styles.guideTitle}>Popular Activities:</h4>
+                  <h4 className={styles.guideTitle}>Interactive Cost Map:</h4>
                   <p className={styles.guideText}>
-                    List all the popular activities that users are doing based on current user trend and rating data.
+                    Hover over destinations worldwide to check live average trip costs, popularity ratings, and budget indices.
                   </p>
                 </div>
 
                 <div className={styles.guideItem}>
-                  <h4 className={styles.guideTitle}>User Trends and Analytics:</h4>
+                  <h4 className={styles.guideTitle}>Account Security & Logs:</h4>
                   <p className={styles.guideText}>
-                    Focuses on providing individual or platform-wide spending curves across 1-day, week-wise, month-wise, and year-wise intervals.
+                    Real-time audit log of your recent login timestamps, IP addresses, and authenticated sessions.
                   </p>
                 </div>
               </div>
@@ -688,9 +717,9 @@ const AdminPanelPage = () => {
               {/* Live Status Badge */}
               <div className={styles.serverStatusCard}>
                 <div className={styles.statusRow}>
-                  <span>Target Filter</span>
+                  <span>Account Session</span>
                   <span className={styles.statusHighlight}>
-                    {selectedUserId !== 'all' ? selectedUserObj?.username || 'User' : 'All Users'}
+                    @{currentAuthUser?.username || 'User'}
                   </span>
                 </div>
                 <div className={styles.statusRow}>
