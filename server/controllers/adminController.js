@@ -649,3 +649,314 @@ export const getLoginLogs = async (req, res, next) => {
     next(err);
   }
 };
+
+// @desc    Get global admin overview stats
+// @route   GET /api/admin/overview
+// @access  Admin
+export const getAdminOverview = async (req, res, next) => {
+  try {
+    const totalUsers = await User.countDocuments();
+    const totalTrips = await Trip.countDocuments();
+    const totalCities = await City.countDocuments();
+    const totalActivities = await Activity.countDocuments();
+    const totalStops = await Stop.countDocuments();
+    
+    const allStops = await Stop.find();
+    const totalScheduledActivities = allStops.reduce((sum, s) => sum + (s.activities?.length || 0), 0);
+    const totalBudgetSum = allStops.reduce((sum, s) => sum + (s.sectionBudget || 0), 0);
+
+    // Recent users
+    const recentUsers = await User.find().sort({ createdAt: -1 }).limit(8);
+    const recentUsersData = recentUsers.map(u => ({
+      id: u._id,
+      name: `${u.firstName || ''} ${u.lastName || ''}`.trim(),
+      email: u.email,
+      city: u.city || '',
+      country: u.country || '',
+      is_admin: u.role === 'admin',
+      created_at: u.createdAt ? u.createdAt.toISOString().slice(0, 10) : 'N/A'
+    }));
+
+    // Recent Trips
+    const recentTrips = await Trip.find().sort({ createdAt: -1 }).limit(8);
+    const recentTripsData = await Promise.all(recentTrips.map(async (t) => {
+      const tripStops = await Stop.find({ _id: { $in: t.stops } });
+      const tripBudget = tripStops.reduce((sum, s) => sum + (s.sectionBudget || 0), 0);
+      return {
+        id: t._id,
+        name: t.name,
+        user_id: t.user,
+        start_date: t.startDate ? t.startDate.toISOString().slice(0, 10) : '',
+        end_date: t.endDate ? t.endDate.toISOString().slice(0, 10) : '',
+        budget: tripBudget,
+        cover_photo_url: t.coverPhotoUrl || '',
+        created_at: t.createdAt ? t.createdAt.toISOString().slice(0, 10) : 'N/A'
+      };
+    }));
+
+    // Category distribution of activities
+    const catCounts = await Activity.aggregate([
+      { $group: { _id: '$category', count: { $sum: 1 } } }
+    ]);
+    const categoryDistribution = catCounts.map(c => ({
+      category: c._id || 'other',
+      count: c.count
+    }));
+
+    // Top Planned Cities
+    const topCitiesQuery = await Stop.aggregate([
+      { $group: { _id: '$city', count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      { $limit: 6 }
+    ]);
+
+    const topPlannedCities = await Promise.all(topCitiesQuery.map(async (c) => {
+      if (!c._id) return { city: 'Unknown', country: 'Unknown', stops_count: c.count };
+      const cityObj = await City.findById(c._id);
+      return {
+        city: cityObj ? cityObj.name : 'Unknown',
+        country: cityObj ? cityObj.country : 'Unknown',
+        stops_count: c.count
+      };
+    }));
+
+    res.json({
+      success: true,
+      data: {
+        stats: {
+          total_users: totalUsers,
+          total_trips: totalTrips,
+          total_stops: totalStops,
+          total_cities: totalCities,
+          total_activities: totalActivities,
+          total_scheduled_activities: totalScheduledActivities,
+          total_estimated_budget: totalBudgetSum,
+        },
+        recent_users: recentUsersData,
+        recent_trips: recentTripsData,
+        category_distribution: categoryDistribution,
+        top_planned_cities: topPlannedCities,
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// @desc    Toggle admin status of a user
+// @route   PUT /api/admin/users/:id/toggle-admin
+// @access  Admin
+export const toggleUserAdmin = async (req, res, next) => {
+  try {
+    const targetUser = await User.findById(req.params.id);
+    if (!targetUser) {
+      const err = new Error('User not found');
+      err.statusCode = 404;
+      return next(err);
+    }
+    
+    if (targetUser._id.toString() === req.user._id.toString()) {
+      const err = new Error('Cannot toggle admin status of your own account');
+      err.statusCode = 400;
+      return next(err);
+    }
+
+    targetUser.role = targetUser.role === 'admin' ? 'user' : 'admin';
+    await targetUser.save();
+
+    res.json({
+      success: true,
+      data: {
+        message: `User ${targetUser.email} admin status updated.`,
+        user_id: targetUser._id,
+        is_admin: targetUser.role === 'admin'
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// @desc    Get all cities with activity counts
+// @route   GET /api/admin/cities
+// @access  Admin
+export const getAdminCities = async (req, res, next) => {
+  try {
+    const cities = await City.find().sort({ name: 1 });
+    const result = await Promise.all(cities.map(async (c) => {
+      const actCount = await Activity.countDocuments({ city: c._id });
+      return {
+        id: c._id,
+        name: c.name,
+        country: c.country,
+        region: c.region,
+        cost_index: c.costIndex || 3,
+        popularity_score: c.popularity || 80,
+        image_url: c.imageUrl,
+        activities_count: actCount
+      };
+    }));
+    res.json({ success: true, data: { cities: result } });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// @desc    Create a destination city
+// @route   POST /api/admin/cities
+// @access  Admin
+export const createCity = async (req, res, next) => {
+  try {
+    const { name, country, region, cost_index, popularity_score, image_url } = req.body;
+    
+    const newCity = await City.create({
+      name,
+      country,
+      region,
+      costIndex: cost_index || 3,
+      popularity: popularity_score || 80,
+      imageUrl: image_url || "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=800&auto=format&fit=crop"
+    });
+
+    res.status(201).json({
+      success: true,
+      data: {
+        message: "City created successfully",
+        city: {
+          id: newCity._id,
+          name: newCity.name,
+          country: newCity.country,
+          region: newCity.region
+        }
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// @desc    Update city details
+// @route   PUT /api/admin/cities/:id
+// @access  Admin
+export const updateCity = async (req, res, next) => {
+  try {
+    const city = await City.findById(req.params.id);
+    if (!city) {
+      const err = new Error('City not found');
+      err.statusCode = 404;
+      return next(err);
+    }
+
+    const { name, country, region, cost_index, popularity_score, image_url } = req.body;
+
+    if (name !== undefined) city.name = name;
+    if (country !== undefined) city.country = country;
+    if (region !== undefined) city.region = region;
+    if (cost_index !== undefined) city.costIndex = cost_index;
+    if (popularity_score !== undefined) city.popularity = popularity_score;
+    if (image_url !== undefined) city.imageUrl = image_url;
+
+    await city.save();
+
+    res.json({
+      success: true,
+      data: {
+        message: "City updated successfully",
+        city_id: city._id
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// @desc    Delete a city and its associated activities
+// @route   DELETE /api/admin/cities/:id
+// @access  Admin
+export const deleteCity = async (req, res, next) => {
+  try {
+    const city = await City.findById(req.params.id);
+    if (!city) {
+      const err = new Error('City not found');
+      err.statusCode = 404;
+      return next(err);
+    }
+
+    await Activity.deleteMany({ city: city._id });
+    await City.findByIdAndDelete(city._id);
+
+    res.json({
+      success: true,
+      data: {
+        message: `City '${city.name}' deleted successfully`
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// @desc    Create a curated activity for a city
+// @route   POST /api/admin/activities
+// @access  Admin
+export const createActivity = async (req, res, next) => {
+  try {
+    const { city_id, name, category, cost, duration_hours, description } = req.body;
+
+    const city = await City.findById(city_id);
+    if (!city) {
+      const err = new Error('City not found');
+      err.statusCode = 404;
+      return next(err);
+    }
+
+    const newAct = await Activity.create({
+      city: city_id,
+      name,
+      category,
+      estimatedCost: cost || 0,
+      duration: duration_hours * 60 || 60, // duration in minutes
+      description
+    });
+
+    res.status(201).json({
+      success: true,
+      data: {
+        message: "Activity created successfully",
+        activity: {
+          id: newAct._id,
+          name: newAct.name,
+          city_id: newAct.city
+        }
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// @desc    Delete a curated activity
+// @route   DELETE /api/admin/activities/:id
+// @access  Admin
+export const deleteActivity = async (req, res, next) => {
+  try {
+    const act = await Activity.findById(req.params.id);
+    if (!act) {
+      const err = new Error('Activity not found');
+      err.statusCode = 404;
+      return next(err);
+    }
+
+    await Activity.findByIdAndDelete(act._id);
+
+    res.json({
+      success: true,
+      data: {
+        message: `Activity '${act.name}' deleted successfully`
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+

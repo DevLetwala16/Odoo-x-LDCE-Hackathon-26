@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import { connectDB } from './config/db.js';
 import { errorHandler } from './middleware/errorHandler.js';
+import User from './models/User.js';
 import { config } from './config/env.js';
 
 // Route imports (uncomment as routes are created)
@@ -46,7 +47,25 @@ app.use('/api/calendar',   calendarRoutes);
 app.use(errorHandler);
 
 // Connect to DB and start server
-connectDB().then(() => {
+connectDB().then(async () => {
+  // Ensure system admin exists
+  try {
+    const adminExists = await User.findOne({ username: 'admin' });
+    if (!adminExists) {
+      await User.create({
+        firstName: 'System',
+        lastName: 'Admin',
+        username: 'admin',
+        email: 'admin@musafir.com',
+        password: 'admin123',
+        role: 'admin'
+      });
+      console.log('✅ Auto-created system administrator account (admin / admin123)');
+    }
+  } catch (err) {
+    console.error('❌ Failed to auto-create admin user:', err.message);
+  }
+
   app.listen(config.port, () => {
     console.log(`🚀 Server running on :${config.port} (${config.nodeEnv})`);
   });
