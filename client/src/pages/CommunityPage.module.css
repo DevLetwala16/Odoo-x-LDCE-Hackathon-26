@@ -1,227 +1,194 @@
 /* ═══════════════════════════════════════════════════
-   Community Page — Serene Horizon Design System
-   Two-column feed layout, premium post cards
+   Community Page — Airbnb-inspired Premium Design
+   Social feed layout, clean post cards, like animation
    ═══════════════════════════════════════════════════ */
 
 .container {
-  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  max-width: 800px;
   margin: 0 auto;
-  padding: var(--space-8) var(--space-6);
 }
 
-.header {
+/* ── Create Post ── */
+.createPostCard {
+  padding: var(--space-6);
+  border-radius: var(--radius-2xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.createHeader {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: var(--space-8);
+  gap: var(--space-4);
 }
 
-.title {
-  font-size: 2rem;
-  font-weight: 700;
+.userAvatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-primary), #2FA36B);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--font-weight-bold);
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.createInput {
+  flex: 1;
+  background: var(--color-bg-sunken);
+  border: 1px solid transparent;
+  padding: 12px 20px;
+  border-radius: var(--radius-full);
+  font-size: 0.9375rem;
   color: var(--color-text-primary);
-  margin: 0;
-  letter-spacing: -0.02em;
+  transition: all 0.2s ease;
+  cursor: text;
+  text-align: left;
 }
 
-.layout {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-8);
+.createInput:hover {
+  background: var(--color-bg-surface);
+  border-color: var(--color-border);
 }
 
-@media (min-width: 768px) {
-  .layout {
-    grid-template-columns: 2fr 1fr;
-  }
-}
-
-/* ── Feed Column ── */
-.feedColumn {
+/* ── Feed ── */
+.feed {
   display: flex;
   flex-direction: column;
   gap: var(--space-6);
 }
 
-/* ── Post Card ── */
 .postCard {
   padding: var(--space-6);
-  border-radius: 16px;
-  background: #FFFFFF;
-  box-shadow: 0 4px 20px rgba(30, 41, 59, 0.05);
-  border: 1px solid rgba(190, 200, 202, 0.2);
-  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-              box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.postCard:hover {
-  box-shadow: 0 10px 30px rgba(30, 41, 59, 0.08);
-  transform: translateY(-1px);
+  border-radius: var(--radius-2xl);
 }
 
 .postHeader {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
+  justify-content: space-between;
   margin-bottom: var(--space-4);
 }
 
-.postAvatar {
-  width: 44px;
-  height: 44px;
+.postAuthorInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.authorAvatar {
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-hover));
-  color: #FFFFFF;
+  background: var(--color-bg-sunken);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  font-size: 0.875rem;
-  flex-shrink: 0;
-  border: 2px solid #FFFFFF;
-  box-shadow: 0 2px 8px rgba(30, 41, 59, 0.1);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-secondary);
 }
 
-.postUserInfo {
-  flex: 1;
+.authorAvatar img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
-.postUserName {
-  font-weight: 600;
+.authorDetails {
+  display: flex;
+  flex-direction: column;
+}
+
+.authorName {
+  font-weight: var(--font-weight-bold);
   color: var(--color-text-primary);
-  font-size: 0.9375rem;
   margin: 0;
+  font-size: 0.9375rem;
 }
 
 .postTime {
-  font-size: 0.75rem;
   color: var(--color-text-secondary);
-  margin: 2px 0 0 0;
+  font-size: 0.8125rem;
+  margin: 0;
 }
 
 .postContent {
   color: var(--color-text-primary);
-  line-height: 1.7;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin: 0 0 var(--space-4) 0;
+}
+
+.postImage {
+  width: 100%;
+  max-height: 400px;
+  object-fit: cover;
+  border-radius: var(--radius-lg);
   margin-bottom: var(--space-4);
-  font-size: 0.9375rem;
 }
 
-.postTags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: var(--space-4);
-}
-
-.tag {
-  background-color: rgba(14, 124, 134, 0.08);
-  color: var(--color-primary);
-  padding: 4px 12px;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-}
-
+/* ── Post Actions ── */
 .postActions {
   display: flex;
   align-items: center;
-  gap: var(--space-4);
-  padding-top: var(--space-3);
-  border-top: 1px solid rgba(190, 200, 202, 0.2);
+  gap: var(--space-6);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border-light);
 }
 
 .actionBtn {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-medium);
   background: none;
   border: none;
-  color: var(--color-text-secondary);
+  padding: 8px 12px;
+  border-radius: var(--radius-full);
   cursor: pointer;
-  padding: 6px 12px;
-  border-radius: var(--radius-md);
-  font-size: 0.8125rem;
-  font-weight: 500;
-  transition: all 0.15s ease;
+  transition: all 0.2s ease;
 }
 
 .actionBtn:hover {
-  background-color: var(--color-primary-light);
-  color: var(--color-primary);
+  background-color: var(--color-bg-sunken);
+  color: var(--color-text-primary);
 }
 
-.actionBtn.liked {
+.liked {
   color: var(--color-accent);
 }
 
-/* ── Sidebar ── */
-.sidebar {
-  display: none;
+.liked svg {
+  fill: var(--color-accent);
+  animation: scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-@media (min-width: 768px) {
-  .sidebar {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-6);
-  }
+.liked:hover {
+  color: var(--color-accent-hover);
+  background-color: var(--color-accent-light);
 }
 
-.sidebarWidget {
-  background: #FFFFFF;
-  border-radius: 16px;
-  padding: var(--space-5);
-  box-shadow: 0 4px 20px rgba(30, 41, 59, 0.05);
-  border: 1px solid rgba(190, 200, 202, 0.2);
-}
-
-.sidebarTitle {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--color-text-primary);
-  margin: 0 0 var(--space-4) 0;
-  padding-bottom: var(--space-3);
-  border-bottom: 1px solid rgba(190, 200, 202, 0.2);
-}
-
-/* ── Form ── */
-.createPostCard {
-  padding: var(--space-6);
-  border-radius: 16px;
-  background: #FFFFFF;
-  box-shadow: 0 4px 20px rgba(30, 41, 59, 0.05);
-  border: 1px solid rgba(190, 200, 202, 0.2);
-}
-
-.emptyState {
-  text-align: center;
-  padding: var(--space-12) var(--space-6);
-  color: var(--color-text-secondary);
-}
-
-.emptyStateIcon {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--color-primary-light), rgba(14, 124, 134, 0.08));
-  color: var(--color-primary);
+/* ── Pagination ── */
+.pagination {
   display: flex;
-  align-items: center;
   justify-content: center;
-  margin: 0 auto var(--space-5);
+  align-items: center;
+  gap: var(--space-4);
+  margin-top: var(--space-6);
 }
 
-.emptyStateTitle {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--color-text-primary);
-  margin: 0 0 8px 0;
-}
-
-.emptyStateText {
-  font-size: 0.9375rem;
-  line-height: 1.6;
-  max-width: 400px;
-  margin: 0 auto;
+.pageInfo {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
 }

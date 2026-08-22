@@ -1,177 +1,196 @@
+/* ═══════════════════════════════════════════════════
+   Itinerary Builder Page — Airbnb-inspired Premium
+   Visual timeline, clean stop cards, drag handles
+   ═══════════════════════════════════════════════════ */
+
 .headerActions {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--space-xl);
+  justify-content: flex-end;
+  gap: var(--space-3);
+  margin-bottom: var(--space-8);
   flex-wrap: wrap;
-  gap: var(--space-md);
 }
 
 .builderArea {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
   max-width: 800px;
   margin: 0 auto;
 }
 
+/* ── Timeline ── */
 .timeline {
   display: flex;
   flex-direction: column;
-  gap: var(--space-lg);
+  gap: var(--space-6);
   position: relative;
+  padding-left: var(--space-8);
 }
 
 .timeline::before {
   content: '';
   position: absolute;
-  left: 20px;
+  left: 14px;
   top: 0;
   bottom: 0;
-  width: 2px;
-  background-color: var(--color-border);
-  z-index: 0;
+  width: 3px;
+  background: linear-gradient(180deg, var(--color-accent), var(--color-primary));
+  border-radius: var(--radius-full);
 }
 
+/* ── Stop Card ── */
 .stopCard {
+  padding: var(--space-6);
+  border-radius: var(--radius-xl);
   position: relative;
-  z-index: 1;
-  margin-left: var(--space-2xl);
 }
 
 .stopCard::before {
   content: '';
   position: absolute;
-  left: calc(-1 * var(--space-2xl) + 14px);
-  top: var(--space-lg);
-  width: 14px;
-  height: 14px;
+  left: calc(-1 * var(--space-8) + 6px);
+  top: var(--space-6);
+  width: 18px;
+  height: 18px;
+  background: var(--color-bg-surface);
+  border: 3px solid var(--color-accent);
   border-radius: 50%;
-  background-color: var(--color-primary);
-  border: 2px solid var(--color-surface);
+  z-index: 1;
 }
 
 .stopHeader {
   display: flex;
-  align-items: center;
-  padding: var(--space-md);
-  border-bottom: 1px solid var(--color-border);
-  background-color: var(--color-surface);
+  align-items: flex-start;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
 }
 
 .dragHandle {
+  color: var(--color-text-tertiary);
   cursor: grab;
+  padding: var(--space-1);
+  border-radius: var(--radius-sm);
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.dragHandle:hover {
   color: var(--color-text-secondary);
-  padding: var(--space-xs);
-  margin-right: var(--space-sm);
+  background-color: var(--color-bg-sunken);
 }
 
 .stopInfo {
   flex: 1;
+  min-width: 0;
 }
 
 .cityName {
-  margin: 0 0 var(--space-xs) 0;
-  font-size: var(--text-lg);
-  font-weight: 600;
   display: flex;
   align-items: center;
-  gap: var(--space-xs);
+  gap: 8px;
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: var(--font-weight-bold);
+  margin: 0;
+  color: var(--color-text-primary);
 }
 
 .cityIcon {
-  color: var(--color-primary);
+  color: var(--color-accent);
+  flex-shrink: 0;
 }
 
 .stopDates {
-  margin: 0;
-  font-size: var(--text-sm);
+  margin: 4px 0 0 0;
   color: var(--color-text-secondary);
+  font-size: 0.8125rem;
 }
 
 .stopActions {
   display: flex;
-  gap: var(--space-xs);
+  gap: var(--space-1);
+  flex-shrink: 0;
 }
 
 .actionBtn {
-  background: none;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   display: flex;
   align-items: center;
   justify-content: center;
+  border: none;
+  background: none;
+  border-radius: var(--radius-full);
   cursor: pointer;
   color: var(--color-text-secondary);
-  transition: all 0.2s;
+  transition: all 0.15s ease;
+  font-size: 1rem;
 }
 
-.actionBtn:hover:not(:disabled) {
-  background-color: var(--color-background);
-  color: var(--color-text);
+.actionBtn:hover {
+  background-color: var(--color-bg-sunken);
+  color: var(--color-text-primary);
 }
 
 .actionBtn:disabled {
-  opacity: 0.5;
+  opacity: 0.3;
   cursor: not-allowed;
 }
 
 .deleteBtn:hover {
-  color: var(--color-error, #dc2626);
-  border-color: var(--color-error, #dc2626);
-  background-color: #fee2e2;
+  background-color: var(--color-warning-light);
+  color: var(--color-warning);
 }
 
+/* ── Activities ── */
 .activitiesArea {
-  padding: var(--space-md);
-  background-color: var(--color-background);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border-light);
 }
 
 .activitiesTitle {
-  margin: 0 0 var(--space-sm) 0;
-  font-size: var(--text-sm);
-  font-weight: 600;
+  font-size: 0.8125rem;
+  font-weight: var(--font-weight-semibold);
   color: var(--color-text-secondary);
   text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 var(--space-3) 0;
 }
 
 .activityList {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 var(--space-md) 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
 }
 
 .activityItem {
-  padding: var(--space-sm);
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  margin-bottom: var(--space-xs);
-  font-size: var(--text-sm);
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-bg-sunken);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  color: var(--color-text-primary);
 }
 
 .emptyActivities {
-  font-size: var(--text-sm);
-  color: var(--color-text-secondary);
-  margin-bottom: var(--space-md);
+  color: var(--color-text-tertiary);
+  font-size: 0.875rem;
   font-style: italic;
+  margin: 0 0 var(--space-3) 0;
 }
 
 .addActivityBtn {
-  width: 100%;
+  font-size: 0.8125rem;
+}
+
+/* ── Error & Modal ── */
+.error {
+  text-align: center;
+  padding: var(--space-16);
+  color: var(--color-text-secondary);
+  font-size: 1.125rem;
 }
 
 .modalContent {
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
-}
-
-.error {
-  text-align: center;
-  padding: var(--space-2xl);
-  color: var(--color-error, #dc2626);
-  font-weight: 500;
+  gap: var(--space-4);
 }

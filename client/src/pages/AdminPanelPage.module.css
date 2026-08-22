@@ -1,26 +1,38 @@
+/* ═══════════════════════════════════════════════════
+   Admin Panel Page — Airbnb-inspired Premium Design
+   Dashboard stat cards, clean tables, charts
+   ═══════════════════════════════════════════════════ */
+
 .container {
-  max-width: 1100px;
-  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
 }
 
-/* Tabs */
+/* ── Tabs ── */
 .tabs {
   display: flex;
-  gap: var(--space-1);
-  background-color: var(--color-bg-sunken);
-  border-radius: var(--radius-md);
-  padding: var(--space-1);
-  margin-bottom: var(--space-6);
-  width: fit-content;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-full);
+  padding: 4px;
+  margin-bottom: var(--space-2);
+  box-shadow: var(--shadow-xs);
+  max-width: 400px;
 }
 
 .tab {
-  padding: var(--space-2) var(--space-5);
-  font-size: var(--font-size-sm);
+  flex: 1;
+  padding: 10px 20px;
+  background: none;
+  border: none;
+  border-radius: var(--radius-full);
+  font-size: 0.875rem;
   font-weight: var(--font-weight-medium);
   color: var(--color-text-secondary);
-  border-radius: var(--radius-sm);
-  transition: all var(--transition-fast);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
 }
 
 .tab:hover {
@@ -28,36 +40,37 @@
 }
 
 .active {
-  background-color: var(--color-bg-surface);
-  color: var(--color-primary);
-  box-shadow: var(--shadow-sm);
+  background-color: var(--color-text-primary);
+  color: #FFFFFF;
+  font-weight: var(--font-weight-semibold);
 }
 
-/* Stats Grid */
+/* ── Stats Grid ── */
 .statsGrid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-4);
-  margin-bottom: var(--space-6);
+  grid-template-columns: 1fr;
+  gap: var(--space-5);
+  margin-bottom: var(--space-8);
 }
 
-@media (max-width: 768px) {
+@media (min-width: 640px) {
   .statsGrid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
 .statCard {
-  padding: var(--space-5);
+  padding: var(--space-6);
+  border-radius: var(--radius-2xl);
   display: flex;
   align-items: center;
-  gap: var(--space-4);
+  gap: var(--space-5);
 }
 
 .statIcon {
-  width: 48px;
-  height: 48px;
-  border-radius: var(--radius-lg);
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -65,53 +78,58 @@
 }
 
 .statLabel {
-  font-size: var(--font-size-sm);
+  font-size: 0.8125rem;
+  font-weight: var(--font-weight-semibold);
   color: var(--color-text-secondary);
-  margin: 0 0 var(--space-1) 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 4px 0;
 }
 
 .statNumber {
-  font-size: var(--font-size-2xl);
+  font-family: var(--font-display);
+  font-size: 1.75rem;
   font-weight: var(--font-weight-bold);
   color: var(--color-text-primary);
   margin: 0;
+  line-height: 1;
 }
 
-/* Charts */
+/* ── Charts ── */
 .chartCard {
   padding: var(--space-6);
-  margin-bottom: var(--space-6);
+  border-radius: var(--radius-2xl);
+  margin-bottom: var(--space-8);
 }
 
 .chartTitle {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-6) 0;
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text-primary);
-  margin: 0 0 var(--space-5) 0;
 }
 
 .chartWrapper {
   width: 100%;
+  overflow-x: auto;
 }
 
-.noData {
-  text-align: center;
-  color: var(--color-text-secondary);
-  padding: var(--space-10);
-}
-
-/* User Table */
+/* ── Table ── */
 .tableCard {
   padding: var(--space-6);
+  border-radius: var(--radius-2xl);
 }
 
 .tableTitle {
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-semibold);
-  margin: 0 0 var(--space-4) 0;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-6) 0;
 }
 
 .tableWrapper {
@@ -121,26 +139,29 @@
 .table {
   width: 100%;
   border-collapse: collapse;
-  font-size: var(--font-size-sm);
-}
-
-.table thead th {
   text-align: left;
+}
+
+.table th {
   padding: var(--space-3) var(--space-4);
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-semibold);
   color: var(--color-text-secondary);
-  font-weight: var(--font-weight-medium);
-  border-bottom: 2px solid var(--color-border);
-  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid var(--color-border-light);
 }
 
-.table tbody td {
-  padding: var(--space-3) var(--space-4);
-  border-bottom: 1px solid var(--color-border);
+.table td {
+  padding: var(--space-4);
+  font-size: 0.875rem;
   color: var(--color-text-primary);
+  border-bottom: 1px solid var(--color-border-light);
+  vertical-align: middle;
 }
 
-.table tbody tr:hover {
-  background-color: var(--color-bg-sunken);
+.table tr:last-child td {
+  border-bottom: none;
 }
 
 .nameCell {
@@ -148,22 +169,20 @@
   align-items: center;
   gap: var(--space-3);
   font-weight: var(--font-weight-medium);
-  white-space: nowrap;
 }
 
 .userAvatar {
   width: 32px;
   height: 32px;
-  border-radius: var(--radius-full);
-  background-color: var(--color-primary);
-  color: white;
+  border-radius: 50%;
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-weight-bold);
+  font-size: 0.75rem;
   overflow: hidden;
-  flex-shrink: 0;
 }
 
 .userAvatar img {
@@ -173,27 +192,41 @@
 }
 
 .roleBadge {
-  padding: var(--space-1) var(--space-2);
+  display: inline-block;
+  padding: 4px 10px;
   border-radius: var(--radius-full);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-medium);
-  background-color: var(--color-info);
-  color: var(--color-primary);
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-semibold);
+  background-color: var(--color-bg-sunken);
+  color: var(--color-text-secondary);
 }
 
 .adminBadge {
-  background-color: rgba(242, 112, 60, 0.12);
-  color: var(--color-accent);
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
 }
 
 .deleteUserBtn {
-  color: var(--color-text-secondary);
-  padding: var(--space-1);
-  border-radius: var(--radius-sm);
-  transition: all var(--transition-fast);
+  background: none;
+  border: none;
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: var(--radius-full);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .deleteUserBtn:hover {
+  background-color: var(--color-warning-light);
   color: var(--color-warning);
-  background-color: rgba(224, 87, 76, 0.08);
+}
+
+.noData {
+  text-align: center;
+  padding: var(--space-8);
+  color: var(--color-text-secondary);
+  font-style: italic;
 }

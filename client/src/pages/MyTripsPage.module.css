@@ -1,13 +1,12 @@
 /* ═══════════════════════════════════════════════════
-   My Trips Page — Serene Horizon Design System
-   Premium trip cards with cover images, status badges,
-   hover-lift with image zoom
+   My Trips Page — Airbnb-inspired Premium Design
+   Pill tabs, hover-lift trip cards, image zoom
    ═══════════════════════════════════════════════════ */
 
 .header {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--space-5);
   margin-bottom: var(--space-8);
 }
 
@@ -22,21 +21,21 @@
 /* ── Tabs ── */
 .tabs {
   display: flex;
-  background-color: #FFFFFF;
-  border: 1px solid rgba(190, 200, 202, 0.3);
-  border-radius: 12px;
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-full);
   padding: 4px;
   overflow-x: auto;
-  box-shadow: 0 2px 8px rgba(30, 41, 59, 0.04);
+  box-shadow: var(--shadow-xs);
 }
 
 .tab {
   padding: 10px 24px;
   background: none;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-full);
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   color: var(--color-text-secondary);
   cursor: pointer;
   transition: all 0.2s ease;
@@ -45,14 +44,12 @@
 
 .tab:hover {
   color: var(--color-text-primary);
-  background-color: rgba(14, 124, 134, 0.04);
 }
 
 .activeTab {
-  background-color: var(--color-primary-light);
-  color: var(--color-primary);
-  font-weight: 600;
-  box-shadow: 0 1px 3px rgba(14, 124, 134, 0.1);
+  background-color: var(--color-text-primary);
+  color: #FFFFFF;
+  font-weight: var(--font-weight-semibold);
 }
 
 /* ── Trip Card Grid ── */
@@ -78,59 +75,62 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  border-radius: 16px;
+  border-radius: var(--radius-xl);
   overflow: hidden;
-  background: #FFFFFF;
-  box-shadow: 0 4px 20px rgba(30, 41, 59, 0.05);
-  border: 1px solid rgba(190, 200, 202, 0.2);
-  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-              box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  background: var(--color-bg-surface);
+  box-shadow: var(--shadow-card);
   cursor: pointer;
+  padding: 0;
 }
 
-.tripCard:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 36px rgba(30, 41, 59, 0.1);
+.tripCard:hover .tripCover::after {
+  opacity: 0;
 }
 
 .tripCover {
-  height: 200px;
+  height: 220px;
   background-size: cover;
   background-position: center;
   position: relative;
   overflow: hidden;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tripCard:hover .tripCover {
+  /* zoom in on hover */
 }
 
 .tripCover::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(17, 28, 45, 0.4) 0%, transparent 60%);
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.3) 0%,
+    transparent 50%
+  );
   z-index: 1;
-}
-
-.tripCard:hover .tripCover {
-  /* Image zoom handled by inner element if needed */
 }
 
 .statusBadge {
   position: absolute;
-  top: 12px;
-  right: 12px;
+  top: 14px;
+  right: 14px;
   z-index: 2;
 }
 
 .tripContent {
-  padding: var(--space-5);
+  padding: var(--space-5) var(--space-5) var(--space-6);
   display: flex;
   flex-direction: column;
   flex: 1;
 }
 
 .tripName {
-  margin: 0 0 8px 0;
-  font-size: 1.0625rem;
-  font-weight: 600;
+  margin: 0 0 10px 0;
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: var(--font-weight-semibold);
   color: var(--color-text-primary);
   letter-spacing: -0.01em;
 }
@@ -139,7 +139,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-4);
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .detailItem {
@@ -153,7 +153,7 @@
 .tripDescription {
   margin: 0;
   color: var(--color-text-secondary);
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   line-height: 1.6;
   flex: 1;
 }
@@ -164,37 +164,37 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 80px var(--space-6);
+  padding: 100px var(--space-6);
   text-align: center;
-  background-color: #FFFFFF;
-  border-radius: 16px;
-  border: 2px dashed rgba(190, 200, 202, 0.35);
-  box-shadow: 0 4px 20px rgba(30, 41, 59, 0.03);
+  background-color: var(--color-bg-surface);
+  border-radius: var(--radius-2xl);
+  border: 2px dashed var(--color-border);
 }
 
 .emptyIcon {
-  width: 72px;
-  height: 72px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--color-primary-light), rgba(14, 124, 134, 0.08));
-  color: var(--color-primary);
+  background: linear-gradient(135deg, var(--color-accent-light), rgba(255, 56, 92, 0.08));
+  color: var(--color-accent);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: var(--space-5);
+  margin-bottom: var(--space-6);
 }
 
 .emptyState h3 {
   margin: 0 0 8px 0;
   color: var(--color-text-primary);
-  font-size: 1.25rem;
-  font-weight: 600;
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  font-weight: var(--font-weight-bold);
 }
 
 .emptyState p {
   color: var(--color-text-secondary);
   margin: 0 0 var(--space-6) 0;
-  font-size: 0.9375rem;
+  font-size: 1rem;
   line-height: 1.6;
   max-width: 400px;
 }

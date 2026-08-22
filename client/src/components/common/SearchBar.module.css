@@ -1,34 +1,48 @@
-.searchContainer {
+/* ═══════════════════════════════════════════════════
+   SearchBar — Airbnb-inspired Premium Design
+   Prominent rounded search with icon
+   ═══════════════════════════════════════════════════ */
+
+.searchBar {
+  position: relative;
   display: flex;
   align-items: center;
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: 0 var(--space-sm);
-  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.searchContainer:focus-within {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px var(--color-primary-light);
-}
-
-.icon {
+.searchIcon {
+  position: absolute;
+  left: 16px;
   color: var(--color-text-secondary);
-  flex-shrink: 0;
+  pointer-events: none;
+  transition: color 0.2s ease;
 }
 
 .input {
-  flex: 1;
-  border: none;
-  background: transparent;
-  padding: var(--space-sm);
-  font-size: var(--text-sm);
-  color: var(--color-text);
-  outline: none;
-  min-width: 0;
+  width: 100%;
+  padding: 12px 16px 12px 44px;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background-color: var(--color-bg-surface);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  transition: all 0.2s ease;
 }
 
 .input::placeholder {
-  color: var(--color-text-secondary);
+  color: var(--color-text-tertiary);
+}
+
+.input:hover {
+  border-color: var(--color-text-secondary);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--color-text-primary);
+  box-shadow: 0 0 0 1px var(--color-text-primary);
+}
+
+.input:focus ~ .searchIcon,
+.input:focus + .searchIcon {
+  color: var(--color-text-primary);
 }

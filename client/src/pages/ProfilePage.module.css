@@ -1,7 +1,12 @@
+/* ═══════════════════════════════════════════════════
+   Profile Page — Airbnb-inspired Premium Design
+   Cover area, prominent avatar, clean info layout
+   ═══════════════════════════════════════════════════ */
+
 .container {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xl);
+  gap: var(--space-8);
 }
 
 @media (min-width: 768px) {
@@ -11,126 +16,159 @@
   }
 }
 
+/* ── Sidebar ── */
 .sidebar {
+  flex-shrink: 0;
   width: 100%;
 }
 
 @media (min-width: 768px) {
   .sidebar {
-    width: 300px;
-    flex-shrink: 0;
+    width: 280px;
+    position: sticky;
+    top: 92px;
   }
 }
 
-.mainContent {
-  flex: 1;
+.avatarCard {
+  padding: var(--space-8);
+  border-radius: var(--radius-2xl);
+  text-align: center;
+  position: relative;
+  overflow: visible;
 }
 
-.avatarCard {
-  padding: var(--space-xl);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
+.avatarCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100px;
+  background: linear-gradient(135deg, var(--color-primary), #2FA36B);
+  border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
 }
 
 .avatarWrapper {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  margin-bottom: var(--space-md);
-  overflow: hidden;
-  border: 4px solid var(--color-background);
-  box-shadow: var(--shadow-md);
+  position: relative;
+  z-index: 1;
+  margin-bottom: var(--space-4);
+  margin-top: var(--space-4);
+  display: flex;
+  justify-content: center;
 }
 
 .avatarImage {
-  width: 100%;
-  height: 100%;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
   object-fit: cover;
+  border: 4px solid var(--color-bg-surface);
+  box-shadow: var(--shadow-lg);
 }
 
 .avatarPlaceholder {
-  width: 100%;
-  height: 100%;
-  background-color: var(--color-primary-light);
-  color: var(--color-primary);
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-primary), #2FA36B);
+  color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 3rem;
-  font-weight: bold;
+  font-size: 2.5rem;
+  font-weight: var(--font-weight-bold);
+  font-family: var(--font-display);
+  border: 4px solid var(--color-bg-surface);
+  box-shadow: var(--shadow-lg);
 }
 
 .userName {
-  margin: 0 0 var(--space-xs) 0;
-  font-size: var(--text-xl);
-  font-weight: bold;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin: 0 0 2px 0;
 }
 
 .userUsername {
-  margin: 0 0 var(--space-lg) 0;
   color: var(--color-text-secondary);
-  font-size: var(--text-sm);
+  font-size: 0.875rem;
+  margin: 0 0 var(--space-5) 0;
 }
 
 .contactInfo {
-  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: var(--space-3);
   text-align: left;
-  border-top: 1px solid var(--color-border);
-  padding-top: var(--space-md);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--color-border-light);
 }
 
 .infoItem {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
+  gap: var(--space-3);
   color: var(--color-text-secondary);
-  font-size: var(--text-sm);
+  font-size: 0.875rem;
+}
+
+.infoItem svg {
+  color: var(--color-text-tertiary);
+  flex-shrink: 0;
+}
+
+/* ── Main Content ── */
+.mainContent {
+  flex: 1;
+  min-width: 0;
 }
 
 .detailsCard {
-  padding: var(--space-xl);
+  padding: var(--space-8);
+  border-radius: var(--radius-2xl);
 }
 
 .cardHeader {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--space-lg);
-  padding-bottom: var(--space-md);
-  border-bottom: 1px solid var(--color-border);
+  justify-content: space-between;
+  margin-bottom: var(--space-6);
+  flex-wrap: wrap;
+  gap: var(--space-3);
 }
 
 .cardTitle {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: var(--font-weight-bold);
   margin: 0;
-  font-size: var(--text-lg);
-  font-weight: 600;
+  color: var(--color-text-primary);
 }
 
 .editActions {
   display: flex;
-  gap: var(--space-sm);
+  gap: var(--space-2);
 }
 
+/* ── Edit Form ── */
 .editForm {
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
+  gap: var(--space-5);
 }
 
 .row {
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
+  gap: var(--space-5);
 }
 
 @media (min-width: 600px) {
   .row {
     flex-direction: row;
+    gap: var(--space-4);
   }
   .row > * {
     flex: 1;
@@ -140,44 +178,61 @@
 .inputGroup {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
+  gap: 8px;
 }
 
 .label {
-  font-size: var(--text-sm);
-  font-weight: 500;
-  color: var(--color-text);
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .textarea {
-  padding: var(--space-sm);
-  border: 1px solid var(--color-border);
+  padding: 14px 18px;
+  border: 1.5px solid var(--color-border);
   border-radius: var(--radius-md);
-  background-color: var(--color-surface);
-  color: var(--color-text);
-  font-size: var(--text-sm);
+  background-color: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  font-size: 1rem;
   resize: vertical;
   outline: none;
   font-family: inherit;
+  line-height: 1.5;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .textarea:focus {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px var(--color-primary-light);
+  border-color: var(--color-text-primary);
+  box-shadow: 0 0 0 1px var(--color-text-primary);
+}
+
+/* ── View Mode ── */
+.viewInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
 }
 
 .infoGroup {
-  margin-bottom: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .infoLabel {
-  font-size: var(--text-sm);
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-semibold);
   color: var(--color-text-secondary);
-  margin: 0 0 var(--space-xs) 0;
-  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0;
 }
 
 .infoValue {
+  color: var(--color-text-primary);
+  font-size: 1rem;
+  line-height: 1.6;
   margin: 0;
-  color: var(--color-text);
 }

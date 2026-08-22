@@ -1,8 +1,13 @@
+/* ═══════════════════════════════════════════════════
+   PageShell — Airbnb-inspired Layout
+   Clean page headers, generous spacing
+   ═══════════════════════════════════════════════════ */
+
 .pageShell {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: var(--color-background);
+  background-color: var(--color-bg-page);
 }
 
 .mainContent {
@@ -12,17 +17,20 @@
 }
 
 .pageHeader {
-  background-color: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
-  padding: var(--space-lg) var(--space-md);
+  padding: var(--space-8) var(--space-6);
+  border-bottom: 1px solid var(--color-border-light);
+  background: linear-gradient(180deg, var(--color-bg-surface) 0%, var(--color-bg-page) 100%);
 }
 
 .pageTitle {
   max-width: 1200px;
   margin: 0 auto;
-  font-size: var(--text-2xl);
-  font-weight: bold;
-  color: var(--color-text);
+  font-family: var(--font-display);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-black);
+  color: var(--color-text-primary);
+  letter-spacing: -0.02em;
+  width: 100%;
 }
 
 .contentContainer {
@@ -30,5 +38,15 @@
   max-width: 1200px;
   width: 100%;
   margin: 0 auto;
-  padding: var(--space-md);
+  padding: var(--space-8) var(--space-6);
+  animation: fadeInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+@media (max-width: 767px) {
+  .pageHeader {
+    padding: var(--space-6) var(--space-4);
+  }
+  .contentContainer {
+    padding: var(--space-6) var(--space-4);
+  }
 }

@@ -1,29 +1,49 @@
 /* ═══════════════════════════════════════════════════
-   Login Page — Serene Horizon Design System
-   Split-screen layout with hero image + login card
+   Login Page — Airbnb-inspired Premium Design
+   Full-bleed hero with Ken Burns, elegant card form
    ═══════════════════════════════════════════════════ */
 
 .container {
   display: flex;
   min-height: 100vh;
-  background-color: #F9F9FF;
+  background-color: var(--color-bg-page);
 }
 
-/* ── Left Panel: Hero Image ── */
+/* ── Left Panel: Full-bleed Hero ── */
 .leftPanel {
   display: none;
-  flex: 1;
+  flex: 1.1;
   position: relative;
   overflow: hidden;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  background-image:
-    linear-gradient(135deg, rgba(11, 100, 109, 0.85), rgba(14, 124, 134, 0.7)),
-    url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=1200');
+  justify-content: flex-end;
+  align-items: flex-start;
+  text-align: left;
+  padding: var(--space-12);
+}
+
+.leftPanel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=1400');
   background-size: cover;
   background-position: center;
+  animation: kenBurns 25s ease-in-out infinite;
+  z-index: 0;
+}
+
+.leftPanel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.65) 0%,
+    rgba(0, 0, 0, 0.2) 40%,
+    rgba(0, 0, 0, 0.05) 100%
+  );
+  z-index: 1;
 }
 
 @media (min-width: 768px) {
@@ -35,79 +55,81 @@
 .brandContainer {
   display: flex;
   align-items: center;
-  gap: var(--space-4);
+  gap: var(--space-3);
   margin-bottom: var(--space-4);
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 
 .brandIcon {
   color: #FFFFFF;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+  width: 40px;
+  height: 40px;
 }
 
 .brandName {
+  font-family: var(--font-display);
   font-size: 3rem;
-  font-weight: 700;
+  font-weight: var(--font-weight-black);
   margin: 0;
   color: #FFFFFF;
-  letter-spacing: -0.02em;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  letter-spacing: -0.03em;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
 }
 
 .tagline {
-  font-size: 1.125rem;
-  color: rgba(255, 255, 255, 0.9);
-  max-width: 400px;
+  font-size: 1.25rem;
+  color: rgba(255, 255, 255, 0.88);
+  max-width: 420px;
   line-height: 1.7;
   position: relative;
-  z-index: 1;
-  font-weight: 300;
-  letter-spacing: 0.02em;
+  z-index: 2;
+  font-weight: var(--font-weight-normal);
+  letter-spacing: 0.01em;
 }
 
-/* ── Right Panel: Login Form ── */
+/* ── Right Panel: Form ── */
 .rightPanel {
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: var(--space-6);
-  background-color: #FFFFFF;
+  padding: var(--space-8);
+  background-color: var(--color-bg-surface);
 }
 
 .loginCard {
   width: 100%;
-  max-width: 440px;
-  padding: var(--space-10);
-  border: none;
-  box-shadow: none;
-  background: transparent;
+  max-width: 420px;
+  animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 
 @media (max-width: 767px) {
-  .loginCard {
+  .rightPanel {
     padding: var(--space-6);
-    box-shadow: 0 4px 20px rgba(30, 41, 59, 0.05);
-    background: #FFFFFF;
-    border-radius: 16px;
+  }
+  .loginCard {
+    padding: 0;
   }
 }
 
 .title {
-  font-size: 2rem;
-  font-weight: 700;
+  font-family: var(--font-display);
+  font-size: 1.875rem;
+  font-weight: var(--font-weight-black);
   color: var(--color-text-primary);
   margin: 0 0 6px 0;
-  text-align: center;
-  letter-spacing: -0.01em;
+  text-align: left;
+  letter-spacing: -0.02em;
 }
 
 .subtitle {
   color: var(--color-text-secondary);
-  text-align: center;
+  text-align: left;
   margin-bottom: var(--space-8);
-  font-size: 0.9375rem;
+  font-size: 1rem;
+  line-height: 1.5;
 }
 
 .form {
@@ -116,12 +138,28 @@
   gap: var(--space-5);
 }
 
+.divider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin: var(--space-2) 0;
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-sm);
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background-color: var(--color-border-light);
+}
+
 .submitBtn {
   margin-top: var(--space-2);
   width: 100%;
-  padding: 14px 24px;
+  padding: 16px 24px;
   font-size: 1rem;
-  border-radius: var(--radius-md);
 }
 
 .footer {
@@ -132,13 +170,13 @@
 }
 
 .link {
-  color: var(--color-primary);
+  color: var(--color-accent);
   text-decoration: none;
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   transition: color 0.2s ease;
 }
 
 .link:hover {
-  color: var(--color-primary-hover);
+  color: var(--color-accent-hover);
   text-decoration: underline;
 }
